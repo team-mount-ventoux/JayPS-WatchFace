@@ -1,6 +1,6 @@
-GPSTracker-PebbleWatchFace
+AdventureTracker-PebbleWatchFace
 ==========================
 
-Pebble Watch Face for the GPS Sports Tracker App
+Pebble Watch Face for the Adventure Tracker App
 
-This repository contains the watch face for the GPS Sports Tracker App, this initial version is a port from the original pebble example.
+Adventure tracker is a simple app show your current grid reference when hiking or current speed / distance when cycling.
