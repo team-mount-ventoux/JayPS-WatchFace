@@ -88,6 +88,12 @@ void handle_init(AppContextRef ctx) {
   //layer.update_proc = update_layer_callback;
   //layer_add_child(&window.layer, &layer);
 
+  Tuplet initial_values[] = {
+    TupletCString(SPEED_TEXT, "0"),
+    TupletCString(DISTANCE_TEXT, "0"),
+    TupletCString(AVGSPEED_TEXT, "0"),
+  };
+
   text_layer_init(&s_data.speed_layer, GRect(28, 10, 84, 76));
   text_layer_set_text_color(&s_data.speed_layer, GColorWhite);
   text_layer_set_background_color(&s_data.speed_layer, GColorClear);
@@ -111,12 +117,6 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_text_alignment(&s_data.avgspeed_layer, GTextAlignmentCenter);
   text_layer_set_text(&s_data.avgspeed_layer, s_data.avgspeed);
   layer_add_child(&window->layer, &s_data.avgspeed_layer.layer);
-
-  Tuplet initial_values[] = {
-    TupletCString(SPEED_TEXT, "0\u00B0C"),
-    TupletCString(DISTANCE_TEXT, "0\u00B0C"),
-    TupletCString(AVGSPEED_TEXT, "0\u00B0C"),
-  };
 
   app_sync_init(&s_data.sync, s_data.sync_buffer, sizeof(s_data.sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
                 sync_tuple_changed_callback, sync_error_callback, NULL);
