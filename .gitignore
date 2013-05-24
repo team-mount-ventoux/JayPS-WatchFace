@@ -15,3 +15,7 @@
 *.exe
 *.out
 *.app
+
+.waf-*
+/adventuretracker/build/
+/adventuretracker/.lock-waf_darwin_build

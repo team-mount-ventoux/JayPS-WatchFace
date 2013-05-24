@@ -1,4 +1,5 @@
-export PEBBLE_SDK_ROOT=/Applications/PebbleKit-v1.1/Pebble
+: ${PEBBLE_SDK_ROOT?"Please set the environment variable PEBBLE_SDK_ROOT and point it to the Pebble folder where you extracted the Pebble SDK, i.e export PEBBLE_SDK_ROOT=/Applications/PebbleKit/Pebble"}
+
 rm tools
 rm lib
 rm waf
