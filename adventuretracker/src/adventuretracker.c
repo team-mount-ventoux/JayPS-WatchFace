@@ -128,7 +128,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   
   switch (key) {
   case SPEED_TEXT:
-    strncpy(s_data.speed, "0.0", 16);
+    strncpy(s_data.speed, s_data.distance, 16); // test code, setting to new_tuple->value->cstring crashes with android
     break;
   case DISTANCE_TEXT:
     strncpy(s_data.distance, new_tuple->value->cstring, 16);
