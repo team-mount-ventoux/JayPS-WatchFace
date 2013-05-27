@@ -20,7 +20,7 @@ enum {
 
 #define NUMBER_OF_IMAGES 11
 #define TOTAL_IMAGE_SLOTS 4
-#define EMPTY_SLOT -1
+
 #define CHAR_WIDTH 35
 #define DOT_WIDTH 15
 #define CHAR_HEIGHT 51
@@ -35,7 +35,6 @@ const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
 };
 
 BmpContainer image_containers[TOTAL_IMAGE_SLOTS];
-int image_slot_state[TOTAL_IMAGE_SLOTS] = {EMPTY_SLOT, EMPTY_SLOT, EMPTY_SLOT, EMPTY_SLOT};
 
 TextLayer mph_layer;
 TextLayer distance_layer;
@@ -46,17 +45,76 @@ TextLayer avgmph_layer;
 Layer line_layer;
 Layer bottom_layer;
 
-static struct AppData {
+typedef struct SpeedLayer {
+      Layer layer;
+      const char* text;
+ } SpeedLayer;
+
+ static struct AppData {
   Window window;
-  TextLayer speed_layer;
+  SpeedLayer speed_layer;
   TextLayer distance_layer;
   TextLayer avgspeed_layer;
   char speed[16];
   char distance[16];
   char avgspeed[16];
   AppSync sync;
-  uint8_t sync_buffer[128];
+  uint8_t sync_buffer[96];
 } s_data;
+
+void speed_layer_set_container_image(BmpContainer *bmp_container, const int resource_id, GPoint origin) {
+
+  layer_remove_from_parent(&bmp_container->layer.layer);
+  bmp_deinit_container(bmp_container);
+
+  bmp_init_container(resource_id, bmp_container);
+
+  GRect frame = layer_get_frame(&bmp_container->layer.layer);
+  frame.origin.x = origin.x;
+  frame.origin.y = origin.y;
+  layer_set_frame(&bmp_container->layer.layer, frame);
+
+  layer_add_child(&s_data.speed_layer.layer, &bmp_container->layer.layer);
+}
+
+void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
+  if (speed_layer->text && strlen(speed_layer->text) > 0) {
+    
+    int len = strlen(speed_layer->text);
+    // get the size
+    int size = 0;
+    if(len > 1)
+      size = (len * CHAR_WIDTH) - 20; // dot is 20 pixels smaller
+    else if(len ==1)
+      size = CHAR_WIDTH;
+
+    int leftpos = (CANVAS_WIDTH - size) / 2;
+
+
+    for(int c=0; c < len; c++) {
+
+      int digit_value = -1;
+      if(speed_layer->text[c] == '.') {
+        digit_value = 10;
+      } else {
+        digit_value = speed_layer->text[c] - '0';
+      }
+      
+      if(digit_value >=0 && digit_value < 11)
+        speed_layer_set_container_image(&image_containers[c],IMAGE_RESOURCE_IDS[digit_value],GPoint(leftpos,10));
+    }
+
+  }
+}
+
+void speed_layer_init(SpeedLayer *speed_layer, GRect frame) {
+  layer_init(&speed_layer->layer, frame);
+  speed_layer->layer.update_proc = (LayerUpdateProc)speed_layer_update_proc;
+}
+
+void speed_layer_set_text(SpeedLayer *speed_layer,char* textdata) {
+  speed_layer->text = textdata;
+}
 
 // TODO: Error handling
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
@@ -70,7 +128,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   
   switch (key) {
   case SPEED_TEXT:
-    strncpy(s_data.speed, new_tuple->value->cstring, 16);
+    strncpy(s_data.speed, "0.0", 16);
     break;
   case DISTANCE_TEXT:
     strncpy(s_data.distance, new_tuple->value->cstring, 16);
@@ -80,48 +138,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     break;
   default:
     return;
-  }
-
-}
-
-void show_speed(char* speed) {
-
-  // clean up memory
-  for(int n=0; n < TOTAL_IMAGE_SLOTS; n++) {
-    if(image_slot_state[n] != EMPTY_SLOT) {
-      layer_remove_from_parent(&image_containers[n].layer.layer);
-      bmp_deinit_container(&image_containers[n]);
-      image_slot_state[n] = EMPTY_SLOT;
-    }
-  }
-
-  int len = strlen(speed);
-  // get the size
-  int size = 0;
-  if(len > 1)
-    size = (len * CHAR_WIDTH) - 20; // dot is 20 pixels smaller
-  else if(len ==1)
-    size = CHAR_WIDTH;
-
-  int leftpos = (CANVAS_WIDTH - size) / 2;
-
-
-  for(int c=0; c < len; c++) {
-
-    int digit_value = -1;
-    if(speed[c] == '.') {
-      digit_value = 10;
-    } else {
-      digit_value = speed[c] - '0';
-    }
-
-    bmp_init_container(IMAGE_RESOURCE_IDS[digit_value], &image_containers[c]);
-    image_containers[c].layer.layer.frame.origin.x = leftpos;
-    image_containers[c].layer.layer.frame.origin.y = 10;
-    layer_add_child(&s_data.window.layer, &image_containers[c].layer.layer);
-    leftpos += (digit_value == 10) ? DOT_WIDTH : CHAR_WIDTH;
-    image_slot_state[c] = 1;
-
   }
 
 }
@@ -157,6 +173,10 @@ void handle_init(AppContextRef ctx) {
   window_set_fullscreen(&s_data.window, true); 
 
 
+  speed_layer_init(&s_data.speed_layer,GRect(0,0,CANVAS_WIDTH,CHAR_HEIGHT+10));
+  speed_layer_set_text(&s_data.speed_layer, s_data.speed);
+  layer_add_child(&window->layer, &s_data.speed_layer.layer);
+
   layer_init(&bottom_layer, window->layer.frame);
   bottom_layer.update_proc = &botom_layer_update_callback;
   layer_add_child(&window->layer, &bottom_layer);
@@ -181,7 +201,7 @@ void handle_init(AppContextRef ctx) {
 
   
   text_layer_init(&miles_layer, GRect(2, 148, 66, 14));
-  text_layer_set_text(&miles_layer, "miles");
+  text_layer_set_text(&miles_layer, "v1.2");
   text_layer_set_text_color(&miles_layer, GColorBlack);
   text_layer_set_background_color(&miles_layer, GColorClear);
   text_layer_set_font(&miles_layer, font_12);
@@ -245,13 +265,16 @@ void handle_init(AppContextRef ctx) {
 
 static void handle_deinit(AppContextRef c) {
    app_sync_deinit(&s_data.sync);
+   for(int n=0; n < TOTAL_IMAGE_SLOTS; n++) {
+      bmp_deinit_container(&image_containers[n]);
+   }
 }
 
 void handle_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)t;
   (void)ctx;
 
-  show_speed(s_data.speed);
+  layer_mark_dirty(&s_data.speed_layer.layer);
   layer_mark_dirty(&s_data.distance_layer.layer);
   layer_mark_dirty(&s_data.avgspeed_layer.layer);
 }
@@ -272,7 +295,7 @@ void pbl_main(void *params) {
     },
     .messaging_info = {
       .buffer_sizes = {
-        .inbound = 128,
+        .inbound = 96,
         .outbound = 16,
       }
     }
