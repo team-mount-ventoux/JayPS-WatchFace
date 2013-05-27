@@ -13,13 +13,15 @@ PBL_APP_INFO(MY_UUID,
              APP_INFO_STANDARD_APP);
 
 enum {
-  SPEED_TEXT = 0x0,     // TUPLE_CSTR
-  DISTANCE_TEXT = 0x1,  // TUPLE_CSTR
-  AVGSPEED_TEXT = 0x2,  // TUPLE_CSTR
+  NOT_USED =0x0,
+  SPEED_TEXT = 0x1,     // TUPLE_CSTR
+  DISTANCE_TEXT = 0x2,  // TUPLE_CSTR
+  AVGSPEED_TEXT = 0x3,  // TUPLE_CSTR
 };
 
 #define NUMBER_OF_IMAGES 11
 #define TOTAL_IMAGE_SLOTS 4
+#define NOT_USED -1
 
 #define CHAR_WIDTH 35
 #define DOT_WIDTH 15
@@ -35,6 +37,7 @@ const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
 };
 
 BmpContainer image_containers[TOTAL_IMAGE_SLOTS];
+int image_slots[TOTAL_IMAGE_SLOTS] = {NOT_USED,NOT_USED,NOT_USED,NOT_USED};
 
 TextLayer mph_layer;
 TextLayer distance_layer;
@@ -62,25 +65,15 @@ typedef struct SpeedLayer {
   uint8_t sync_buffer[96];
 } s_data;
 
-void speed_layer_set_container_image(BmpContainer *bmp_container, const int resource_id, GPoint origin) {
-
-  layer_remove_from_parent(&bmp_container->layer.layer);
-  bmp_deinit_container(bmp_container);
-
-  bmp_init_container(resource_id, bmp_container);
-
-  GRect frame = layer_get_frame(&bmp_container->layer.layer);
-  frame.origin.x = origin.x;
-  frame.origin.y = origin.y;
-  layer_set_frame(&bmp_container->layer.layer, frame);
-
-  layer_add_child(&s_data.speed_layer.layer, &bmp_container->layer.layer);
-}
 
 void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
   if (speed_layer->text && strlen(speed_layer->text) > 0) {
     
     int len = strlen(speed_layer->text);
+
+    if(len > 4)
+      return;
+
     // get the size
     int size = 0;
     if(len > 1)
@@ -91,6 +84,15 @@ void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
     int leftpos = (CANVAS_WIDTH - size) / 2;
 
 
+    // clean up old layers
+    for(int n=0; n < TOTAL_IMAGE_SLOTS; n++) {
+      if(image_slots[n] != NOT_USED) {
+        layer_remove_from_parent(&image_containers[n].layer.layer);
+        bmp_deinit_container(&image_containers[n]);
+        image_slots[n] = NOT_USED;
+      }
+    }
+
     for(int c=0; c < len; c++) {
 
       int digit_value = -1;
@@ -100,8 +102,23 @@ void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
         digit_value = speed_layer->text[c] - '0';
       }
       
-      if(digit_value >=0 && digit_value < 11)
-        speed_layer_set_container_image(&image_containers[c],IMAGE_RESOURCE_IDS[digit_value],GPoint(leftpos,10));
+      if(digit_value >=0 && digit_value < 11) {
+        bmp_init_container(IMAGE_RESOURCE_IDS[digit_value], &image_containers[c]);
+
+        GRect frame = layer_get_frame(&image_containers[c].layer.layer);
+        frame.origin.x = leftpos;
+        frame.origin.y = 10;
+        layer_set_frame(&image_containers[c].layer.layer, frame);
+
+        layer_add_child(&s_data.speed_layer.layer, &image_containers[c].layer.layer);
+        image_slots[c] = digit_value;
+      }
+
+      if(digit_value == 10)
+        leftpos += DOT_WIDTH;
+      else
+        leftpos += CHAR_WIDTH;
+        
     }
 
   }
@@ -128,7 +145,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   
   switch (key) {
   case SPEED_TEXT:
-    strncpy(s_data.speed, s_data.distance, 16); // test code, setting to new_tuple->value->cstring crashes with android
+    strncpy(s_data.speed, new_tuple->value->cstring, 16); // test code, setting to new_tuple->value->cstring crashes with android
     break;
   case DISTANCE_TEXT:
     strncpy(s_data.distance, new_tuple->value->cstring, 16);
@@ -201,7 +218,7 @@ void handle_init(AppContextRef ctx) {
 
   
   text_layer_init(&miles_layer, GRect(2, 148, 66, 14));
-  text_layer_set_text(&miles_layer, "v1.2");
+  text_layer_set_text(&miles_layer, "v1.3");
   text_layer_set_text_color(&miles_layer, GColorBlack);
   text_layer_set_background_color(&miles_layer, GColorClear);
   text_layer_set_font(&miles_layer, font_12);
