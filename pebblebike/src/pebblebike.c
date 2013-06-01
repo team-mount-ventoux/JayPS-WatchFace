@@ -7,16 +7,33 @@
 // 5DD35873-3BB6-44D6-8255-0E61BC3B97F5
 #define MY_UUID { 0x5D, 0xD3, 0x58, 0x73, 0x3B, 0xB6, 0x44, 0xD6, 0x82, 0x55, 0x0E, 0x61, 0xBC, 0x3B, 0x97, 0xF5 }
 PBL_APP_INFO(MY_UUID,
-             "Pebble Cycling", "N Jackson",
+             "Pebble Bike", "N Jackson",
              1, 0, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_STANDARD_APP);
 
 enum {
-  NOT_USED =0x0,
+  STATE_CHANGED =0x0,
   SPEED_TEXT = 0x1,     // TUPLE_CSTR
   DISTANCE_TEXT = 0x2,  // TUPLE_CSTR
   AVGSPEED_TEXT = 0x3,  // TUPLE_CSTR
+  MEASUREMENT_UNITS = 0x04 // TUPLE_INT
+};
+
+enum {
+  STATE_START = 1,
+  STATE_STOP = 2,
+};
+
+enum {
+  PLAY_PRESS =0x0,
+  STOP_PRESS = 0x1,
+  REFRESH_PRESS = 0x2,
+};
+
+enum {
+  UNITS_IMPERIAL = 0x0,
+  UNITS_METRIC = 0x1,
 };
 
 #define NUMBER_OF_IMAGES 11
@@ -28,6 +45,12 @@ enum {
 #define CHAR_HEIGHT 51
 
 #define CANVAS_WIDTH 144
+#define MENU_WIDTH 22
+
+#define SPEED_UNIT_METRIC "mph"
+#define SPEED_UNIT_IMPERIAL "kph"
+#define DISTANCE_UNIT_METRIC "miles"
+#define DISTANCE_UNIT_IMPERIAL "km"
 
 const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
   RESOURCE_ID_IMAGE_NUM_0, RESOURCE_ID_IMAGE_NUM_1, RESOURCE_ID_IMAGE_NUM_2,
@@ -39,11 +62,14 @@ const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
 BmpContainer image_containers[TOTAL_IMAGE_SLOTS];
 int image_slots[TOTAL_IMAGE_SLOTS] = {NOT_USED,NOT_USED,NOT_USED,NOT_USED};
 
-TextLayer mph_layer;
+HeapBitmap start_button;
+HeapBitmap stop_button;
+HeapBitmap reset_button;
+
+ActionBarLayer action_bar;
+
 TextLayer distance_layer;
-TextLayer miles_layer;
 TextLayer avg_layer;
-TextLayer avgmph_layer;
 
 Layer line_layer;
 Layer bottom_layer;
@@ -58,15 +84,25 @@ typedef struct SpeedLayer {
   SpeedLayer speed_layer;
   TextLayer distance_layer;
   TextLayer avgspeed_layer;
+  TextLayer mph_layer;
+  TextLayer avgmph_layer;
+  TextLayer miles_layer;
   char speed[16];
   char distance[16];
   char avgspeed[16];
+  char unitsSpeed[8];
+  char unitsDistance[8];
+  int state;
   AppSync sync;
   uint8_t sync_buffer[96];
 } s_data;
 
 
 void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
+
+  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorBlack);
+  graphics_fill_rect(app_get_current_graphics_context(), layer_get_frame(&speed_layer->layer), 0, GCornerNone);
+
   if (speed_layer->text && strlen(speed_layer->text) > 0) {
     
     int len = strlen(speed_layer->text);
@@ -81,7 +117,7 @@ void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
     else if(len ==1)
       size = CHAR_WIDTH;
 
-    int leftpos = (CANVAS_WIDTH - size) / 2;
+    int leftpos = (CANVAS_WIDTH - MENU_WIDTH - size) / 2;
 
 
     // clean up old layers
@@ -124,6 +160,10 @@ void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
   }
 }
 
+void bottom_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
+
+}
+
 void speed_layer_init(SpeedLayer *speed_layer, GRect frame) {
   layer_init(&speed_layer->layer, frame);
   speed_layer->layer.update_proc = (LayerUpdateProc)speed_layer_update_proc;
@@ -131,6 +171,43 @@ void speed_layer_init(SpeedLayer *speed_layer, GRect frame) {
 
 void speed_layer_set_text(SpeedLayer *speed_layer,char* textdata) {
   speed_layer->text = textdata;
+}
+
+static void send_cmd(uint8_t cmd) {
+  Tuplet value = TupletInteger(STATE_CHANGED, cmd);
+  
+  DictionaryIterator *iter;
+  app_message_out_get(&iter);
+  
+  if (iter == NULL)
+    return;
+  
+  dict_write_tuplet(iter, &value);
+  dict_write_end(iter);
+  
+  app_message_out_send();
+  app_message_out_release();
+}
+
+void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
+  if(s_data.state == STATE_STOP)
+    send_cmd(PLAY_PRESS);
+  else
+    send_cmd(STOP_PRESS);
+}
+
+void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
+  send_cmd(REFRESH_PRESS);
+}
+
+
+void click_config_provider(ClickConfig **config, void *context) {
+  config[BUTTON_ID_DOWN]->click.handler = (ClickHandler) handle_bottombutton_click;
+  config[BUTTON_ID_UP]->click.handler = (ClickHandler) handle_topbutton_click;
+}
+
+static void app_send_failed(DictionaryIterator* failed, AppMessageResult reason, void* context) {
+  // TODO: error handling
 }
 
 // TODO: Error handling
@@ -153,26 +230,40 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   case AVGSPEED_TEXT:
     strncpy(s_data.avgspeed, new_tuple->value->cstring, 16);
     break;
+  case STATE_CHANGED:
+    s_data.state = new_tuple->value->uint8;
+    break;
+  case MEASUREMENT_UNITS:
+    if(new_tuple->value->uint8 == UNITS_METRIC) {
+      strncpy(s_data.unitsSpeed, SPEED_UNIT_METRIC, 8);
+      strncpy(s_data.unitsDistance, DISTANCE_UNIT_METRIC, 8);
+    } else {
+      strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
+      strncpy(s_data.unitsDistance, SPEED_UNIT_METRIC, 8);
+    }
+    layer_mark_dirty(&s_data.miles_layer.layer);
+    layer_mark_dirty(&s_data.mph_layer.layer);
+    layer_mark_dirty(&s_data.avgmph_layer.layer);
+    break;
   default:
     return;
   }
 
 }
 
+void update_buttons(int state) {
+
+  if(state == STATE_STOP)
+    action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
+  else
+    action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &stop_button.bmp);
+
+}
+
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
   graphics_context_set_stroke_color(ctx, GColorBlack);
-  graphics_draw_line(ctx, GPoint(72, 90), GPoint(72, 160));
-}
-
-void botom_layer_update_callback(Layer *me, GContext* ctx) {
-  (void)me;
-
-  //GFont font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
-  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
-  graphics_fill_rect(app_get_current_graphics_context(), GRect(0,85,CANVAS_WIDTH,84), 0, GCornerNone);
-  
-  //GFont font_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_12));
+  graphics_draw_line(ctx, GPoint(72 - MENU_WIDTH / 2, 90), GPoint(72 - MENU_WIDTH / 2, 160));
 }
 
 void handle_init(AppContextRef ctx) {
@@ -184,31 +275,44 @@ void handle_init(AppContextRef ctx) {
   GFont font_18 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_18));
   GFont font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
   
+  // set default unit of measure
+  char * speedUnits = SPEED_UNIT_METRIC;
+  char * distanceUnits = DISTANCE_UNIT_METRIC;
+  
+  heap_bitmap_init(&start_button,RESOURCE_ID_IMAGE_START_BUTTON);
+  heap_bitmap_init(&stop_button,RESOURCE_ID_IMAGE_STOP_BUTTON);
+  heap_bitmap_init(&reset_button,RESOURCE_ID_IMAGE_RESET_BUTTON);
+
+
   Window* window = &s_data.window;
-  window_init(window, "Pebble Cycling");
-  window_set_background_color(&s_data.window, GColorBlack);
+  window_init(window, "Pebble Bike");
+  window_set_background_color(&s_data.window, GColorWhite);
   window_set_fullscreen(&s_data.window, true); 
 
 
-  speed_layer_init(&s_data.speed_layer,GRect(0,0,CANVAS_WIDTH,CHAR_HEIGHT+10));
+  speed_layer_init(&s_data.speed_layer,GRect(0,0,CANVAS_WIDTH,88));
   speed_layer_set_text(&s_data.speed_layer, s_data.speed);
   layer_add_child(&window->layer, &s_data.speed_layer.layer);
 
-  layer_init(&bottom_layer, window->layer.frame);
-  bottom_layer.update_proc = &botom_layer_update_callback;
-  layer_add_child(&window->layer, &bottom_layer);
+  // Initialize the action bar:
+  action_bar_layer_init(&action_bar);
+  action_bar_layer_add_to_window(&action_bar, window);
+  action_bar_layer_set_click_config_provider(&action_bar,
+                                             click_config_provider);
+
+  action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
+  action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &reset_button.bmp);
+
+  text_layer_init(&s_data.mph_layer, GRect(0, 60, CANVAS_WIDTH - MENU_WIDTH, 21));
+  text_layer_set_text(&s_data.mph_layer, speedUnits);
+  text_layer_set_text_color(&s_data.mph_layer, GColorWhite);
+  text_layer_set_background_color(&s_data.mph_layer, GColorClear);
+  text_layer_set_font(&s_data.mph_layer, font_18);
+  text_layer_set_text_alignment(&s_data.mph_layer, GTextAlignmentCenter);
+  layer_add_child(&window->layer, &s_data.mph_layer.layer);
 
 
-  text_layer_init(&mph_layer, GRect(0, 60, CANVAS_WIDTH, 21));
-  text_layer_set_text(&mph_layer, "mph");
-  text_layer_set_text_color(&mph_layer, GColorWhite);
-  text_layer_set_background_color(&mph_layer, GColorClear);
-  text_layer_set_font(&mph_layer, font_18);
-  text_layer_set_text_alignment(&mph_layer, GTextAlignmentCenter);
-  layer_add_child(&window->layer, &mph_layer.layer);
-
-
-  text_layer_init(&distance_layer, GRect(2, 97, 66, 14));
+  text_layer_init(&distance_layer, GRect(2, 97, 66 - MENU_WIDTH / 2, 14));
   text_layer_set_text(&distance_layer, "distance");
   text_layer_set_text_color(&distance_layer, GColorBlack);
   text_layer_set_background_color(&distance_layer, GColorClear);
@@ -217,16 +321,16 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window->layer, &distance_layer.layer);
 
   
-  text_layer_init(&miles_layer, GRect(2, 148, 66, 14));
-  text_layer_set_text(&miles_layer, "v1.3");
-  text_layer_set_text_color(&miles_layer, GColorBlack);
-  text_layer_set_background_color(&miles_layer, GColorClear);
-  text_layer_set_font(&miles_layer, font_12);
-  text_layer_set_text_alignment(&miles_layer, GTextAlignmentCenter);
-  layer_add_child(&window->layer, &miles_layer.layer);
+  text_layer_init(&s_data.miles_layer, GRect(2, 148, 66 - MENU_WIDTH / 2, 14));
+  text_layer_set_text(&s_data.miles_layer, distanceUnits);
+  text_layer_set_text_color(&s_data.miles_layer, GColorBlack);
+  text_layer_set_background_color(&s_data.miles_layer, GColorClear);
+  text_layer_set_font(&s_data.miles_layer, font_12);
+  text_layer_set_text_alignment(&s_data.miles_layer, GTextAlignmentCenter);
+  layer_add_child(&window->layer, &s_data.miles_layer.layer);
 
 
-  text_layer_init(&avg_layer, GRect(75, 90, 66, 28));
+  text_layer_init(&avg_layer, GRect(75 - MENU_WIDTH / 2, 90, 66 - MENU_WIDTH / 2, 28));
   text_layer_set_text(&avg_layer, "average speed");
   text_layer_set_text_color(&avg_layer, GColorBlack);
   text_layer_set_background_color(&avg_layer, GColorClear);
@@ -235,13 +339,13 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window->layer, &avg_layer.layer);
 
 
-  text_layer_init(&avgmph_layer, GRect(75, 148, 66, 14));
-  text_layer_set_text(&avgmph_layer, "mph");
-  text_layer_set_text_color(&avgmph_layer, GColorBlack);
-  text_layer_set_background_color(&avgmph_layer, GColorClear);
-  text_layer_set_font(&avgmph_layer, font_12);
-  text_layer_set_text_alignment(&avgmph_layer, GTextAlignmentCenter);
-  layer_add_child(&window->layer, &avgmph_layer.layer);
+  text_layer_init(&s_data.avgmph_layer, GRect(75 - MENU_WIDTH / 2, 148, 66 - MENU_WIDTH / 2, 14));
+  text_layer_set_text(&s_data.avgmph_layer, speedUnits);
+  text_layer_set_text_color(&s_data.avgmph_layer, GColorBlack);
+  text_layer_set_background_color(&s_data.avgmph_layer, GColorClear);
+  text_layer_set_font(&s_data.avgmph_layer, font_12);
+  text_layer_set_text_alignment(&s_data.avgmph_layer, GTextAlignmentCenter);
+  layer_add_child(&window->layer, &s_data.avgmph_layer.layer);
 
 
   layer_init(&line_layer, window->layer.frame);
@@ -249,7 +353,7 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window->layer, &line_layer);
   
 
-  text_layer_init(&s_data.distance_layer, GRect(2, 116, 66, 32));
+  text_layer_init(&s_data.distance_layer, GRect(2, 116, 66 - MENU_WIDTH / 2, 32));
   text_layer_set_text_color(&s_data.distance_layer, GColorBlack);
   text_layer_set_background_color(&s_data.distance_layer, GColorClear);
   text_layer_set_font(&s_data.distance_layer, font_24);
@@ -258,7 +362,7 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window->layer, &s_data.distance_layer.layer);
 
 
-  text_layer_init(&s_data.avgspeed_layer, GRect(74, 116, 66, 32));
+  text_layer_init(&s_data.avgspeed_layer, GRect(74 - MENU_WIDTH / 2, 116, 66  - MENU_WIDTH / 2, 32));
   text_layer_set_text_color(&s_data.avgspeed_layer, GColorBlack);
   text_layer_set_background_color(&s_data.avgspeed_layer, GColorClear);
   text_layer_set_font(&s_data.avgspeed_layer, font_24);
@@ -271,6 +375,8 @@ void handle_init(AppContextRef ctx) {
     TupletCString(SPEED_TEXT, "0.0"),
     TupletCString(DISTANCE_TEXT, "0.0"),
     TupletCString(AVGSPEED_TEXT, "0.0"),
+    TupletInteger(STATE_CHANGED,STATE_STOP), //stopped
+    TupletInteger(MEASUREMENT_UNITS,UNITS_IMPERIAL), //stopped
   };
 
   app_sync_init(&s_data.sync, s_data.sync_buffer, sizeof(s_data.sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
@@ -285,12 +391,16 @@ static void handle_deinit(AppContextRef c) {
    for(int n=0; n < TOTAL_IMAGE_SLOTS; n++) {
       bmp_deinit_container(&image_containers[n]);
    }
+
+  heap_bitmap_deinit(&start_button);
+  heap_bitmap_deinit(&stop_button);
+  heap_bitmap_deinit(&reset_button);
 }
 
 void handle_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)t;
   (void)ctx;
-
+  update_buttons(s_data.state);
   layer_mark_dirty(&s_data.speed_layer.layer);
   layer_mark_dirty(&s_data.distance_layer.layer);
   layer_mark_dirty(&s_data.avgspeed_layer.layer);

@@ -91,6 +91,24 @@
         "type": "png",
         "defName": "IMAGE_NUM_DOT",
         "file": "images/num_dot.png"
+        },
+
+        {
+        "type": "png",
+        "defName": "IMAGE_START_BUTTON",
+        "file": "images/start_button.png"
+        },
+
+        {
+        "type": "png",
+        "defName": "IMAGE_STOP_BUTTON",
+        "file": "images/stop_button.png"
+        },
+
+        {
+        "type": "png",
+        "defName": "IMAGE_RESET_BUTTON",
+        "file": "images/reset_button.png"
         }
  ]
 }

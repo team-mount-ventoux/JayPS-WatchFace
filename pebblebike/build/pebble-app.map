@@ -1,0 +1,797 @@
+Archive member included because of file (symbol)
+
+/Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                              src/pebblebike.c.1.o (app_event_loop)
+/Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+                              src/pebblebike.c.1.o (memset)
+/Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+                              src/pebblebike.c.1.o (strlen)
+/Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+                              src/pebblebike.c.1.o (strncpy)
+
+Allocating common symbols
+Common symbol       size              file
+
+action_bar          0x44              src/pebblebike.c.1.o
+avg_layer           0x38              src/pebblebike.c.1.o
+image_containers    0x110             src/pebblebike.c.1.o
+stop_button         0x14              src/pebblebike.c.1.o
+reset_button        0x14              src/pebblebike.c.1.o
+bottom_layer        0x28              src/pebblebike.c.1.o
+distance_layer      0x38              src/pebblebike.c.1.o
+start_button        0x14              src/pebblebike.c.1.o
+line_layer          0x28              src/pebblebike.c.1.o
+
+Discarded input sections
+
+ .text          0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .bss           0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .init          0x0000000000000000        0x4 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .fini          0x0000000000000000        0x4 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .text          0x0000000000000000       0x68 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+ .bss           0x0000000000000000       0x1c /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+ .init_array    0x0000000000000000        0x4 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+ .fini_array    0x0000000000000000        0x4 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+ .eh_frame      0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+ .jcr           0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+ .bss           0x0000000000000000        0x0 /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_set_delay
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_set_duration
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_set_curve
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_set_handlers
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_set_implementation
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_get_context
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_schedule
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_unschedule
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_unschedule_all
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.animation_is_scheduled
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.app_timer_send_event
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.app_timer_cancel_event
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.cos_lookup
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.fonts_get_system_font
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.fonts_unload_custom_font
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_context_set_text_color
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_context_set_compositing_mode
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_draw_pixel
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_draw_circle
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_fill_circle
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_draw_round_rect
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.get_time
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.gpath_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.gpath_move_to
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.gpath_rotate_to
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.gpath_draw_outline
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.gpath_draw_filled
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.grect_center_point
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_set_hidden
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.light_enable
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.light_enable_interaction
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.psleep   0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.resource_load
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.resource_load_byte_range
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.resource_size
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.rotbmp_deinit_container
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.rotbmp_init_container
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.rotbmp_pair_deinit_container
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.rotbmp_pair_init_container
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.rotbmp_pair_layer_set_src_ic
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.rotbmp_pair_layer_set_angle
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_set_click_config_provider
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_render
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.sin_lookup
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.string_format_time
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.text_layer_get_text
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.vibes_double_pulse
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.vibes_enqueue_custom_pattern
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.vibes_long_pulse
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.vibes_short_pulse
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.clock_is_24h_style
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.property_animation_init_layer_frame
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_draw_bitmap_in_rect
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_text_draw
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_set_bounds
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_get_bounds
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_set_update_proc
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_get_window
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_remove_child_layers
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_insert_below_sibling
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_insert_above_sibling
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_get_hidden
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_set_clips
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.layer_get_clips
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.text_layer_get_max_used_size
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.text_layer_set_size
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.text_layer_set_overflow_mode
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.graphics_text_layout_get_max_used_size
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.inverter_layer_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.bitmap_layer_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.bitmap_layer_set_bitmap
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.bitmap_layer_set_alignment
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.bitmap_layer_set_background_color
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.bitmap_layer_set_compositing_mode
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.click_recognizer_get_button_id
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.click_number_of_clicks_counted
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_cell_basic_draw
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_cell_title_draw
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_cell_basic_header_draw
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_layer_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_layer_get_layer
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_layer_set_callbacks
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_layer_set_click_config_onto_window
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_layer_set_selected_next
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_layer_set_selected_index
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_layer_reload_data
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.menu_index_compare
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_add_child
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_set_click_config_onto_window
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_set_callbacks
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_set_context
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_set_content_offset
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_get_content_offset
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_set_content_size
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_get_content_size
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_set_frame
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_scroll_up_click_handler
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.scroll_layer_scroll_down_click_handler
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.simple_menu_layer_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.simple_menu_layer_get_layer
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.simple_menu_layer_get_selected_index
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.simple_menu_layer_set_selected_index
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_deinit
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_set_click_config_provider_with_context
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_get_click_config_provider
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_set_window_handlers
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_get_root_layer
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_get_fullscreen
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_set_status_bar_icon
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_is_loaded
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_stack_pop
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_stack_pop_all
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_stack_contains_window
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_stack_get_top_window
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.window_stack_remove
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.property_animation_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.property_animation_update_int16
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.property_animation_update_gpoint
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.property_animation_update_grect
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.app_message_register_callbacks
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.app_message_deregister_callbacks
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.app_sync_set
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.app_sync_get
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_calc_buffer_size
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_begin
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_data
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_cstring
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_int
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_uint8
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_uint16
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_uint32
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_int8
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_int16
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_write_int32
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_read_begin_from_buffer
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_read_next
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_read_first
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_serialize_tuplets
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_serialize_tuplets_to_buffer
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_serialize_tuplets_to_buffer_with_iter
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_calc_buffer_size_from_tuplets
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_merge
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.dict_find
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.action_bar_layer_set_context
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.action_bar_layer_clear_icon
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.action_bar_layer_remove_from_window
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.action_bar_layer_set_background_color
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.number_window_init
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.number_window_set_label
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.number_window_set_max
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.number_window_set_min
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.number_window_set_value
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.number_window_set_step_size
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.number_window_get_value
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text.clock_copy_time_string
+                0x0000000000000000        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .text          0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .bss           0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .text          0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .bss           0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .text          0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+ .bss           0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+ .text          0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtend.o
+ .bss           0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtend.o
+ .eh_frame      0x0000000000000000        0x4 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtend.o
+ .jcr           0x0000000000000000        0x4 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtend.o
+ .text          0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+ .bss           0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+ .init          0x0000000000000000        0x8 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+ .fini          0x0000000000000000        0x8 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+APP              0x0000000000000000 0x0000000000006000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+LOAD /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+LOAD src/pebblebike.c.1.o
+LOAD /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a
+START GROUP
+LOAD /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a
+LOAD /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a
+END GROUP
+LOAD /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtend.o
+LOAD /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+.header         0x0000000000000000       0x7c
+ *(.pbl_header)
+ .pbl_header    0x0000000000000000       0x7c src/pebblebike.c.1.o
+                0x0000000000000000                __pbl_app_info
+
+.rodata         0x000000000000007c       0x8c
+ .rodata        0x000000000000007c       0x8c src/pebblebike.c.1.o
+                0x0000000000000084                IMAGE_RESOURCE_IDS
+
+.rodata.str1.1  0x0000000000000108       0x35
+ .rodata.str1.1
+                0x0000000000000108       0x35 src/pebblebike.c.1.o
+
+.text           0x0000000000000140      0x80c
+ *(.text)
+ .text          0x0000000000000140      0x7f8 src/pebblebike.c.1.o
+                0x0000000000000140                click_config_provider
+                0x0000000000000294                line_layer_update_callback
+                0x0000000000000300                handle_bottombutton_click
+                0x0000000000000306                handle_topbutton_click
+                0x0000000000000320                speed_layer_update_proc
+                0x0000000000000460                bottom_layer_update_proc
+                0x0000000000000462                speed_layer_init
+                0x0000000000000480                speed_layer_set_text
+                0x0000000000000484                handle_init
+                0x0000000000000890                update_buttons
+                0x00000000000008bc                handle_tick
+                0x00000000000008ec                pbl_main
+ .text          0x0000000000000938       0x14 /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+
+.glue_7         0x000000000000094c        0x0
+ .glue_7        0x0000000000000000        0x0 linker stubs
+
+.glue_7t        0x000000000000094c        0x0
+ .glue_7t       0x0000000000000000        0x0 linker stubs
+
+.vfp11_veneer   0x000000000000094c        0x0
+ .vfp11_veneer  0x0000000000000000        0x0 linker stubs
+
+.v4_bx          0x000000000000094c        0x0
+ .v4_bx         0x0000000000000000        0x0 linker stubs
+
+.iplt           0x000000000000094c        0x0
+ .iplt          0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+
+.text.app_event_loop
+                0x000000000000094c        0xc
+ .text.app_event_loop
+                0x000000000000094c        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x000000000000094c                app_event_loop
+
+.text.bmp_init_container
+                0x0000000000000958        0xc
+ .text.bmp_init_container
+                0x0000000000000958        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000958                bmp_init_container
+
+.text.bmp_deinit_container
+                0x0000000000000964        0xc
+ .text.bmp_deinit_container
+                0x0000000000000964        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000964                bmp_deinit_container
+
+.text.fonts_load_custom_font
+                0x0000000000000970        0xc
+ .text.fonts_load_custom_font
+                0x0000000000000970        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000970                fonts_load_custom_font
+
+.text.graphics_context_set_stroke_color
+                0x000000000000097c        0xc
+ .text.graphics_context_set_stroke_color
+                0x000000000000097c        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x000000000000097c                graphics_context_set_stroke_color
+
+.text.graphics_context_set_fill_color
+                0x0000000000000988        0xc
+ .text.graphics_context_set_fill_color
+                0x0000000000000988        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000988                graphics_context_set_fill_color
+
+.text.graphics_draw_line
+                0x0000000000000994        0xc
+ .text.graphics_draw_line
+                0x0000000000000994        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000994                graphics_draw_line
+
+.text.graphics_fill_rect
+                0x00000000000009a0        0xc
+ .text.graphics_fill_rect
+                0x00000000000009a0        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x00000000000009a0                graphics_fill_rect
+
+.text.layer_mark_dirty
+                0x00000000000009ac        0xc
+ .text.layer_mark_dirty
+                0x00000000000009ac        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x00000000000009ac                layer_mark_dirty
+
+.text.layer_remove_from_parent
+                0x00000000000009b8        0xc
+ .text.layer_remove_from_parent
+                0x00000000000009b8        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x00000000000009b8                layer_remove_from_parent
+
+.text.layer_add_child
+                0x00000000000009c4        0xc
+ .text.layer_add_child
+                0x00000000000009c4        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x00000000000009c4                layer_add_child
+
+.text.layer_get_frame
+                0x00000000000009d0        0xc
+ .text.layer_get_frame
+                0x00000000000009d0        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x00000000000009d0                layer_get_frame
+
+.text.layer_set_frame
+                0x00000000000009dc        0xc
+ .text.layer_set_frame
+                0x00000000000009dc        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x00000000000009dc                layer_set_frame
+
+.text.layer_init
+                0x00000000000009e8        0xc
+ .text.layer_init
+                0x00000000000009e8        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x00000000000009e8                layer_init
+
+.text.resource_init_current_app
+                0x00000000000009f4        0xc
+ .text.resource_init_current_app
+                0x00000000000009f4        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x00000000000009f4                resource_init_current_app
+
+.text.resource_get_handle
+                0x0000000000000a00        0xc
+ .text.resource_get_handle
+                0x0000000000000a00        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a00                resource_get_handle
+
+.text.window_init
+                0x0000000000000a0c        0xc
+ .text.window_init
+                0x0000000000000a0c        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a0c                window_init
+
+.text.window_stack_push
+                0x0000000000000a18        0xc
+ .text.window_stack_push
+                0x0000000000000a18        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a18                window_stack_push
+
+.text.window_set_background_color
+                0x0000000000000a24        0xc
+ .text.window_set_background_color
+                0x0000000000000a24        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a24                window_set_background_color
+
+.text.window_set_fullscreen
+                0x0000000000000a30        0xc
+ .text.window_set_fullscreen
+                0x0000000000000a30        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a30                window_set_fullscreen
+
+.text.text_layer_init
+                0x0000000000000a3c        0xc
+ .text.text_layer_init
+                0x0000000000000a3c        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a3c                text_layer_init
+
+.text.text_layer_set_text
+                0x0000000000000a48        0xc
+ .text.text_layer_set_text
+                0x0000000000000a48        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a48                text_layer_set_text
+
+.text.text_layer_set_font
+                0x0000000000000a54        0xc
+ .text.text_layer_set_font
+                0x0000000000000a54        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a54                text_layer_set_font
+
+.text.text_layer_set_text_color
+                0x0000000000000a60        0xc
+ .text.text_layer_set_text_color
+                0x0000000000000a60        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a60                text_layer_set_text_color
+
+.text.text_layer_set_background_color
+                0x0000000000000a6c        0xc
+ .text.text_layer_set_background_color
+                0x0000000000000a6c        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a6c                text_layer_set_background_color
+
+.text.app_get_current_graphics_context
+                0x0000000000000a78        0xc
+ .text.app_get_current_graphics_context
+                0x0000000000000a78        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a78                app_get_current_graphics_context
+
+.text.text_layer_set_text_alignment
+                0x0000000000000a84        0xc
+ .text.text_layer_set_text_alignment
+                0x0000000000000a84        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a84                text_layer_set_text_alignment
+
+.text.heap_bitmap_init
+                0x0000000000000a90        0xc
+ .text.heap_bitmap_init
+                0x0000000000000a90        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a90                heap_bitmap_init
+
+.text.heap_bitmap_deinit
+                0x0000000000000a9c        0xc
+ .text.heap_bitmap_deinit
+                0x0000000000000a9c        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000a9c                heap_bitmap_deinit
+
+.text.app_message_out_get
+                0x0000000000000aa8        0xc
+ .text.app_message_out_get
+                0x0000000000000aa8        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000aa8                app_message_out_get
+
+.text.app_message_out_send
+                0x0000000000000ab4        0xc
+ .text.app_message_out_send
+                0x0000000000000ab4        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000ab4                app_message_out_send
+
+.text.app_message_out_release
+                0x0000000000000ac0        0xc
+ .text.app_message_out_release
+                0x0000000000000ac0        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000ac0                app_message_out_release
+
+.text.app_sync_init
+                0x0000000000000acc        0xc
+ .text.app_sync_init
+                0x0000000000000acc        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000acc                app_sync_init
+
+.text.app_sync_deinit
+                0x0000000000000ad8        0xc
+ .text.app_sync_deinit
+                0x0000000000000ad8        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000ad8                app_sync_deinit
+
+.text.dict_write_end
+                0x0000000000000ae4        0xc
+ .text.dict_write_end
+                0x0000000000000ae4        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000ae4                dict_write_end
+
+.text.dict_write_tuplet
+                0x0000000000000af0        0xc
+ .text.dict_write_tuplet
+                0x0000000000000af0        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000af0                dict_write_tuplet
+
+.text.action_bar_layer_init
+                0x0000000000000afc        0xc
+ .text.action_bar_layer_init
+                0x0000000000000afc        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000afc                action_bar_layer_init
+
+.text.action_bar_layer_set_click_config_provider
+                0x0000000000000b08        0xc
+ .text.action_bar_layer_set_click_config_provider
+                0x0000000000000b08        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000b08                action_bar_layer_set_click_config_provider
+
+.text.action_bar_layer_set_icon
+                0x0000000000000b14        0xc
+ .text.action_bar_layer_set_icon
+                0x0000000000000b14        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000b14                action_bar_layer_set_icon
+
+.text.action_bar_layer_add_to_window
+                0x0000000000000b20        0xc
+ .text.action_bar_layer_add_to_window
+                0x0000000000000b20        0xc /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+                0x0000000000000b20                action_bar_layer_add_to_window
+
+.text.memset    0x0000000000000b2c       0x10
+ .text.memset   0x0000000000000b2c       0x10 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+                0x0000000000000b2c                memset
+
+.text.strlen    0x0000000000000b3c       0x10
+ .text.strlen   0x0000000000000b3c       0x10 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+                0x0000000000000b3c                strlen
+
+.text.strncpy   0x0000000000000b4c       0x2a
+ .text.strncpy  0x0000000000000b4c       0x2a /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+                0x0000000000000b4c                strncpy
+
+.rel.dyn        0x0000000000000b78        0x0
+ .rel.iplt      0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .rel.got       0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+
+.data           0x0000000000000b78       0x14
+ *(.data)
+ .data          0x0000000000000b78        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .data          0x0000000000000b78        0x4 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+                0x0000000000000b78                __dso_handle
+ .data          0x0000000000000b7c       0x10 src/pebblebike.c.1.o
+                0x0000000000000b7c                image_slots
+ .data          0x0000000000000b8c        0x0 /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .data          0x0000000000000b8c        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .data          0x0000000000000b8c        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .data          0x0000000000000b8c        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+ .data          0x0000000000000b8c        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtend.o
+ .data          0x0000000000000b8c        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+.igot.plt       0x0000000000000b8c        0x0
+ .igot.plt      0x0000000000000000        0x0 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+
+.got            0x0000000000000b8c       0x20
+ .got           0x0000000000000b8c       0x20 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+
+.got.plt        0x0000000000000bac        0xc
+ .got.plt       0x0000000000000bac        0xc /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+                0x0000000000000bac                _GLOBAL_OFFSET_TABLE_
+
+.bss            0x0000000000000bb8      0x4cc
+ *(.bss)
+ .bss           0x0000000000000bb8      0x27c src/pebblebike.c.1.o
+ COMMON         0x0000000000000e34      0x250 src/pebblebike.c.1.o
+                0x0000000000000e34                action_bar
+                0x0000000000000e78                avg_layer
+                0x0000000000000eb0                image_containers
+                0x0000000000000fc0                stop_button
+                0x0000000000000fd4                reset_button
+                0x0000000000000fe8                bottom_layer
+                0x0000000000001010                distance_layer
+                0x0000000000001048                start_button
+                0x000000000000105c                line_layer
+
+DISCARD
+ libc.a(*)
+ libm.a(*)
+ libgcc.a(*)
+ *(.eh_frame)
+OUTPUT(/Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/build/pebble-app.elf elf32-littlearm)
+
+.ARM.attributes
+                0x0000000000000000       0x27
+ .ARM.attributes
+                0x0000000000000000       0x1b /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .ARM.attributes
+                0x000000000000001b       0x2b /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+ .ARM.attributes
+                0x0000000000000046       0x33 src/pebblebike.c.1.o
+ .ARM.attributes
+                0x0000000000000079       0x21 /Users/njackson/Documents/Code/Pebble/PebbleBike-PebbleWatchFace/pebblebike/lib/libpebble.a(tmp2xbJbSpebble_os.o)
+ .ARM.attributes
+                0x000000000000009a       0x2b /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .ARM.attributes
+                0x00000000000000c5       0x2b /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .ARM.attributes
+                0x00000000000000f0       0x2b /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+ .ARM.attributes
+                0x000000000000011b       0x2b /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtend.o
+ .ARM.attributes
+                0x0000000000000146       0x1b /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+.comment        0x0000000000000000       0x4e
+ .comment       0x0000000000000000       0x4e /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
+                                         0x4f (size before relaxing)
+ .comment       0x0000000000000000       0x4f src/pebblebike.c.1.o
+ .comment       0x0000000000000000       0x4f /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .comment       0x0000000000000000       0x4f /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .comment       0x0000000000000000       0x4f /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+ .comment       0x0000000000000000       0x4f /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtend.o
+
+.debug_line     0x0000000000000000      0x3d9
+ .debug_line    0x0000000000000000       0x71 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .debug_line    0x0000000000000071      0x2f3 src/pebblebike.c.1.o
+ .debug_line    0x0000000000000364       0x75 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+.debug_info     0x0000000000000000     0x1f24
+ .debug_info    0x0000000000000000       0xb2 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .debug_info    0x00000000000000b2     0x1dc0 src/pebblebike.c.1.o
+ .debug_info    0x0000000000001e72       0xb2 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+.debug_abbrev   0x0000000000000000      0x361
+ .debug_abbrev  0x0000000000000000       0x12 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .debug_abbrev  0x0000000000000012      0x33d src/pebblebike.c.1.o
+ .debug_abbrev  0x000000000000034f       0x12 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+.debug_aranges  0x0000000000000000       0x70
+ .debug_aranges
+                0x0000000000000000       0x28 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .debug_aranges
+                0x0000000000000028       0x20 src/pebblebike.c.1.o
+ .debug_aranges
+                0x0000000000000048       0x28 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+.debug_ranges   0x0000000000000000       0x58
+ .debug_ranges  0x0000000000000000       0x20 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
+ .debug_ranges  0x0000000000000020       0x18 src/pebblebike.c.1.o
+ .debug_ranges  0x0000000000000038       0x20 /Applications/PebbleKit/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+
+.debug_loc      0x0000000000000000      0x4d3
+ .debug_loc     0x0000000000000000      0x4d3 src/pebblebike.c.1.o
+
+.debug_str      0x0000000000000000     0x1390
+ .debug_str     0x0000000000000000     0x1390 src/pebblebike.c.1.o
+                                       0x14d7 (size before relaxing)
+
+.debug_frame    0x0000000000000000      0x190
+ .debug_frame   0x0000000000000000      0x190 src/pebblebike.c.1.o
