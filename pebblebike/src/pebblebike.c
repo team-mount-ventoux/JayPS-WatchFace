@@ -36,6 +36,12 @@ enum {
   UNITS_METRIC = 0x1,
 };
 
+enum {
+  PAGE_SPEED = 0,
+  PAGE_ALTITUDE = 1,
+};
+#define NUMBER_OF_PAGES 2
+
 #define NUMBER_OF_IMAGES 11
 #define TOTAL_IMAGE_SLOTS 4
 #define NOT_USED -1
@@ -46,6 +52,9 @@ enum {
 
 #define CANVAS_WIDTH 144
 #define MENU_WIDTH 22
+
+#define SCREEN_W 144
+#define SCREEN_H 168
 
 #define SPEED_UNIT_METRIC "mph"
 #define SPEED_UNIT_IMPERIAL "kph"
@@ -68,31 +77,57 @@ HeapBitmap reset_button;
 
 ActionBarLayer action_bar;
 
+// page_speed
 TextLayer distance_layer;
 TextLayer avg_layer;
 
+
 Layer line_layer;
 Layer bottom_layer;
+
+GFont font_12, font_18, font_24;
 
 typedef struct SpeedLayer {
       Layer layer;
       const char* text;
  } SpeedLayer;
 
+ typedef struct FieldLayer {
+    Layer main_layer;
+    TextLayer title_layer;
+    TextLayer data_layer;
+    TextLayer unit_layer;
+    const char* title_text;
+    const char* data_text;
+    const char* unit_text;
+  } FieldLayer;
+
  static struct AppData {
   Window window;
+
+  Layer page_speed;
+  Layer page_altitude;
+
   SpeedLayer speed_layer;
   TextLayer distance_layer;
   TextLayer avgspeed_layer;
   TextLayer mph_layer;
   TextLayer avgmph_layer;
   TextLayer miles_layer;
+
+  FieldLayer altitude_layer;
+  FieldLayer altitude_ascent;
+  FieldLayer altitude_ascent_rate;
+  FieldLayer altitude_slope;
+
+
   char speed[16];
   char distance[16];
   char avgspeed[16];
   char unitsSpeed[8];
   char unitsDistance[8];
   int state;
+  int page_number;
   AppSync sync;
   uint8_t sync_buffer[96];
 } s_data;
@@ -188,6 +223,19 @@ static void send_cmd(uint8_t cmd) {
   app_message_out_send();
   app_message_out_release();
 }
+void update_layers() {
+  layer_set_hidden(&s_data.page_speed, true);
+  layer_set_hidden(&s_data.page_altitude, true);
+  if (s_data.page_number == PAGE_SPEED) {
+    layer_set_hidden(&s_data.page_speed, false);
+//    layer_mark_dirty(&s_data.speed_layer.layer);
+//    layer_mark_dirty(&s_data.distance_layer.layer);
+//    layer_mark_dirty(&s_data.avgspeed_layer.layer);
+  }
+  if (s_data.page_number == PAGE_ALTITUDE) {
+    layer_set_hidden(&s_data.page_altitude, false);
+  }
+}
 
 void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   if(s_data.state == STATE_STOP)
@@ -195,7 +243,13 @@ void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   else
     send_cmd(STOP_PRESS);
 }
-
+void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
+	s_data.page_number++;
+	if (s_data.page_number >= NUMBER_OF_PAGES) {
+		s_data.page_number = 0;
+	}
+	update_layers();
+}
 void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   send_cmd(REFRESH_PRESS);
 }
@@ -203,6 +257,7 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
 
 void click_config_provider(ClickConfig **config, void *context) {
   config[BUTTON_ID_DOWN]->click.handler = (ClickHandler) handle_bottombutton_click;
+  config[BUTTON_ID_SELECT]->click.handler = (ClickHandler) handle_selectbutton_click;
   config[BUTTON_ID_UP]->click.handler = (ClickHandler) handle_topbutton_click;
 }
 
@@ -216,7 +271,14 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
   (void) app_message_error;
   (void) context;
 }
+void update_buttons(int state) {
 
+  if(state == STATE_STOP)
+    action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
+  else
+    action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &stop_button.bmp);
+
+}
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   (void) old_tuple;
   
@@ -232,6 +294,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     break;
   case STATE_CHANGED:
     s_data.state = new_tuple->value->uint8;
+    update_buttons(s_data.state);
     break;
   case MEASUREMENT_UNITS:
     if(new_tuple->value->uint8 == UNITS_METRIC) {
@@ -251,14 +314,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 }
 
-void update_buttons(int state) {
 
-  if(state == STATE_STOP)
-    action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
-  else
-    action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &stop_button.bmp);
 
-}
 
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
@@ -266,19 +323,166 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_draw_line(ctx, GPoint(72 - MENU_WIDTH / 2, 90), GPoint(72 - MENU_WIDTH / 2, 160));
 }
 
+void page_speed_update_proc(Layer *page_speed, GContext* ctx);
+void page_altitude_update_proc(Layer *page_altitude, GContext* ctx);
+
+void page_speed_layer_init(Window* window) {
+  layer_init(&s_data.page_speed, GRect(0,0,CANVAS_WIDTH-MENU_WIDTH,SCREEN_H));
+  s_data.page_speed.update_proc = &page_speed_update_proc;
+  layer_add_child(&window->layer, &s_data.page_speed);
+
+  speed_layer_init(&s_data.speed_layer,GRect(0,0,CANVAS_WIDTH-MENU_WIDTH,88));
+  speed_layer_set_text(&s_data.speed_layer, s_data.speed);
+  layer_add_child(&s_data.page_speed, &s_data.speed_layer.layer);
+
+
+  text_layer_init(&s_data.mph_layer, GRect(0, 60, CANVAS_WIDTH - MENU_WIDTH, 21));
+  text_layer_set_text(&s_data.mph_layer, s_data.unitsSpeed);
+  text_layer_set_text_color(&s_data.mph_layer, GColorWhite);
+  text_layer_set_background_color(&s_data.mph_layer, GColorClear);
+  text_layer_set_font(&s_data.mph_layer, font_18);
+  text_layer_set_text_alignment(&s_data.mph_layer, GTextAlignmentCenter);
+  layer_add_child(&s_data.page_speed, &s_data.mph_layer.layer);
+
+
+  text_layer_init(&distance_layer, GRect(2, 97, 66 - MENU_WIDTH / 2, 14));
+  text_layer_set_text(&distance_layer, "distance");
+  text_layer_set_text_color(&distance_layer, GColorBlack);
+  text_layer_set_background_color(&distance_layer, GColorClear);
+  text_layer_set_font(&distance_layer, font_12);
+  text_layer_set_text_alignment(&distance_layer, GTextAlignmentCenter);
+  layer_add_child(&s_data.page_speed, &distance_layer.layer);
+
+  
+  text_layer_init(&s_data.miles_layer, GRect(2, 148, 66 - MENU_WIDTH / 2, 14));
+  text_layer_set_text(&s_data.miles_layer, s_data.unitsDistance);
+  text_layer_set_text_color(&s_data.miles_layer, GColorBlack);
+  text_layer_set_background_color(&s_data.miles_layer, GColorClear);
+  text_layer_set_font(&s_data.miles_layer, font_12);
+  text_layer_set_text_alignment(&s_data.miles_layer, GTextAlignmentCenter);
+  layer_add_child(&s_data.page_speed, &s_data.miles_layer.layer);
+
+
+  text_layer_init(&avg_layer, GRect(75 - MENU_WIDTH / 2, 90, 66 - MENU_WIDTH / 2, 28));
+  text_layer_set_text(&avg_layer, "average speed");
+  text_layer_set_text_color(&avg_layer, GColorBlack);
+  text_layer_set_background_color(&avg_layer, GColorClear);
+  text_layer_set_font(&avg_layer, font_12);
+  text_layer_set_text_alignment(&avg_layer, GTextAlignmentCenter);
+  layer_add_child(&s_data.page_speed, &avg_layer.layer);
+
+
+  text_layer_init(&s_data.avgmph_layer, GRect(75 - MENU_WIDTH / 2, 148, 66 - MENU_WIDTH / 2, 14));
+  text_layer_set_text(&s_data.avgmph_layer, s_data.unitsSpeed);
+  text_layer_set_text_color(&s_data.avgmph_layer, GColorBlack);
+  text_layer_set_background_color(&s_data.avgmph_layer, GColorClear);
+  text_layer_set_font(&s_data.avgmph_layer, font_12);
+  text_layer_set_text_alignment(&s_data.avgmph_layer, GTextAlignmentCenter);
+  layer_add_child(&s_data.page_speed, &s_data.avgmph_layer.layer);
+
+
+  layer_init(&line_layer, window->layer.frame);
+  line_layer.update_proc = &line_layer_update_callback;
+  layer_add_child(&s_data.page_speed, &line_layer);
+  
+
+  text_layer_init(&s_data.distance_layer, GRect(2, 116, 66 - MENU_WIDTH / 2, 32));
+  text_layer_set_text_color(&s_data.distance_layer, GColorBlack);
+  text_layer_set_background_color(&s_data.distance_layer, GColorClear);
+  text_layer_set_font(&s_data.distance_layer, font_24);
+  text_layer_set_text_alignment(&s_data.distance_layer, GTextAlignmentCenter);
+  text_layer_set_text(&s_data.distance_layer, s_data.distance);
+  layer_add_child(&s_data.page_speed, &s_data.distance_layer.layer);
+
+
+  text_layer_init(&s_data.avgspeed_layer, GRect(74 - MENU_WIDTH / 2, 116, 66  - MENU_WIDTH / 2, 32));
+  text_layer_set_text_color(&s_data.avgspeed_layer, GColorBlack);
+  text_layer_set_background_color(&s_data.avgspeed_layer, GColorClear);
+  text_layer_set_font(&s_data.avgspeed_layer, font_24);
+  text_layer_set_text_alignment(&s_data.avgspeed_layer, GTextAlignmentCenter);
+  text_layer_set_text(&s_data.avgspeed_layer, s_data.avgspeed);
+  layer_add_child(&s_data.page_speed, &s_data.avgspeed_layer.layer);
+
+  layer_set_hidden(&s_data.page_speed, false);
+  //vibes_double_pulse();
+}
+void page_speed_update_proc(Layer *page_speed, GContext* ctx) {
+  //vibes_short_pulse();
+}
+
+void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t y, char* title_text, char* data_text, char* unit_text) {
+  layer_init(&field_layer->main_layer, GRect(x, y, (SCREEN_W - MENU_WIDTH) / 2 - 1, (SCREEN_H / 2) - 1));
+  layer_add_child(parent, &field_layer->main_layer);
+
+
+  // title
+  text_layer_init(&field_layer->title_layer, GRect(2, 2, 66 - MENU_WIDTH / 2, 14));
+  text_layer_set_text(&field_layer->title_layer, title_text);
+  text_layer_set_text_color(&field_layer->title_layer, GColorBlack);
+  text_layer_set_background_color(&field_layer->title_layer, GColorClear);
+  text_layer_set_font(&field_layer->title_layer, font_12);
+  text_layer_set_text_alignment(&field_layer->title_layer, GTextAlignmentCenter);
+  layer_add_child(&field_layer->main_layer, &field_layer->title_layer.layer);
+
+  // data
+  text_layer_init(&field_layer->data_layer, GRect(2, 21, 66 - MENU_WIDTH / 2, 32));
+  text_layer_set_text_color(&field_layer->data_layer, GColorBlack);
+  text_layer_set_background_color(&field_layer->data_layer, GColorClear);
+  text_layer_set_font(&field_layer->data_layer, font_24);
+  text_layer_set_text_alignment(&field_layer->data_layer, GTextAlignmentCenter);
+  text_layer_set_text(&field_layer->data_layer, data_text);
+  layer_add_child(&field_layer->main_layer, &field_layer->data_layer.layer);
+
+  // unit
+  text_layer_init(&field_layer->unit_layer, GRect(2, 53, 66 - MENU_WIDTH / 2, 14));
+  text_layer_set_text(&field_layer->unit_layer, unit_text);
+  text_layer_set_text_color(&field_layer->unit_layer, GColorBlack);
+  text_layer_set_background_color(&field_layer->unit_layer, GColorClear);
+  text_layer_set_font(&field_layer->unit_layer, font_12);
+  text_layer_set_text_alignment(&field_layer->unit_layer, GTextAlignmentCenter);
+  layer_add_child(&field_layer->main_layer, &field_layer->unit_layer.layer);
+
+}
+
+
+void page_altitude_layer_init(Window* window) {
+  layer_init(&s_data.page_altitude, GRect(0,0,SCREEN_W-MENU_WIDTH,SCREEN_H));
+  s_data.page_altitude.update_proc = &page_altitude_update_proc;
+  layer_add_child(&window->layer, &s_data.page_altitude);
+
+
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_layer, 0, 0, "Altitude", "0", "m");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent, 67, 0, "Ascent", "0", "m");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0, 85, "Ascent rate", "0", "m/h");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_slope, 67, 85, "Slope", "0", "%");
+
+
+  layer_set_hidden(&s_data.page_altitude, true);
+}
+
+void page_altitude_update_proc(Layer *page_altitude, GContext* ctx) {
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+
+  // vertical line
+  graphics_draw_line(ctx, GPoint((SCREEN_W - MENU_WIDTH) / 2, 0), GPoint((SCREEN_W - MENU_WIDTH) / 2, SCREEN_H));
+
+  // horizontal line
+  graphics_draw_line(ctx, GPoint(0, SCREEN_H / 2), GPoint(SCREEN_W - MENU_WIDTH, SCREEN_H / 2));
+}
+
 void handle_init(AppContextRef ctx) {
   (void)ctx;
 
   resource_init_current_app(&APP_RESOURCES);
 
-  GFont font_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_12));
-  GFont font_18 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_18));
-  GFont font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
-  
+  font_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_12));
+  font_18 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_18));
+  font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
+
   // set default unit of measure
   strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
   strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
-  
+
   heap_bitmap_init(&start_button,RESOURCE_ID_IMAGE_START_BUTTON);
   heap_bitmap_init(&stop_button,RESOURCE_ID_IMAGE_STOP_BUTTON);
   heap_bitmap_init(&reset_button,RESOURCE_ID_IMAGE_RESET_BUTTON);
@@ -287,12 +491,14 @@ void handle_init(AppContextRef ctx) {
   Window* window = &s_data.window;
   window_init(window, "Pebble Bike");
   window_set_background_color(&s_data.window, GColorWhite);
-  window_set_fullscreen(&s_data.window, true); 
+  window_set_fullscreen(&s_data.window, true);
 
 
-  speed_layer_init(&s_data.speed_layer,GRect(0,0,CANVAS_WIDTH,88));
-  speed_layer_set_text(&s_data.speed_layer, s_data.speed);
-  layer_add_child(&window->layer, &s_data.speed_layer.layer);
+  page_speed_layer_init(window);
+
+  page_altitude_layer_init(window);
+
+
 
   // Initialize the action bar:
   action_bar_layer_init(&action_bar);
@@ -302,74 +508,6 @@ void handle_init(AppContextRef ctx) {
 
   action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
   action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &reset_button.bmp);
-
-  text_layer_init(&s_data.mph_layer, GRect(0, 60, CANVAS_WIDTH - MENU_WIDTH, 21));
-  text_layer_set_text(&s_data.mph_layer, s_data.unitsSpeed);
-  text_layer_set_text_color(&s_data.mph_layer, GColorWhite);
-  text_layer_set_background_color(&s_data.mph_layer, GColorClear);
-  text_layer_set_font(&s_data.mph_layer, font_18);
-  text_layer_set_text_alignment(&s_data.mph_layer, GTextAlignmentCenter);
-  layer_add_child(&window->layer, &s_data.mph_layer.layer);
-
-
-  text_layer_init(&distance_layer, GRect(2, 97, 66 - MENU_WIDTH / 2, 14));
-  text_layer_set_text(&distance_layer, "distance");
-  text_layer_set_text_color(&distance_layer, GColorBlack);
-  text_layer_set_background_color(&distance_layer, GColorClear);
-  text_layer_set_font(&distance_layer, font_12);
-  text_layer_set_text_alignment(&distance_layer, GTextAlignmentCenter);
-  layer_add_child(&window->layer, &distance_layer.layer);
-
-  
-  text_layer_init(&s_data.miles_layer, GRect(2, 148, 66 - MENU_WIDTH / 2, 14));
-  text_layer_set_text(&s_data.miles_layer, s_data.unitsDistance);
-  text_layer_set_text_color(&s_data.miles_layer, GColorBlack);
-  text_layer_set_background_color(&s_data.miles_layer, GColorClear);
-  text_layer_set_font(&s_data.miles_layer, font_12);
-  text_layer_set_text_alignment(&s_data.miles_layer, GTextAlignmentCenter);
-  layer_add_child(&window->layer, &s_data.miles_layer.layer);
-
-
-  text_layer_init(&avg_layer, GRect(75 - MENU_WIDTH / 2, 90, 66 - MENU_WIDTH / 2, 28));
-  text_layer_set_text(&avg_layer, "average speed");
-  text_layer_set_text_color(&avg_layer, GColorBlack);
-  text_layer_set_background_color(&avg_layer, GColorClear);
-  text_layer_set_font(&avg_layer, font_12);
-  text_layer_set_text_alignment(&avg_layer, GTextAlignmentCenter);
-  layer_add_child(&window->layer, &avg_layer.layer);
-
-
-  text_layer_init(&s_data.avgmph_layer, GRect(75 - MENU_WIDTH / 2, 148, 66 - MENU_WIDTH / 2, 14));
-  text_layer_set_text(&s_data.avgmph_layer, s_data.unitsSpeed);
-  text_layer_set_text_color(&s_data.avgmph_layer, GColorBlack);
-  text_layer_set_background_color(&s_data.avgmph_layer, GColorClear);
-  text_layer_set_font(&s_data.avgmph_layer, font_12);
-  text_layer_set_text_alignment(&s_data.avgmph_layer, GTextAlignmentCenter);
-  layer_add_child(&window->layer, &s_data.avgmph_layer.layer);
-
-
-  layer_init(&line_layer, window->layer.frame);
-  line_layer.update_proc = &line_layer_update_callback;
-  layer_add_child(&window->layer, &line_layer);
-  
-
-  text_layer_init(&s_data.distance_layer, GRect(2, 116, 66 - MENU_WIDTH / 2, 32));
-  text_layer_set_text_color(&s_data.distance_layer, GColorBlack);
-  text_layer_set_background_color(&s_data.distance_layer, GColorClear);
-  text_layer_set_font(&s_data.distance_layer, font_24);
-  text_layer_set_text_alignment(&s_data.distance_layer, GTextAlignmentCenter);
-  text_layer_set_text(&s_data.distance_layer, s_data.distance);
-  layer_add_child(&window->layer, &s_data.distance_layer.layer);
-
-
-  text_layer_init(&s_data.avgspeed_layer, GRect(74 - MENU_WIDTH / 2, 116, 66  - MENU_WIDTH / 2, 32));
-  text_layer_set_text_color(&s_data.avgspeed_layer, GColorBlack);
-  text_layer_set_background_color(&s_data.avgspeed_layer, GColorClear);
-  text_layer_set_font(&s_data.avgspeed_layer, font_24);
-  text_layer_set_text_alignment(&s_data.avgspeed_layer, GTextAlignmentCenter);
-  text_layer_set_text(&s_data.avgspeed_layer, s_data.avgspeed);
-  layer_add_child(&window->layer, &s_data.avgspeed_layer.layer);
-  
 
   Tuplet initial_values[] = {
     TupletCString(SPEED_TEXT, "0.0"),
@@ -381,11 +519,10 @@ void handle_init(AppContextRef ctx) {
 
   app_sync_init(&s_data.sync, s_data.sync_buffer, sizeof(s_data.sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
                 sync_tuple_changed_callback, sync_error_callback, NULL);
-  
+
   window_stack_push(window, true /* Animated */);
 
 }
-
 static void handle_deinit(AppContextRef c) {
    app_sync_deinit(&s_data.sync);
    for(int n=0; n < TOTAL_IMAGE_SLOTS; n++) {
@@ -400,10 +537,8 @@ static void handle_deinit(AppContextRef c) {
 void handle_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)t;
   (void)ctx;
-  update_buttons(s_data.state);
-  layer_mark_dirty(&s_data.speed_layer.layer);
-  layer_mark_dirty(&s_data.distance_layer.layer);
-  layer_mark_dirty(&s_data.avgspeed_layer.layer);
+  //update_buttons(s_data.state);
+  //update_layers();
 }
 
 /*
