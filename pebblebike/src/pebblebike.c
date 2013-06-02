@@ -222,7 +222,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   
   switch (key) {
   case SPEED_TEXT:
-    strncpy(s_data.speed, new_tuple->value->cstring, 16); // test code, setting to new_tuple->value->cstring crashes with android
+    strncpy(s_data.speed, new_tuple->value->cstring, 16);
     break;
   case DISTANCE_TEXT:
     strncpy(s_data.distance, new_tuple->value->cstring, 16);
@@ -239,7 +239,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_METRIC, 8);
     } else {
       strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
-      strncpy(s_data.unitsDistance, SPEED_UNIT_METRIC, 8);
+      strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
     }
     layer_mark_dirty(&s_data.miles_layer.layer);
     layer_mark_dirty(&s_data.mph_layer.layer);
@@ -276,8 +276,8 @@ void handle_init(AppContextRef ctx) {
   GFont font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
   
   // set default unit of measure
-  char * speedUnits = SPEED_UNIT_METRIC;
-  char * distanceUnits = DISTANCE_UNIT_METRIC;
+  strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
+  strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
   
   heap_bitmap_init(&start_button,RESOURCE_ID_IMAGE_START_BUTTON);
   heap_bitmap_init(&stop_button,RESOURCE_ID_IMAGE_STOP_BUTTON);
@@ -304,7 +304,7 @@ void handle_init(AppContextRef ctx) {
   action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &reset_button.bmp);
 
   text_layer_init(&s_data.mph_layer, GRect(0, 60, CANVAS_WIDTH - MENU_WIDTH, 21));
-  text_layer_set_text(&s_data.mph_layer, speedUnits);
+  text_layer_set_text(&s_data.mph_layer, s_data.unitsSpeed);
   text_layer_set_text_color(&s_data.mph_layer, GColorWhite);
   text_layer_set_background_color(&s_data.mph_layer, GColorClear);
   text_layer_set_font(&s_data.mph_layer, font_18);
@@ -322,7 +322,7 @@ void handle_init(AppContextRef ctx) {
 
   
   text_layer_init(&s_data.miles_layer, GRect(2, 148, 66 - MENU_WIDTH / 2, 14));
-  text_layer_set_text(&s_data.miles_layer, distanceUnits);
+  text_layer_set_text(&s_data.miles_layer, s_data.unitsDistance);
   text_layer_set_text_color(&s_data.miles_layer, GColorBlack);
   text_layer_set_background_color(&s_data.miles_layer, GColorClear);
   text_layer_set_font(&s_data.miles_layer, font_12);
@@ -340,7 +340,7 @@ void handle_init(AppContextRef ctx) {
 
 
   text_layer_init(&s_data.avgmph_layer, GRect(75 - MENU_WIDTH / 2, 148, 66 - MENU_WIDTH / 2, 14));
-  text_layer_set_text(&s_data.avgmph_layer, speedUnits);
+  text_layer_set_text(&s_data.avgmph_layer, s_data.unitsSpeed);
   text_layer_set_text_color(&s_data.avgmph_layer, GColorBlack);
   text_layer_set_background_color(&s_data.avgmph_layer, GColorClear);
   text_layer_set_font(&s_data.avgmph_layer, font_12);
