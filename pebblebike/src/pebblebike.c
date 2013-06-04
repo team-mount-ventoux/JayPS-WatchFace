@@ -7,7 +7,7 @@
 // 5DD35873-3BB6-44D6-8255-0E61BC3B97F5
 #define MY_UUID { 0x5D, 0xD3, 0x58, 0x73, 0x3B, 0xB6, 0x44, 0xD6, 0x82, 0x55, 0x0E, 0x61, 0xBC, 0x3B, 0x97, 0xF5 }
 PBL_APP_INFO(MY_UUID,
-             "Pebble Bike", "N Jackson",
+             "Pebble Bike 1.1", "N Jackson",
              1, 0, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_STANDARD_APP);
@@ -17,7 +17,7 @@ enum {
   SPEED_TEXT = 0x1,     // TUPLE_CSTR
   DISTANCE_TEXT = 0x2,  // TUPLE_CSTR
   AVGSPEED_TEXT = 0x3,  // TUPLE_CSTR
-  MEASUREMENT_UNITS = 0x04 // TUPLE_INT
+  MEASUREMENT_UNITS = 0x4 // TUPLE_INT
 };
 
 enum {
@@ -47,10 +47,10 @@ enum {
 #define CANVAS_WIDTH 144
 #define MENU_WIDTH 22
 
-#define SPEED_UNIT_METRIC "mph"
-#define SPEED_UNIT_IMPERIAL "kph"
-#define DISTANCE_UNIT_METRIC "miles"
-#define DISTANCE_UNIT_IMPERIAL "km"
+#define SPEED_UNIT_METRIC "kph"
+#define SPEED_UNIT_IMPERIAL "mph"
+#define DISTANCE_UNIT_METRIC "km"
+#define DISTANCE_UNIT_IMPERIAL "miles"
 
 const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
   RESOURCE_ID_IMAGE_NUM_0, RESOURCE_ID_IMAGE_NUM_1, RESOURCE_ID_IMAGE_NUM_2,
