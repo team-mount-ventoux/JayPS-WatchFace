@@ -17,7 +17,11 @@ enum {
   SPEED_TEXT = 0x1,     // TUPLE_CSTR
   DISTANCE_TEXT = 0x2,  // TUPLE_CSTR
   AVGSPEED_TEXT = 0x3,  // TUPLE_CSTR
-  MEASUREMENT_UNITS = 0x04 // TUPLE_INT
+  MEASUREMENT_UNITS = 0x04, // TUPLE_INT
+  ALTITUDE_TEXT = 0x5,   // TUPLE_CSTR
+  ASCENT_TEXT = 0x6,     // TUPLE_CSTR
+  ASCENTRATE_TEXT = 0x7, // TUPLE_CSTR
+  SLOPE_TEXT = 0x8,      // TUPLE_CSTR
 };
 
 enum {
@@ -124,6 +128,10 @@ typedef struct SpeedLayer {
   char speed[16];
   char distance[16];
   char avgspeed[16];
+  char altitude[16];
+  char ascent[16];
+  char ascentrate[16];
+  char slope[16];
   char unitsSpeed[8];
   char unitsDistance[8];
   int state;
@@ -292,6 +300,18 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   case AVGSPEED_TEXT:
     strncpy(s_data.avgspeed, new_tuple->value->cstring, 16);
     break;
+  case ALTITUDE_TEXT:
+    strncpy(s_data.altitude, new_tuple->value->cstring, 16);
+    break;
+  case ASCENT_TEXT:
+    strncpy(s_data.ascent, new_tuple->value->cstring, 16);
+    break;
+  case ASCENTRATE_TEXT:
+    strncpy(s_data.ascentrate, new_tuple->value->cstring, 16);
+    break;
+  case SLOPE_TEXT:
+    strncpy(s_data.slope, new_tuple->value->cstring, 16);
+    break;
   case STATE_CHANGED:
     s_data.state = new_tuple->value->uint8;
     update_buttons(s_data.state);
@@ -450,11 +470,10 @@ void page_altitude_layer_init(Window* window) {
   s_data.page_altitude.update_proc = &page_altitude_update_proc;
   layer_add_child(&window->layer, &s_data.page_altitude);
 
-
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_layer, 0, 0, "Altitude", "0", "m");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent, 67, 0, "Ascent", "0", "m");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0, 85, "Ascent rate", "0", "m/h");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_slope, 67, 85, "Slope", "0", "%");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_layer, 0, 0, "Altitude", s_data.altitude, "m");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent, 67, 0, "Ascent", s_data.ascent, "m");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0, 85, "Ascent rate", s_data.ascentrate, "m/h");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_slope, 67, 85, "Slope", s_data.slope, "%");
 
 
   layer_set_hidden(&s_data.page_altitude, true);
@@ -515,6 +534,10 @@ void handle_init(AppContextRef ctx) {
     TupletCString(AVGSPEED_TEXT, "0.0"),
     TupletInteger(STATE_CHANGED,STATE_STOP), //stopped
     TupletInteger(MEASUREMENT_UNITS,UNITS_IMPERIAL), //stopped
+    TupletCString(ALTITUDE_TEXT, "0"),
+    TupletCString(ASCENT_TEXT, "0"),
+    TupletCString(ASCENTRATE_TEXT, "0"),
+    TupletCString(SLOPE_TEXT, "0"),
   };
 
   app_sync_init(&s_data.sync, s_data.sync_buffer, sizeof(s_data.sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
