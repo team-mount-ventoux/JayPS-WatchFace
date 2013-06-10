@@ -541,11 +541,11 @@ void handle_init(AppContextRef ctx) {
     TupletCString(AVGSPEED_TEXT, "0.0"),
     TupletInteger(STATE_CHANGED,STATE_STOP), //stopped
     TupletInteger(MEASUREMENT_UNITS,UNITS_IMPERIAL), //stopped
-    TupletCString(ALTITUDE_TEXT, "0"),
-    TupletCString(ASCENT_TEXT, "0"),
-    TupletCString(ASCENTRATE_TEXT, "0"),
-    TupletCString(SLOPE_TEXT, "0"),
-    TupletCString(ACCURACY_TEXT, "0"),
+    TupletCString(ALTITUDE_TEXT, "-"),
+    TupletCString(ASCENT_TEXT, "-"),
+    TupletCString(ASCENTRATE_TEXT, "-"),
+    TupletCString(SLOPE_TEXT, "-"),
+    TupletCString(ACCURACY_TEXT, "-"),
   };
 
   app_sync_init(&s_data.sync, s_data.sync_buffer, sizeof(s_data.sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
