@@ -22,6 +22,7 @@ enum {
   ASCENT_TEXT = 0x6,     // TUPLE_CSTR
   ASCENTRATE_TEXT = 0x7, // TUPLE_CSTR
   SLOPE_TEXT = 0x8,      // TUPLE_CSTR
+  ACCURACY_TEXT = 0x9,      // TUPLE_CSTR
 };
 
 enum {
@@ -123,6 +124,7 @@ typedef struct SpeedLayer {
   FieldLayer altitude_ascent;
   FieldLayer altitude_ascent_rate;
   FieldLayer altitude_slope;
+  FieldLayer altitude_accuracy;
 
 
   char speed[16];
@@ -132,6 +134,7 @@ typedef struct SpeedLayer {
   char ascent[16];
   char ascentrate[16];
   char slope[16];
+  char accuracy[16];
   char unitsSpeed[8];
   char unitsDistance[8];
   int state;
@@ -312,6 +315,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   case SLOPE_TEXT:
     strncpy(s_data.slope, new_tuple->value->cstring, 16);
     break;
+  case ACCURACY_TEXT:
+    strncpy(s_data.accuracy, new_tuple->value->cstring, 16);
+    break;
   case STATE_CHANGED:
     s_data.state = new_tuple->value->uint8;
     update_buttons(s_data.state);
@@ -473,7 +479,8 @@ void page_altitude_layer_init(Window* window) {
   field_layer_init(&s_data.page_altitude, &s_data.altitude_layer, 0, 0, "Altitude", s_data.altitude, "m");
   field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent, 67, 0, "Ascent", s_data.ascent, "m");
   field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0, 85, "Ascent rate", s_data.ascentrate, "m/h");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_slope, 67, 85, "Slope", s_data.slope, "%");
+  //field_layer_init(&s_data.page_altitude, &s_data.altitude_slope, 67, 85, "Slope", s_data.slope, "%");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_accuracy, 67, 85, "Accuracy", s_data.accuracy, "m");
 
 
   layer_set_hidden(&s_data.page_altitude, true);
@@ -538,6 +545,7 @@ void handle_init(AppContextRef ctx) {
     TupletCString(ASCENT_TEXT, "0"),
     TupletCString(ASCENTRATE_TEXT, "0"),
     TupletCString(SLOPE_TEXT, "0"),
+    TupletCString(ACCURACY_TEXT, "0"),
   };
 
   app_sync_init(&s_data.sync, s_data.sync_buffer, sizeof(s_data.sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
