@@ -140,7 +140,7 @@ typedef struct SpeedLayer {
   int state;
   int page_number;
   AppSync sync;
-  uint8_t sync_buffer[96];
+  uint8_t sync_buffer[200];
 } s_data;
 
 
@@ -281,6 +281,73 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
   (void) dict_error;
   (void) app_message_error;
   (void) context;
+
+  vibes_short_pulse();
+
+  switch (dict_error) {
+    case DICT_OK:
+      //The operation returned successfully.
+      strncpy(s_data.ascent, "OK", 16);
+      break;
+    case DICT_NOT_ENOUGH_STORAGE:
+      strncpy(s_data.ascent, "STO", 16);
+      //There was not enough backing storage to complete the operation.
+      break;
+    case DICT_INVALID_ARGS:
+      //One or more arguments were invalid or uninitialized.
+      strncpy(s_data.ascent, "INV", 16);
+      break;
+    case DICT_INTERNAL_INCONSISTENCY:
+      //The lengths and/or count of the dictionary its tuples are inconsistent.
+      strncpy(s_data.ascent, "INC", 16);
+      break;
+  }
+  switch (app_message_error) {
+    case APP_MSG_OK:
+      // All good, operation was successful.
+      strncpy(s_data.ascentrate, "OK", 16);
+      break;
+    case APP_MSG_SEND_TIMEOUT:
+      // The other end did not confirm receiving the sent data with an (n)ack in time.
+      strncpy(s_data.ascentrate, "NOC", 16);
+      break;
+    case APP_MSG_SEND_REJECTED:
+      // The other end rejected the sent data, with a "nack" reply.
+      strncpy(s_data.ascentrate, "NAC", 16);
+      break;
+    case APP_MSG_NOT_CONNECTED:
+      // The other end was not connected.
+      strncpy(s_data.ascentrate, "NCO", 16);
+      break;
+    case APP_MSG_APP_NOT_RUNNING:
+      // The local application was not running.
+      strncpy(s_data.ascentrate, "NOR", 16);
+      break;
+    case APP_MSG_INVALID_ARGS:
+      // The function was called with invalid arguments.
+      strncpy(s_data.ascentrate, "INV", 16);
+      break;
+    case APP_MSG_BUSY:
+      // There are pending (in or outbound) messages that need to be processed first before new ones can be received or sent.
+      strncpy(s_data.ascentrate, "BUS", 16);
+      break;
+    case APP_MSG_BUFFER_OVERFLOW:
+      // The buffer was too small to contain the incoming message.
+      strncpy(s_data.ascentrate, "OVE", 16);
+      break;
+    case APP_MSG_ALREADY_RELEASED:
+      // The resource had already been released.
+      strncpy(s_data.ascentrate, "ALR", 16);
+      break;
+    case APP_MSG_CALLBACK_ALREADY_REGISTERED:
+      // The callback node was already registered, or its ListNode has not been initialized.
+      strncpy(s_data.ascentrate, "AL2", 16);
+      break;
+    case APP_MSG_CALLBACK_NOT_REGISTERED:
+      // The callback could not be deregistered, because it had not been registered before.
+      strncpy(s_data.ascentrate, "NOR", 16);
+      break;
+  }
 }
 void update_buttons(int state) {
 
@@ -548,7 +615,7 @@ void handle_init(AppContextRef ctx) {
     TupletCString(ACCURACY_TEXT, "-"),
   };
 
-  app_sync_init(&s_data.sync, s_data.sync_buffer, sizeof(s_data.sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
+  app_sync_init(&s_data.sync, s_data.sync_buffer, 200, initial_values, ARRAY_LENGTH(initial_values),
                 sync_tuple_changed_callback, sync_error_callback, NULL);
 
   window_stack_push(window, true /* Animated */);
@@ -588,7 +655,7 @@ void pbl_main(void *params) {
     },
     .messaging_info = {
       .buffer_sizes = {
-        .inbound = 96,
+        .inbound = 200,
         .outbound = 16,
       }
     }
