@@ -57,6 +57,7 @@ enum {
 
 #define CANVAS_WIDTH 144
 #define MENU_WIDTH 22
+#define TOPBAR_HEIGHT 15
 
 #define SCREEN_W 144
 #define SCREEN_H 168
@@ -92,6 +93,12 @@ Layer bottom_layer;
 
 GFont font_12, font_18, font_24;
 
+typedef struct TopBarLayer {
+  Layer layer;
+  TextLayer time_layer;
+  TextLayer accuracy_layer;
+} TopBarLayer;
+
 typedef struct SpeedLayer {
       Layer layer;
       const char* text;
@@ -113,6 +120,8 @@ typedef struct SpeedLayer {
   Layer page_speed;
   Layer page_altitude;
 
+  TopBarLayer topbar_layer;
+
   SpeedLayer speed_layer;
   TextLayer distance_layer;
   TextLayer avgspeed_layer;
@@ -126,7 +135,7 @@ typedef struct SpeedLayer {
   FieldLayer altitude_slope;
   FieldLayer altitude_accuracy;
 
-
+  char time[6]; // xx:xx, \0 terminated
   char speed[16];
   char distance[16];
   char avgspeed[16];
@@ -504,13 +513,13 @@ void page_speed_update_proc(Layer *page_speed, GContext* ctx) {
   //vibes_short_pulse();
 }
 
-void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t y, char* title_text, char* data_text, char* unit_text) {
-  layer_init(&field_layer->main_layer, GRect(x, y, (SCREEN_W - MENU_WIDTH) / 2 - 1, (SCREEN_H / 2) - 1));
+void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t y, int16_t w, int16_t h, char* title_text, char* data_text, char* unit_text) {
+  layer_init(&field_layer->main_layer, GRect(x, y, w, h));
   layer_add_child(parent, &field_layer->main_layer);
 
 
   // title
-  text_layer_init(&field_layer->title_layer, GRect(2, 2, 66 - MENU_WIDTH / 2, 14));
+  text_layer_init(&field_layer->title_layer, GRect(1, 2, w - 2, 14));
   text_layer_set_text(&field_layer->title_layer, title_text);
   text_layer_set_text_color(&field_layer->title_layer, GColorBlack);
   text_layer_set_background_color(&field_layer->title_layer, GColorClear);
@@ -519,7 +528,7 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
   layer_add_child(&field_layer->main_layer, &field_layer->title_layer.layer);
 
   // data
-  text_layer_init(&field_layer->data_layer, GRect(2, 21, 66 - MENU_WIDTH / 2, 32));
+  text_layer_init(&field_layer->data_layer, GRect(1, 21, w - 2, 32));
   text_layer_set_text_color(&field_layer->data_layer, GColorBlack);
   text_layer_set_background_color(&field_layer->data_layer, GColorClear);
   text_layer_set_font(&field_layer->data_layer, font_24);
@@ -528,7 +537,7 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
   layer_add_child(&field_layer->main_layer, &field_layer->data_layer.layer);
 
   // unit
-  text_layer_init(&field_layer->unit_layer, GRect(2, 53, 66 - MENU_WIDTH / 2, 14));
+  text_layer_init(&field_layer->unit_layer, GRect(1, h - 14, w - 2, 14));
   text_layer_set_text(&field_layer->unit_layer, unit_text);
   text_layer_set_text_color(&field_layer->unit_layer, GColorBlack);
   text_layer_set_background_color(&field_layer->unit_layer, GColorClear);
@@ -544,24 +553,53 @@ void page_altitude_layer_init(Window* window) {
   s_data.page_altitude.update_proc = &page_altitude_update_proc;
   layer_add_child(&window->layer, &s_data.page_altitude);
 
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_layer, 0, 0, "Altitude", s_data.altitude, "m");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent, 67, 0, "Ascent", s_data.ascent, "m");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0, 85, "Ascent rate", s_data.ascentrate, "m/h");
-  //field_layer_init(&s_data.page_altitude, &s_data.altitude_slope, 67, 85, "Slope", s_data.slope, "%");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_accuracy, 67, 85, "Accuracy", s_data.accuracy, "m");
+  int16_t w = (SCREEN_W - MENU_WIDTH) / 2; //61
+  int16_t h = (SCREEN_H - TOPBAR_HEIGHT) / 2 - 1; // 75
+
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_layer,       0,     TOPBAR_HEIGHT + 0,     w, h, "Altitude", s_data.altitude, "m");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent,      w + 1, TOPBAR_HEIGHT + 0,     w, h, "Ascent", s_data.ascent, "m");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0,     TOPBAR_HEIGHT + h + 1, w, h, "Ascent rate", s_data.ascentrate, "m/h");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_slope,       w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Slope", s_data.slope, "%");
+  //field_layer_init(&s_data.page_altitude, &s_data.altitude_accuracy,    w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Accuracy", s_data.accuracy, "m");
 
 
   layer_set_hidden(&s_data.page_altitude, true);
+}
+
+void topbar_layer_init(Window* window) {
+  int16_t w = SCREEN_W - MENU_WIDTH;
+
+  layer_init(&s_data.topbar_layer.layer, GRect(0,0,w,SCREEN_H));
+  layer_add_child(&window->layer, &s_data.topbar_layer.layer);
+
+  // time
+  text_layer_init(&s_data.topbar_layer.time_layer, GRect(0,0,w/2,TOPBAR_HEIGHT));
+  text_layer_set_text(&s_data.topbar_layer.time_layer, s_data.time);
+  text_layer_set_text_color(&s_data.topbar_layer.time_layer, GColorClear);
+  text_layer_set_background_color(&s_data.topbar_layer.time_layer, GColorBlack);
+  text_layer_set_font(&s_data.topbar_layer.time_layer, font_12);
+  text_layer_set_text_alignment(&s_data.topbar_layer.time_layer, GTextAlignmentCenter);
+  layer_add_child(&window->layer, &s_data.topbar_layer.time_layer.layer);
+
+  // accuracy
+  text_layer_init(&s_data.topbar_layer.accuracy_layer, GRect(w/2,0,w/2,TOPBAR_HEIGHT));
+  text_layer_set_text(&s_data.topbar_layer.accuracy_layer, s_data.accuracy);
+  text_layer_set_text_color(&s_data.topbar_layer.accuracy_layer, GColorClear);
+  text_layer_set_background_color(&s_data.topbar_layer.accuracy_layer, GColorBlack);
+  text_layer_set_font(&s_data.topbar_layer.accuracy_layer, font_12);
+  text_layer_set_text_alignment(&s_data.topbar_layer.accuracy_layer, GTextAlignmentCenter);
+  layer_add_child(&window->layer, &s_data.topbar_layer.accuracy_layer.layer);
+
 }
 
 void page_altitude_update_proc(Layer *page_altitude, GContext* ctx) {
   graphics_context_set_stroke_color(ctx, GColorBlack);
 
   // vertical line
-  graphics_draw_line(ctx, GPoint((SCREEN_W - MENU_WIDTH) / 2, 0), GPoint((SCREEN_W - MENU_WIDTH) / 2, SCREEN_H));
+  graphics_draw_line(ctx, GPoint((SCREEN_W - MENU_WIDTH) / 2, TOPBAR_HEIGHT), GPoint((SCREEN_W - MENU_WIDTH) / 2, SCREEN_H));
 
   // horizontal line
-  graphics_draw_line(ctx, GPoint(0, SCREEN_H / 2), GPoint(SCREEN_W - MENU_WIDTH, SCREEN_H / 2));
+  graphics_draw_line(ctx, GPoint(0, TOPBAR_HEIGHT + (SCREEN_H - TOPBAR_HEIGHT) / 2), GPoint(SCREEN_W - MENU_WIDTH, TOPBAR_HEIGHT + (SCREEN_H - TOPBAR_HEIGHT) / 2));
 }
 
 void handle_init(AppContextRef ctx) {
@@ -587,6 +625,7 @@ void handle_init(AppContextRef ctx) {
   window_set_background_color(&s_data.window, GColorWhite);
   window_set_fullscreen(&s_data.window, true);
 
+  topbar_layer_init(window);
 
   page_speed_layer_init(window);
 
@@ -638,6 +677,21 @@ void handle_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)ctx;
   //update_buttons(s_data.state);
   //update_layers();
+
+  char *time_format;
+  if (clock_is_24h_style()) {
+    time_format = "%R";
+  } else {
+    time_format = "%I:%M";
+  }
+
+  string_format_time(s_data.time, sizeof(s_data.time), time_format, t->tick_time);
+
+  // Kludge to handle lack of non-padded hour format string
+  // for twelve hour clock.
+  if (!clock_is_24h_style() && (s_data.time[0] == '0')) {
+    memmove(s_data.time, &s_data.time[1], sizeof(s_data.time) - 1);
+  }
 }
 
 /*
@@ -652,7 +706,7 @@ void pbl_main(void *params) {
     .deinit_handler = &handle_deinit,
     .tick_info = {
       .tick_handler = &handle_tick,
-      .tick_units = SECOND_UNIT
+      .tick_units = MINUTE_UNIT
     },
     .messaging_info = {
       .buffer_sizes = {
