@@ -66,6 +66,10 @@ enum {
 #define SPEED_UNIT_IMPERIAL "mph"
 #define DISTANCE_UNIT_METRIC "km"
 #define DISTANCE_UNIT_IMPERIAL "miles"
+#define ALTITUDE_UNIT_METRIC "m"
+#define ALTITUDE_UNIT_IMPERIAL "ft"
+#define ASCENT_RATE_UNIT_METRIC "m/h"
+#define ASCENT_RATE_UNIT_IMPERIAL "ft/h"
 
 const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
   RESOURCE_ID_IMAGE_NUM_0, RESOURCE_ID_IMAGE_NUM_1, RESOURCE_ID_IMAGE_NUM_2,
@@ -109,9 +113,7 @@ typedef struct SpeedLayer {
     TextLayer title_layer;
     TextLayer data_layer;
     TextLayer unit_layer;
-    const char* title_text;
-    const char* data_text;
-    const char* unit_text;
+    char units[8];
   } FieldLayer;
 
  static struct AppData {
@@ -403,9 +405,15 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     if(new_tuple->value->uint8 == UNITS_METRIC) {
       strncpy(s_data.unitsSpeed, SPEED_UNIT_METRIC, 8);
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_METRIC, 8);
+      strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_METRIC, 8);
+      strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_METRIC, 8);
+      strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_METRIC, 8);
     } else {
       strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
+      strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_IMPERIAL, 8);
+      strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_IMPERIAL, 8);
+      strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_IMPERIAL, 8);
     }
     layer_mark_dirty(&s_data.miles_layer.layer);
     layer_mark_dirty(&s_data.mph_layer.layer);
@@ -556,9 +564,9 @@ void page_altitude_layer_init(Window* window) {
   int16_t w = (SCREEN_W - MENU_WIDTH) / 2; //61
   int16_t h = (SCREEN_H - TOPBAR_HEIGHT) / 2 - 1; // 75
 
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_layer,       0,     TOPBAR_HEIGHT + 0,     w, h, "Altitude", s_data.altitude, "m");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent,      w + 1, TOPBAR_HEIGHT + 0,     w, h, "Ascent", s_data.ascent, "m");
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0,     TOPBAR_HEIGHT + h + 1, w, h, "Ascent rate", s_data.ascentrate, "m/h");
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_layer,       0,     TOPBAR_HEIGHT + 0,     w, h, "Altitude", s_data.altitude, s_data.altitude_layer.units);
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent,      w + 1, TOPBAR_HEIGHT + 0,     w, h, "Ascent", s_data.ascent, s_data.altitude_ascent.units);
+  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0,     TOPBAR_HEIGHT + h + 1, w, h, "Ascent rate", s_data.ascentrate, s_data.altitude_ascent_rate.units);
   field_layer_init(&s_data.page_altitude, &s_data.altitude_slope,       w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Slope", s_data.slope, "%");
   //field_layer_init(&s_data.page_altitude, &s_data.altitude_accuracy,    w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Accuracy", s_data.accuracy, "m");
 
@@ -614,6 +622,10 @@ void handle_init(AppContextRef ctx) {
   // set default unit of measure
   strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
   strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
+  strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_IMPERIAL, 8);
+  strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_IMPERIAL, 8);
+  strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_IMPERIAL, 8);
+
 
   heap_bitmap_init(&start_button,RESOURCE_ID_IMAGE_START_BUTTON);
   heap_bitmap_init(&stop_button,RESOURCE_ID_IMAGE_STOP_BUTTON);
