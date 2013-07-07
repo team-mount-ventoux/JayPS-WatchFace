@@ -430,16 +430,16 @@ void page_speed_update_proc(Layer *page_speed, GContext* ctx);
 void page_altitude_update_proc(Layer *page_altitude, GContext* ctx);
 
 void page_speed_layer_init(Window* window) {
-  layer_init(&s_data.page_speed, GRect(0,0,CANVAS_WIDTH-MENU_WIDTH,SCREEN_H));
+  layer_init(&s_data.page_speed, GRect(0,TOPBAR_HEIGHT,CANVAS_WIDTH-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
   s_data.page_speed.update_proc = &page_speed_update_proc;
   layer_add_child(&window->layer, &s_data.page_speed);
 
-  speed_layer_init(&s_data.speed_layer,GRect(0,0,CANVAS_WIDTH-MENU_WIDTH,88));
+  speed_layer_init(&s_data.speed_layer,GRect(0,0,CANVAS_WIDTH-MENU_WIDTH,84));
   speed_layer_set_text(&s_data.speed_layer, s_data.speed);
   layer_add_child(&s_data.page_speed, &s_data.speed_layer.layer);
 
 
-  text_layer_init(&s_data.mph_layer, GRect(0, 60, CANVAS_WIDTH - MENU_WIDTH, 21));
+  text_layer_init(&s_data.mph_layer, GRect(0, 58, CANVAS_WIDTH - MENU_WIDTH, 21));
   text_layer_set_text(&s_data.mph_layer, s_data.unitsSpeed);
   text_layer_set_text_color(&s_data.mph_layer, GColorWhite);
   text_layer_set_background_color(&s_data.mph_layer, GColorClear);
@@ -448,7 +448,7 @@ void page_speed_layer_init(Window* window) {
   layer_add_child(&s_data.page_speed, &s_data.mph_layer.layer);
 
 
-  text_layer_init(&distance_layer, GRect(2, 97, 66 - MENU_WIDTH / 2, 14));
+  text_layer_init(&distance_layer, GRect(2, 91, 66 - MENU_WIDTH / 2, 14));
   text_layer_set_text(&distance_layer, "distance");
   text_layer_set_text_color(&distance_layer, GColorBlack);
   text_layer_set_background_color(&distance_layer, GColorClear);
@@ -457,7 +457,7 @@ void page_speed_layer_init(Window* window) {
   layer_add_child(&s_data.page_speed, &distance_layer.layer);
 
   
-  text_layer_init(&s_data.miles_layer, GRect(2, 148, 66 - MENU_WIDTH / 2, 14));
+  text_layer_init(&s_data.miles_layer, GRect(2, 136, 66 - MENU_WIDTH / 2, 14));
   text_layer_set_text(&s_data.miles_layer, s_data.unitsDistance);
   text_layer_set_text_color(&s_data.miles_layer, GColorBlack);
   text_layer_set_background_color(&s_data.miles_layer, GColorClear);
@@ -466,7 +466,7 @@ void page_speed_layer_init(Window* window) {
   layer_add_child(&s_data.page_speed, &s_data.miles_layer.layer);
 
 
-  text_layer_init(&avg_layer, GRect(75 - MENU_WIDTH / 2, 90, 66 - MENU_WIDTH / 2, 28));
+  text_layer_init(&avg_layer, GRect(75 - MENU_WIDTH / 2, 84, 66 - MENU_WIDTH / 2, 28));
   text_layer_set_text(&avg_layer, "average speed");
   text_layer_set_text_color(&avg_layer, GColorBlack);
   text_layer_set_background_color(&avg_layer, GColorClear);
@@ -475,7 +475,7 @@ void page_speed_layer_init(Window* window) {
   layer_add_child(&s_data.page_speed, &avg_layer.layer);
 
 
-  text_layer_init(&s_data.avgmph_layer, GRect(75 - MENU_WIDTH / 2, 148, 66 - MENU_WIDTH / 2, 14));
+  text_layer_init(&s_data.avgmph_layer, GRect(75 - MENU_WIDTH / 2, 136, 66 - MENU_WIDTH / 2, 14));
   text_layer_set_text(&s_data.avgmph_layer, s_data.unitsSpeed);
   text_layer_set_text_color(&s_data.avgmph_layer, GColorBlack);
   text_layer_set_background_color(&s_data.avgmph_layer, GColorClear);
@@ -489,7 +489,7 @@ void page_speed_layer_init(Window* window) {
   layer_add_child(&s_data.page_speed, &line_layer);
   
 
-  text_layer_init(&s_data.distance_layer, GRect(2, 116, 66 - MENU_WIDTH / 2, 32));
+  text_layer_init(&s_data.distance_layer, GRect(1, 106, (SCREEN_W - MENU_WIDTH) / 2 - 2, 32));
   text_layer_set_text_color(&s_data.distance_layer, GColorBlack);
   text_layer_set_background_color(&s_data.distance_layer, GColorClear);
   text_layer_set_font(&s_data.distance_layer, font_24);
@@ -498,7 +498,7 @@ void page_speed_layer_init(Window* window) {
   layer_add_child(&s_data.page_speed, &s_data.distance_layer.layer);
 
 
-  text_layer_init(&s_data.avgspeed_layer, GRect(74 - MENU_WIDTH / 2, 116, 66  - MENU_WIDTH / 2, 32));
+  text_layer_init(&s_data.avgspeed_layer, GRect((SCREEN_W - MENU_WIDTH) / 2 + 1, 106, (SCREEN_W - MENU_WIDTH) / 2 - 2, 32));
   text_layer_set_text_color(&s_data.avgspeed_layer, GColorBlack);
   text_layer_set_background_color(&s_data.avgspeed_layer, GColorClear);
   text_layer_set_font(&s_data.avgspeed_layer, font_24);
@@ -572,8 +572,8 @@ void topbar_layer_init(Window* window) {
   layer_init(&s_data.topbar_layer.layer, GRect(0,0,w,SCREEN_H));
   layer_add_child(&window->layer, &s_data.topbar_layer.layer);
 
-  // time
-  text_layer_init(&s_data.topbar_layer.time_layer, GRect(0,0,w/2,TOPBAR_HEIGHT));
+  // time (centered in top bar)
+  text_layer_init(&s_data.topbar_layer.time_layer, GRect(0,0,w,TOPBAR_HEIGHT));
   text_layer_set_text(&s_data.topbar_layer.time_layer, s_data.time);
   text_layer_set_text_color(&s_data.topbar_layer.time_layer, GColorClear);
   text_layer_set_background_color(&s_data.topbar_layer.time_layer, GColorBlack);
@@ -581,13 +581,13 @@ void topbar_layer_init(Window* window) {
   text_layer_set_text_alignment(&s_data.topbar_layer.time_layer, GTextAlignmentCenter);
   layer_add_child(&window->layer, &s_data.topbar_layer.time_layer.layer);
 
-  // accuracy
-  text_layer_init(&s_data.topbar_layer.accuracy_layer, GRect(w/2,0,w/2,TOPBAR_HEIGHT));
+  // accuracy (1/3, right)
+  text_layer_init(&s_data.topbar_layer.accuracy_layer, GRect(w*2/3,0,w/3,TOPBAR_HEIGHT));
   text_layer_set_text(&s_data.topbar_layer.accuracy_layer, s_data.accuracy);
   text_layer_set_text_color(&s_data.topbar_layer.accuracy_layer, GColorClear);
   text_layer_set_background_color(&s_data.topbar_layer.accuracy_layer, GColorBlack);
   text_layer_set_font(&s_data.topbar_layer.accuracy_layer, font_12);
-  text_layer_set_text_alignment(&s_data.topbar_layer.accuracy_layer, GTextAlignmentCenter);
+  text_layer_set_text_alignment(&s_data.topbar_layer.accuracy_layer, GTextAlignmentRight);
   layer_add_child(&window->layer, &s_data.topbar_layer.accuracy_layer.layer);
 
 }
@@ -692,13 +692,8 @@ void handle_tick(AppContextRef ctx, PebbleTickEvent *t) {
   if (!clock_is_24h_style() && (s_data.time[0] == '0')) {
     memmove(s_data.time, &s_data.time[1], sizeof(s_data.time) - 1);
   }
+  layer_mark_dirty(&s_data.topbar_layer.layer);
 }
-
-/*
-    .tick_info = {
-      .tick_handler = &handle_tick,
-      .tick_units = SECOND_UNIT
-    },*/
 
 void pbl_main(void *params) {
   PebbleAppHandlers handlers = {
