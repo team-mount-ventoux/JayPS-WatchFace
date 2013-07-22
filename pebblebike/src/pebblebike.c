@@ -7,7 +7,7 @@
 // 5DD35873-3BB6-44D6-8255-0E61BC3B97F5
 #define MY_UUID { 0x5D, 0xD3, 0x58, 0x73, 0x3B, 0xB6, 0x44, 0xD6, 0x82, 0x55, 0x0E, 0x61, 0xBC, 0x3B, 0x97, 0xF5 }
 PBL_APP_INFO(MY_UUID,
-             "Pebble Bike 1.2.0-beta2", "N Jackson",
+             "Pebble Bike 1.2.0-beta3", "N Jackson",
              1, 0, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_STANDARD_APP);
