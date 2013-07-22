@@ -105,7 +105,7 @@ typedef struct TopBarLayer {
 
 typedef struct SpeedLayer {
       Layer layer;
-      const char* text;
+      char* text;
  } SpeedLayer;
 
  typedef struct FieldLayer {
@@ -167,12 +167,20 @@ void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
     if(len > 4)
       return;
 
+    // number of dots
+    int dots = 0;
+    for (int c=0; c < len; c++) {
+      if (speed_layer->text[c] == ',') {
+        // convert commas to dots (older app sent localized numbers...)
+        speed_layer->text[c] = '.';
+      }
+      if (speed_layer->text[c] == '.') {
+        dots++;
+      }
+    }
+    
     // get the size
-    int size = 0;
-    if(len > 1)
-      size = (len * CHAR_WIDTH) - 20; // dot is 20 pixels smaller
-    else if(len ==1)
-      size = CHAR_WIDTH;
+    int size = (len - dots) * CHAR_WIDTH + dots * DOT_WIDTH;
 
     int leftpos = (CANVAS_WIDTH - MENU_WIDTH - size) / 2;
 
@@ -656,8 +664,8 @@ void handle_init(AppContextRef ctx) {
 
   Tuplet initial_values[] = {
     TupletCString(SPEED_TEXT, "0.0"),
-    TupletCString(DISTANCE_TEXT, "0.0"),
-    TupletCString(AVGSPEED_TEXT, "0.0"),
+    TupletCString(DISTANCE_TEXT, "-"),
+    TupletCString(AVGSPEED_TEXT, "-"),
     TupletInteger(STATE_CHANGED,STATE_STOP), //stopped
     TupletInteger(MEASUREMENT_UNITS,UNITS_IMPERIAL), //stopped
     TupletCString(ALTITUDE_TEXT, "-"),
