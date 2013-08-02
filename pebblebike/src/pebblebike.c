@@ -23,6 +23,7 @@ enum {
   ASCENTRATE_TEXT = 0x7, // TUPLE_CSTR
   SLOPE_TEXT = 0x8,      // TUPLE_CSTR
   ACCURACY_TEXT = 0x9,      // TUPLE_CSTR
+  LIVE_TRACKING_FRIENDS = 0x10, // TUPLE_CSTR
 };
 
 enum {
@@ -44,8 +45,9 @@ enum {
 enum {
   PAGE_SPEED = 0,
   PAGE_ALTITUDE = 1,
+  PAGE_LIVE_TRACKING = 2,
 };
-#define NUMBER_OF_PAGES 2
+#define NUMBER_OF_PAGES 3
 
 #define NUMBER_OF_IMAGES 11
 #define TOTAL_IMAGE_SLOTS 4
@@ -121,6 +123,7 @@ typedef struct SpeedLayer {
 
   Layer page_speed;
   Layer page_altitude;
+  Layer page_live_tracking;
 
   TopBarLayer topbar_layer;
 
@@ -137,6 +140,8 @@ typedef struct SpeedLayer {
   FieldLayer altitude_slope;
   FieldLayer altitude_accuracy;
 
+  TextLayer live_tracking_layer;
+
   char time[6]; // xx:xx, \0 terminated
   char speed[16];
   char distance[16];
@@ -146,6 +151,7 @@ typedef struct SpeedLayer {
   char ascentrate[16];
   char slope[16];
   char accuracy[16];
+  char friends[90];
   char unitsSpeed[8];
   char unitsDistance[8];
   int state;
@@ -256,6 +262,7 @@ static void send_cmd(uint8_t cmd) {
 void update_layers() {
   layer_set_hidden(&s_data.page_speed, true);
   layer_set_hidden(&s_data.page_altitude, true);
+  layer_set_hidden(&s_data.page_live_tracking, true);
   if (s_data.page_number == PAGE_SPEED) {
     layer_set_hidden(&s_data.page_speed, false);
 //    layer_mark_dirty(&s_data.speed_layer.layer);
@@ -264,6 +271,9 @@ void update_layers() {
   }
   if (s_data.page_number == PAGE_ALTITUDE) {
     layer_set_hidden(&s_data.page_altitude, false);
+  }
+  if (s_data.page_number == PAGE_LIVE_TRACKING) {
+	  layer_set_hidden(&s_data.page_live_tracking, false);
   }
 }
 
@@ -404,6 +414,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     break;
   case ACCURACY_TEXT:
     strncpy(s_data.accuracy, new_tuple->value->cstring, 16);
+    break;
+  case LIVE_TRACKING_FRIENDS:
+    strncpy(s_data.friends, new_tuple->value->cstring, 90-1);
     break;
   case STATE_CHANGED:
     s_data.state = new_tuple->value->uint8;
@@ -582,6 +595,21 @@ void page_altitude_layer_init(Window* window) {
   layer_set_hidden(&s_data.page_altitude, true);
 }
 
+void page_live_tracking_layer_init(Window* window) {
+	  layer_init(&s_data.page_live_tracking, GRect(0,TOPBAR_HEIGHT,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
+	  layer_add_child(&window->layer, &s_data.page_live_tracking);
+
+	  text_layer_init(&s_data.live_tracking_layer, GRect(0,0,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
+	  text_layer_set_text_color(&s_data.live_tracking_layer, GColorBlack);
+	  text_layer_set_background_color(&s_data.live_tracking_layer, GColorClear);
+	  text_layer_set_font(&s_data.live_tracking_layer, font_18);
+	  text_layer_set_text_alignment(&s_data.live_tracking_layer, GTextAlignmentLeft);
+	  text_layer_set_text(&s_data.live_tracking_layer, s_data.friends);
+	  layer_add_child(&s_data.page_live_tracking, &s_data.live_tracking_layer.layer);
+
+	  layer_set_hidden(&s_data.page_live_tracking, true);
+}
+
 void topbar_layer_init(Window* window) {
   int16_t w = SCREEN_W - MENU_WIDTH;
 
@@ -651,6 +679,8 @@ void handle_init(AppContextRef ctx) {
 
   page_altitude_layer_init(window);
 
+  page_live_tracking_layer_init(window);
+
 
 
   // Initialize the action bar:
@@ -673,6 +703,7 @@ void handle_init(AppContextRef ctx) {
     TupletCString(ASCENTRATE_TEXT, "-"),
     TupletCString(SLOPE_TEXT, "-"),
     TupletCString(ACCURACY_TEXT, "-"),
+    TupletCString(LIVE_TRACKING_FRIENDS, "Live Tracking\n--\n--"),
   };
 
   app_sync_init(&s_data.sync, s_data.sync_buffer, 200, initial_values, ARRAY_LENGTH(initial_values),
