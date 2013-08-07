@@ -32,9 +32,10 @@ enum {
 };
 
 enum {
-  PLAY_PRESS =0x0,
+  PLAY_PRESS = 0x0,
   STOP_PRESS = 0x1,
   REFRESH_PRESS = 0x2,
+  CMD_BUTTON_PRESS = 0x4,
 };
 
 enum {
@@ -245,7 +246,7 @@ void speed_layer_set_text(SpeedLayer *speed_layer,char* textdata) {
 }
 
 static void send_cmd(uint8_t cmd) {
-  Tuplet value = TupletInteger(STATE_CHANGED, cmd);
+  Tuplet value = TupletInteger(CMD_BUTTON_PRESS, cmd);
   
   DictionaryIterator *iter;
   app_message_out_get(&iter);
@@ -381,11 +382,14 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 }
 void update_buttons(int state) {
 
-  if(state == STATE_STOP)
+  if(state == STATE_STOP) {
     action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
-  else
+  } else if(state == STATE_START) {
     action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &stop_button.bmp);
-
+  } else {
+    // bug?
+    //vibes_short_pulse();
+  }
 }
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   (void) old_tuple;
