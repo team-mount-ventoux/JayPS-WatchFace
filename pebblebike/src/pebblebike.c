@@ -7,73 +7,21 @@
 // 5DD35873-3BB6-44D6-8255-0E61BC3B97F5
 #define MY_UUID { 0x5D, 0xD3, 0x58, 0x73, 0x3B, 0xB6, 0x44, 0xD6, 0x82, 0x55, 0x0E, 0x61, 0xBC, 0x3B, 0x97, 0xF5 }
 PBL_APP_INFO(MY_UUID,
-             "Pebble Bike 1.3.0-beta1", "N Jackson",
+             "Pebble Bike 1.3.0-beta3", "N Jackson",
              1, 0, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_STANDARD_APP);
 
-enum {
-  STATE_CHANGED =0x0,
-  SPEED_TEXT = 0x1,     // TUPLE_CSTR
-  DISTANCE_TEXT = 0x2,  // TUPLE_CSTR
-  AVGSPEED_TEXT = 0x3,  // TUPLE_CSTR
-  MEASUREMENT_UNITS = 0x4, // TUPLE_INT
-  ALTITUDE_TEXT = 0x5,   // TUPLE_CSTR
-  ASCENT_TEXT = 0x6,     // TUPLE_CSTR
-  ASCENTRATE_TEXT = 0x7, // TUPLE_CSTR
-  SLOPE_TEXT = 0x8,      // TUPLE_CSTR
-  ACCURACY_TEXT = 0x9,      // TUPLE_CSTR
-  LIVE_TRACKING_FRIENDS = 0x10, // TUPLE_CSTR
-};
+#define ROCKSHOT true
 
-enum {
-  STATE_START = 1,
-  STATE_STOP = 2,
-};
-
-enum {
-  PLAY_PRESS = 0x0,
-  STOP_PRESS = 0x1,
-  REFRESH_PRESS = 0x2,
-  CMD_BUTTON_PRESS = 0x4,
-};
-
-enum {
-  UNITS_IMPERIAL = 0x0,
-  UNITS_METRIC = 0x1,
-};
-
-enum {
-  PAGE_SPEED = 0,
-  PAGE_ALTITUDE = 1,
-  PAGE_LIVE_TRACKING = 2,
-};
-#define NUMBER_OF_PAGES 3
+#if ROCKSHOT
+#include "rockshot.h"
+#endif
 
 #define NUMBER_OF_IMAGES 11
 #define TOTAL_IMAGE_SLOTS 4
 #define NOT_USED -1
-
-#define CHAR_WIDTH 35
-#define DOT_WIDTH 15
-#define CHAR_HEIGHT 51
-
-#define CANVAS_WIDTH 144
-#define MENU_WIDTH 22
-#define TOPBAR_HEIGHT 15
-
-#define SCREEN_W 144
-#define SCREEN_H 168
-
-#define SPEED_UNIT_METRIC "km/h"
-#define SPEED_UNIT_IMPERIAL "mph"
-#define DISTANCE_UNIT_METRIC "km"
-#define DISTANCE_UNIT_IMPERIAL "miles"
-#define ALTITUDE_UNIT_METRIC "m"
-#define ALTITUDE_UNIT_IMPERIAL "ft"
-#define ASCENT_RATE_UNIT_METRIC "m/h"
-#define ASCENT_RATE_UNIT_IMPERIAL "ft/h"
-
+             
 const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
   RESOURCE_ID_IMAGE_NUM_0, RESOURCE_ID_IMAGE_NUM_1, RESOURCE_ID_IMAGE_NUM_2,
   RESOURCE_ID_IMAGE_NUM_3, RESOURCE_ID_IMAGE_NUM_4, RESOURCE_ID_IMAGE_NUM_5,
@@ -93,73 +41,160 @@ ActionBarLayer action_bar;
 // page_speed
 TextLayer distance_layer;
 TextLayer avg_layer;
-
-
 Layer line_layer;
 Layer bottom_layer;
 
 GFont font_12, font_18, font_24;
+#include "pebblebike.h"
 
-typedef struct TopBarLayer {
-  Layer layer;
-  TextLayer time_layer;
-  TextLayer accuracy_layer;
-} TopBarLayer;
 
-typedef struct SpeedLayer {
-      Layer layer;
-      char* text;
- } SpeedLayer;
+// map layer
+Layer path_layer;
 
- typedef struct FieldLayer {
-    Layer main_layer;
-    TextLayer title_layer;
-    TextLayer data_layer;
-    TextLayer unit_layer;
-    char units[8];
-  } FieldLayer;
+#define NUM_POINTS 1100
+GPoint pts[NUM_POINTS];
+int cur_point = 0;
+int nb_points = 0;
+// in meters/pixels
+#define MAP_SCALE_MIN 500
+#define MAP_SCALE_MAX 32000
+int map_scale = MAP_SCALE_MIN * 2;
+#define MAP_VSIZE_X 4000
+#define MAP_VSIZE_Y 4000
 
- static struct AppData {
-  Window window;
+#define XINI MAP_VSIZE_X/2
+#define YINI MAP_VSIZE_Y/2
 
-  Layer page_speed;
-  Layer page_altitude;
-  Layer page_live_tracking;
+int32_t xposprev = 0, yposprev = 0;
 
-  TopBarLayer topbar_layer;
+GRect pathFrame;
 
-  SpeedLayer speed_layer;
-  TextLayer distance_layer;
-  TextLayer avgspeed_layer;
-  TextLayer mph_layer;
-  TextLayer avgmph_layer;
-  TextLayer miles_layer;
+void update_map(bool force_recenter);
+void update_location() {
+  
+  if (s_gpsdata.xpos == xposprev && s_gpsdata.ypos == yposprev) {
+      /*snprintf(s_data.debug2, sizeof(s_data.debug2),
+        "#11 nbpoints:%u\npos : %ld|%ld\nposprev : %ld|%ld\n",
+        nb_points,
+        s_gpsdata.xpos, s_gpsdata.ypos,
+        xposprev, yposprev
+      );*/
+      return;
+  }
+  //vibes_short_pulse();
+  xposprev = s_gpsdata.xpos;
+  yposprev = s_gpsdata.ypos;
+    
+  cur_point = nb_points % NUM_POINTS;
+  nb_points++;
 
-  FieldLayer altitude_layer;
-  FieldLayer altitude_ascent;
-  FieldLayer altitude_ascent_rate;
-  FieldLayer altitude_slope;
-  FieldLayer altitude_accuracy;
+  pts[cur_point] = GPoint(s_gpsdata.xpos, s_gpsdata.ypos);
+  
+  
+  if (s_data.page_number == PAGE_MAP) {
+    // refresh displayed map only if current page is PAGE_MAP
+    update_map(false);
+  }
 
-  TextLayer live_tracking_layer;
+}
 
-  char time[6]; // xx:xx, \0 terminated
-  char speed[16];
-  char distance[16];
-  char avgspeed[16];
-  char altitude[16];
-  char ascent[16];
-  char ascentrate[16];
-  char slope[16];
-  char accuracy[16];
-  char friends[90];
-  char unitsSpeed[8];
-  char unitsDistance[8];
-  int state;
-  int page_number;
-  AppSync sync;
-  uint8_t sync_buffer[200];
-} s_data;
+void update_map(bool force_recenter) {
+  int x, y;
+  int debug = 0, debug2 = 0;
+  
+  x = (XINI + (s_gpsdata.xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+  y = (YINI - (s_gpsdata.ypos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+
+  bool need_recenter = false;
+  if (x + pathFrame.origin.x < SCREEN_W/4) {
+    need_recenter = true;
+    debug += 1;
+  }
+  if (3*SCREEN_W/4 < x + pathFrame.origin.x) {
+    need_recenter = true;
+    debug += 1;
+  }
+  if (y + pathFrame.origin.y < SCREEN_H/4) {
+    need_recenter = true;
+    debug2 += 1;
+  }
+  if (3*SCREEN_H/4 < y + pathFrame.origin.y) {
+    need_recenter = true;
+    debug2 += 1;
+  }
+
+  if (need_recenter || force_recenter) {
+    //vibes_short_pulse();
+    pathFrame.origin.x = -x + SCREEN_W/2;
+    pathFrame.origin.y = -y + SCREEN_H/2;
+    layer_set_frame(&path_layer, pathFrame);  
+  }
+
+  snprintf(s_data.debug2, sizeof(s_data.debug2),
+    "#12 nbpts:%u\npos : %d|%d\nx|y:%d|%d\ndebug:%u|%u\nscale:%d\nvsize:%d|%d",
+    nb_points,
+    s_gpsdata.xpos, s_gpsdata.ypos,
+    x, y,
+    debug, debug2,
+    map_scale,
+    MAP_VSIZE_X, MAP_VSIZE_Y
+  );
+
+  // Update the layer
+  layer_mark_dirty(&path_layer);    
+}
+
+void path_layer_update_callback(Layer *me, GContext *ctx) {
+  (void)me;
+
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+
+  GPoint p0, p1;
+  
+  if (nb_points < 2) {
+      return;
+  }
+
+  for (int i = 0; i < ((nb_points > NUM_POINTS ? NUM_POINTS : nb_points) - 1); i++) {
+    p0 = pts[(cur_point-i) % NUM_POINTS];
+    p1 = pts[(cur_point-i-1) % NUM_POINTS];
+
+    p0.x = (XINI + (p0.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+    p0.y = (YINI - (p0.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+    p1.x = (XINI + (p1.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+    p1.y = (YINI - (p1.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y; 
+
+    graphics_draw_line(
+        ctx,
+        p0,
+        p1
+    );
+  }
+
+}
+
+void page_map_layer_init(Window* window) {
+
+  for (int i = 0; i < NUM_POINTS; i++) {
+    pts[i] = GPoint(0, 0);
+  }
+    
+  layer_init(&s_data.page_map, GRect(0,0,SCREEN_W,SCREEN_H));
+  layer_add_child(&window->layer, &s_data.page_map);
+
+  pathFrame = GRect(0, 0, MAP_VSIZE_X, MAP_VSIZE_Y);
+  layer_init(&path_layer, pathFrame);
+  pathFrame.origin.x = -XINI + SCREEN_W/2;
+  pathFrame.origin.y = -YINI + SCREEN_H/2;
+  layer_set_frame(&path_layer, pathFrame);
+  path_layer.update_proc = path_layer_update_callback;
+  layer_add_child(&s_data.page_map, &path_layer);
+    
+  layer_set_hidden(&s_data.page_map, true);
+  
+}
+
+
 
 
 void speed_layer_update_proc(SpeedLayer *speed_layer, GContext* ctx) {
@@ -264,6 +299,9 @@ void update_layers() {
   layer_set_hidden(&s_data.page_speed, true);
   layer_set_hidden(&s_data.page_altitude, true);
   layer_set_hidden(&s_data.page_live_tracking, true);
+  layer_set_hidden(&s_data.page_map, true);
+  layer_set_hidden(&s_data.page_debug1, true);
+  layer_set_hidden(&s_data.page_debug2, true);
   if (s_data.page_number == PAGE_SPEED) {
     layer_set_hidden(&s_data.page_speed, false);
 //    layer_mark_dirty(&s_data.speed_layer.layer);
@@ -276,8 +314,23 @@ void update_layers() {
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
 	  layer_set_hidden(&s_data.page_live_tracking, false);
   }
+  if (s_data.page_number == PAGE_MAP) {
+	  layer_set_hidden(&s_data.page_map, false);
+      //vibes_short_pulse();
+  }
+  if (s_data.page_number == PAGE_DEBUG1) {
+	  layer_set_hidden(&s_data.page_debug1, false);
+  }
+  if (s_data.page_number == PAGE_DEBUG2) {
+	  layer_set_hidden(&s_data.page_debug2, false);
+  }
+
 }
 
+void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
+  vibes_short_pulse();
+  send_cmd(REFRESH_PRESS);
+}
 void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   if(s_data.state == STATE_STOP)
     send_cmd(PLAY_PRESS);
@@ -292,7 +345,18 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
 	update_layers();
 }
 void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
-  send_cmd(REFRESH_PRESS);
+  map_scale = map_scale * 2;
+  if (map_scale > MAP_SCALE_MAX) {
+      map_scale = MAP_SCALE_MIN;
+  }
+  update_map(true);
+}
+void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context) {
+  map_scale = map_scale / 2;
+  if (map_scale < MAP_SCALE_MIN) {
+      map_scale = MAP_SCALE_MAX;
+  }
+  update_map(true);
 }
 
 
@@ -300,12 +364,16 @@ void click_config_provider(ClickConfig **config, void *context) {
   config[BUTTON_ID_DOWN]->click.handler = (ClickHandler) handle_bottombutton_click;
   config[BUTTON_ID_SELECT]->click.handler = (ClickHandler) handle_selectbutton_click;
   config[BUTTON_ID_UP]->click.handler = (ClickHandler) handle_topbutton_click;
+  
+  // long click config:
+  config[BUTTON_ID_DOWN]->long_click.handler = (ClickHandler) handle_bottombutton_longclick;  
+  config[BUTTON_ID_UP]->long_click.handler = (ClickHandler) handle_topbutton_longclick;  
 }
-
+/*
 static void app_send_failed(DictionaryIterator* failed, AppMessageResult reason, void* context) {
   // TODO: error handling
 }
-
+*/
 // TODO: Error handling
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   (void) dict_error;
@@ -380,7 +448,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
   }
   */
 }
-void update_buttons(int state) {
+void update_buttons(uint8_t state) {
 
   if(state == STATE_STOP) {
     action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
@@ -391,59 +459,133 @@ void update_buttons(int state) {
     //vibes_short_pulse();
   }
 }
+void change_units(uint8_t units, bool force) {
+  if ((units == s_gpsdata.units) && !force) {
+    return;
+  }
+  s_gpsdata.units = units;
+  if (s_gpsdata.units == UNITS_METRIC) {
+    strncpy(s_data.unitsSpeed, SPEED_UNIT_METRIC, 8);
+    strncpy(s_data.unitsDistance, DISTANCE_UNIT_METRIC, 8);
+    strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_METRIC, 8);
+    strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_METRIC, 8);
+    strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_METRIC, 8);
+  } else {
+    strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
+    strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
+    strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_IMPERIAL, 8);
+    strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_IMPERIAL, 8);
+    strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_IMPERIAL, 8);
+  }
+  layer_mark_dirty(&s_data.miles_layer.layer);
+  layer_mark_dirty(&s_data.mph_layer.layer);
+  layer_mark_dirty(&s_data.avgmph_layer.layer);
+}
+int nbchange_state=0;
+void change_state(uint8_t state, int force) {
+    //uint8_t state0 = s_data.state;
+  /*
+  if (state == s_data.state) {
+  //if ((state == s_data.state) && !force) {
+    return;
+  }
+  */
+  //vibes_short_pulse();
+  s_data.state = state;
+
+/*
+    snprintf(s_data.debug2, sizeof(s_data.debug2),
+      "change_state #%d\ns:%d f:%d\ns_data.state0:%d\ns_data.state:%d",
+      nbchange_state,
+      state, force,
+      state0,
+      s_data.state
+      );
+*/
+  update_buttons(s_data.state);
+  
+  nbchange_state++;
+}
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   (void) old_tuple;
   
   switch (key) {
-  case SPEED_TEXT:
-    strncpy(s_data.speed, new_tuple->value->cstring, 16);
-    break;
-  case DISTANCE_TEXT:
-    strncpy(s_data.distance, new_tuple->value->cstring, 16);
-    break;
-  case AVGSPEED_TEXT:
-    strncpy(s_data.avgspeed, new_tuple->value->cstring, 16);
-    break;
-  case ALTITUDE_TEXT:
-    strncpy(s_data.altitude, new_tuple->value->cstring, 16);
-    break;
-  case ASCENT_TEXT:
-    strncpy(s_data.ascent, new_tuple->value->cstring, 16);
-    break;
-  case ASCENTRATE_TEXT:
-    strncpy(s_data.ascentrate, new_tuple->value->cstring, 16);
-    break;
-  case SLOPE_TEXT:
-    strncpy(s_data.slope, new_tuple->value->cstring, 16);
-    break;
-  case ACCURACY_TEXT:
-    strncpy(s_data.accuracy, new_tuple->value->cstring, 16);
-    break;
+
   case LIVE_TRACKING_FRIENDS:
     strncpy(s_data.friends, new_tuple->value->cstring, 90-1);
     break;
-  case STATE_CHANGED:
-    s_data.state = new_tuple->value->uint8;
-    update_buttons(s_data.state);
-    break;
-  case MEASUREMENT_UNITS:
-    if(new_tuple->value->uint8 == UNITS_METRIC) {
-      strncpy(s_data.unitsSpeed, SPEED_UNIT_METRIC, 8);
-      strncpy(s_data.unitsDistance, DISTANCE_UNIT_METRIC, 8);
-      strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_METRIC, 8);
-      strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_METRIC, 8);
-      strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_METRIC, 8);
+
+  case ALTITUDE_DATA:
+    change_units((new_tuple->value->data[0] & 0b00000001) >> 0, false);
+    //change_state((new_tuple->value->data[0] & 0b00000010) >> 1, 0);
+    
+    s_gpsdata.accuracy = new_tuple->value->data[1];
+    s_gpsdata.distance = (float) (new_tuple->value->data[2] + 256 * new_tuple->value->data[3]) / 100; // in km or miles
+    s_gpsdata.time = new_tuple->value->data[4] + 256 * new_tuple->value->data[5];
+    if (s_gpsdata.time != 0) {
+      s_gpsdata.avgspeed = s_gpsdata.distance / (float) s_gpsdata.time * 3600; // km/h or mph
     } else {
-      strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
-      strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
-      strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_IMPERIAL, 8);
-      strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_IMPERIAL, 8);
-      strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_IMPERIAL, 8);
+      s_gpsdata.avgspeed = 0;
     }
-    layer_mark_dirty(&s_data.miles_layer.layer);
-    layer_mark_dirty(&s_data.mph_layer.layer);
-    layer_mark_dirty(&s_data.avgmph_layer.layer);
+    s_gpsdata.speed = ((float) (new_tuple->value->data[17] + 256 * new_tuple->value->data[18])) / 10;
+    
+    s_gpsdata.altitude = new_tuple->value->data[6] + 256 * new_tuple->value->data[7];
+    s_gpsdata.ascent = new_tuple->value->data[8] + 256 * new_tuple->value->data[9];
+
+    //TODO: negative values
+    s_gpsdata.ascentrate = new_tuple->value->data[10] + 256 * new_tuple->value->data[11];
+    s_gpsdata.slope = new_tuple->value->data[12];
+    
+    if (new_tuple->value->data[14] >= 128) { 
+        s_gpsdata.xpos = -1 * (new_tuple->value->data[13] + 256 * (new_tuple->value->data[14] - 128));
+    } else {
+        s_gpsdata.xpos = new_tuple->value->data[13] + 256 * new_tuple->value->data[14];
+    }
+    if (new_tuple->value->data[16] >= 128) { 
+        s_gpsdata.ypos = -1 * (new_tuple->value->data[15] + 256 * (new_tuple->value->data[16] - 128));
+    } else {
+        s_gpsdata.ypos = new_tuple->value->data[15] + 256 * new_tuple->value->data[16];
+    }
+
+    snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
+    snprintf(s_data.distance,   sizeof(s_data.distance),   "%.1f", s_gpsdata.distance);
+    snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%.1f", s_gpsdata.avgspeed);
+    snprintf(s_data.speed,      sizeof(s_data.speed),      "%.1f", s_gpsdata.speed);
+    
+    snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
+    snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%u",   s_gpsdata.ascent);
+    snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%u",   s_gpsdata.ascentrate);
+    snprintf(s_data.slope,      sizeof(s_data.slope),      "%u",   s_gpsdata.slope);
+    
+    
+    snprintf(s_data.debug1, sizeof(s_data.debug1),
+      //"#%d d[0]:%d A:%u\nalt:%u asc:%u\nascr:%u sl:%u\npos:%ld|%ld #%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
+      "#%d us:%d|%d A:%u\nalt:%u asc:%u\npos:%d|%d #%u\n%d %d %d %d\nD:%.1f km T:%u\n%.1f avg:%.1f",
+      s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
+      s_gpsdata.altitude, s_gpsdata.ascent,
+      //s_gpsdata.ascentrate, s_gpsdata.slope,
+      s_gpsdata.xpos, s_gpsdata.ypos, nb_points,
+      new_tuple->value->data[13], new_tuple->value->data[14], new_tuple->value->data[15], new_tuple->value->data[16],
+      s_gpsdata.distance, s_gpsdata.time,
+      s_gpsdata.speed, s_gpsdata.avgspeed
+    );
+    
+    update_location();
+    
+    //if (s_data.page_number == PAGE_SPEED) {
+    //  layer_mark_dirty(&s_data.speed_layer.layer);
+    //}
+  
     break;
+  case STATE_CHANGED:
+    if (new_tuple->value->uint8 != old_tuple->value->uint8) {
+      //vibes_short_pulse();
+      change_state(new_tuple->value->uint8, 1);
+    }
+    break;
+  //case MEASUREMENT_UNITS:
+    //change_units(new_tuple->value->uint8, false);
+    //break;
   default:
     return;
   }
@@ -614,6 +756,34 @@ void page_live_tracking_layer_init(Window* window) {
 	  layer_set_hidden(&s_data.page_live_tracking, true);
 }
 
+void page_debug1_layer_init(Window* window) {
+	  layer_init(&s_data.page_debug1, GRect(0,TOPBAR_HEIGHT,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
+	  layer_add_child(&window->layer, &s_data.page_debug1);
+
+	  text_layer_init(&s_data.debug1_layer, GRect(0,0,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
+	  text_layer_set_text_color(&s_data.debug1_layer, GColorBlack);
+	  text_layer_set_background_color(&s_data.debug1_layer, GColorClear);
+	  text_layer_set_font(&s_data.debug1_layer, font_18);
+	  text_layer_set_text_alignment(&s_data.debug1_layer, GTextAlignmentLeft);
+	  text_layer_set_text(&s_data.debug1_layer, s_data.debug1);
+	  layer_add_child(&s_data.page_debug1, &s_data.debug1_layer.layer);
+
+	  layer_set_hidden(&s_data.page_debug1, true);
+}
+void page_debug2_layer_init(Window* window) {
+	  layer_init(&s_data.page_debug2, GRect(0,TOPBAR_HEIGHT,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
+	  layer_add_child(&window->layer, &s_data.page_debug2);
+
+	  text_layer_init(&s_data.debug2_layer, GRect(0,0,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
+	  text_layer_set_text_color(&s_data.debug2_layer, GColorBlack);
+	  text_layer_set_background_color(&s_data.debug2_layer, GColorClear);
+	  text_layer_set_font(&s_data.debug2_layer, font_18);
+	  text_layer_set_text_alignment(&s_data.debug2_layer, GTextAlignmentLeft);
+	  text_layer_set_text(&s_data.debug2_layer, s_data.debug2);
+	  layer_add_child(&s_data.page_debug2, &s_data.debug2_layer.layer);
+
+	  layer_set_hidden(&s_data.page_debug2, true);
+}
 void topbar_layer_init(Window* window) {
   int16_t w = SCREEN_W - MENU_WIDTH;
 
@@ -660,11 +830,12 @@ void handle_init(AppContextRef ctx) {
   font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
 
   // set default unit of measure
-  strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
-  strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
-  strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_IMPERIAL, 8);
-  strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_IMPERIAL, 8);
-  strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_IMPERIAL, 8);
+  change_units(UNITS_IMPERIAL, true);
+  //strncpy(s_data.unitsSpeed, SPEED_UNIT_IMPERIAL, 8);
+  //strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
+  //strncpy(s_data.altitude_layer.units, ALTITUDE_UNIT_IMPERIAL, 8);
+  //strncpy(s_data.altitude_ascent.units, ALTITUDE_UNIT_IMPERIAL, 8);
+  //strncpy(s_data.altitude_ascent_rate.units, ASCENT_RATE_UNIT_IMPERIAL, 8);
 
 
   heap_bitmap_init(&start_button,RESOURCE_ID_IMAGE_START_BUTTON);
@@ -684,8 +855,17 @@ void handle_init(AppContextRef ctx) {
   page_altitude_layer_init(window);
 
   page_live_tracking_layer_init(window);
+  
+  
+  page_map_layer_init(window);
+  
+  page_debug1_layer_init(window);
+  page_debug2_layer_init(window);
 
 
+s_gpsdata.xpos=0;
+s_gpsdata.ypos=0;
+s_gpsdata.nb_received=0;
 
   // Initialize the action bar:
   action_bar_layer_init(&action_bar);
@@ -694,27 +874,39 @@ void handle_init(AppContextRef ctx) {
                                              click_config_provider);
 
   action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
-  action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &reset_button.bmp);
+  //action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &reset_button.bmp);
+
+  uint8_t data[20];
+  for(int i=0; i < 20; i++) {
+    data[i] = 0;
+  }
 
   Tuplet initial_values[] = {
-    TupletCString(SPEED_TEXT, "0.0"),
-    TupletCString(DISTANCE_TEXT, "-"),
-    TupletCString(AVGSPEED_TEXT, "-"),
+    //TupletCString(SPEED_TEXT, "0.0"),
+    //TupletCString(DISTANCE_TEXT, "-"),
+    //TupletCString(AVGSPEED_TEXT, "-"),
     TupletInteger(STATE_CHANGED,STATE_STOP), //stopped
-    TupletInteger(MEASUREMENT_UNITS,UNITS_IMPERIAL), //stopped
-    TupletCString(ALTITUDE_TEXT, "-"),
-    TupletCString(ASCENT_TEXT, "-"),
-    TupletCString(ASCENTRATE_TEXT, "-"),
-    TupletCString(SLOPE_TEXT, "-"),
-    TupletCString(ACCURACY_TEXT, "-"),
-    TupletCString(LIVE_TRACKING_FRIENDS, "Live Tracking\n--\n--"),
+    //TupletInteger(MEASUREMENT_UNITS,UNITS_IMPERIAL), //stopped
+    //TupletCString(ALTITUDE_TEXT, "-"),
+    //TupletCString(ASCENT_TEXT, "-"),
+    //TupletCString(ASCENTRATE_TEXT, "-"),
+    //TupletCString(SLOPE_TEXT, "-"),
+    //TupletCString(ACCURACY_TEXT, "-"),
+    //TupletCString(LIVE_TRACKING_FRIENDS, "+ Live Tracking +\nSetup your account in the android app\nOr join the beta:\npebblebike.com\n/live"),
+    TupletCString(LIVE_TRACKING_FRIENDS, "+ Live Tracking +\nSetup your account\n\nOr join the beta:\npebblebike.com\n/live"),
+    //TupletInteger(XPOS, 0),
+    //TupletInteger(YPOS, 0),
+    TupletBytes(ALTITUDE_DATA, data, 20),
   };
 
   app_sync_init(&s_data.sync, s_data.sync_buffer, 200, initial_values, ARRAY_LENGTH(initial_values),
                 sync_tuple_changed_callback, sync_error_callback, NULL);
 
   window_stack_push(window, true /* Animated */);
-
+  
+  #if ROCKSHOT
+    rockshot_init(ctx);
+  #endif
 }
 static void handle_deinit(AppContextRef c) {
    app_sync_deinit(&s_data.sync);
@@ -761,9 +953,12 @@ void pbl_main(void *params) {
     .messaging_info = {
       .buffer_sizes = {
         .inbound = 200,
-        .outbound = 16,
+        .outbound = 256,
       }
     }
   };
+  #if ROCKSHOT
+    rockshot_main(&handlers);
+  #endif
   app_event_loop(params, &handlers);
 }
