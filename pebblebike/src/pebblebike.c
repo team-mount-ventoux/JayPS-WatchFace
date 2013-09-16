@@ -7,7 +7,7 @@
 // 5DD35873-3BB6-44D6-8255-0E61BC3B97F5
 #define MY_UUID { 0x5D, 0xD3, 0x58, 0x73, 0x3B, 0xB6, 0x44, 0xD6, 0x82, 0x55, 0x0E, 0x61, 0xBC, 0x3B, 0x97, 0xF5 }
 
-#define PRODUCTION true
+#define PRODUCTION false
 
 #if PRODUCTION
   #define DEBUG false
@@ -146,7 +146,7 @@ void update_map(bool force_recenter) {
     pathFrame.origin.y = -y + SCREEN_H/2;
     layer_set_frame(&path_layer, pathFrame);  
   }
-
+/*
   #if DEBUG
   snprintf(s_data.debug2, sizeof(s_data.debug2),
     "#12 nbpts:%u\npos : %d|%d\nx|y:%d|%d\ndebug:%u|%u\nscale:%d\nvsize:%d|%d",
@@ -158,7 +158,7 @@ void update_map(bool force_recenter) {
     MAP_VSIZE_X, MAP_VSIZE_Y
   );
   #endif
-
+*/
   // Update the layer
   layer_mark_dirty(&path_layer);    
 }
@@ -397,82 +397,97 @@ static void app_send_failed(DictionaryIterator* failed, AppMessageResult reason,
   // TODO: error handling
 }
 */
-// TODO: Error handling
+int nb_sync_error_callback = 0;
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   (void) dict_error;
   (void) app_message_error;
   (void) context;
-/*
-  vibes_short_pulse();
+
+  #if DEBUG
+  
+  if (dict_error != DICT_OK || app_message_error != APP_MSG_OK) {
+    //vibes_short_pulse();
+    nb_sync_error_callback++;
+  }
+  
+  char debug1[16];
+  char debug2[16];
 
   switch (dict_error) {
     case DICT_OK:
       //The operation returned successfully.
-      strncpy(s_data.ascent, "OK", 16);
+      strncpy(debug1, "OK", 16);
       break;
     case DICT_NOT_ENOUGH_STORAGE:
-      strncpy(s_data.ascent, "STO", 16);
+      strncpy(debug1, "STO", 16);
       //There was not enough backing storage to complete the operation.
       break;
     case DICT_INVALID_ARGS:
       //One or more arguments were invalid or uninitialized.
-      strncpy(s_data.ascent, "INV", 16);
+      strncpy(debug1, "INV", 16);
       break;
     case DICT_INTERNAL_INCONSISTENCY:
       //The lengths and/or count of the dictionary its tuples are inconsistent.
-      strncpy(s_data.ascent, "INC", 16);
+      strncpy(debug1, "INC", 16);
       break;
   }
   switch (app_message_error) {
     case APP_MSG_OK:
       // All good, operation was successful.
-      strncpy(s_data.ascentrate, "OK", 16);
+      strncpy(debug2, "OK", 16);
       break;
     case APP_MSG_SEND_TIMEOUT:
       // The other end did not confirm receiving the sent data with an (n)ack in time.
-      strncpy(s_data.ascentrate, "NOC", 16);
+      strncpy(debug2, "NOC", 16);
       break;
     case APP_MSG_SEND_REJECTED:
       // The other end rejected the sent data, with a "nack" reply.
-      strncpy(s_data.ascentrate, "NAC", 16);
+      strncpy(debug2, "NAC", 16);
       break;
     case APP_MSG_NOT_CONNECTED:
       // The other end was not connected.
-      strncpy(s_data.ascentrate, "NCO", 16);
+      strncpy(debug2, "NCO", 16);
       break;
     case APP_MSG_APP_NOT_RUNNING:
       // The local application was not running.
-      strncpy(s_data.ascentrate, "NOR", 16);
+      strncpy(debug2, "NOR", 16);
       break;
     case APP_MSG_INVALID_ARGS:
       // The function was called with invalid arguments.
-      strncpy(s_data.ascentrate, "INV", 16);
+      strncpy(debug2, "INV", 16);
       break;
     case APP_MSG_BUSY:
       // There are pending (in or outbound) messages that need to be processed first before new ones can be received or sent.
-      strncpy(s_data.ascentrate, "BUS", 16);
+      strncpy(debug2, "BUS", 16);
       break;
     case APP_MSG_BUFFER_OVERFLOW:
       // The buffer was too small to contain the incoming message.
-      strncpy(s_data.ascentrate, "OVE", 16);
+      strncpy(debug2, "OVE", 16);
       break;
     case APP_MSG_ALREADY_RELEASED:
       // The resource had already been released.
-      strncpy(s_data.ascentrate, "ALR", 16);
+      strncpy(debug2, "ALR", 16);
       break;
     case APP_MSG_CALLBACK_ALREADY_REGISTERED:
       // The callback node was already registered, or its ListNode has not been initialized.
-      strncpy(s_data.ascentrate, "AL2", 16);
+      strncpy(debug2, "AL2", 16);
       break;
     case APP_MSG_CALLBACK_NOT_REGISTERED:
       // The callback could not be deregistered, because it had not been registered before.
-      strncpy(s_data.ascentrate, "NOR", 16);
+      strncpy(debug2, "NOR", 16);
       break;
   }
-  */
+  snprintf(s_data.debug2, sizeof(s_data.debug2),
+    "#%d\ndict_error:\n%d - %s\n\napp_msg_err:\n%d - %s",
+    nb_sync_error_callback,
+    dict_error, debug1,
+    app_message_error, debug2
+  );
+  layer_mark_dirty(&s_data.page_debug2);
+  #endif
+
 }
 void update_buttons(uint8_t state) {
-
   if(state == STATE_STOP) {
     action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
   } else if(state == STATE_START) {
@@ -579,16 +594,16 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%u",   s_gpsdata.ascent);
     snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%u",   s_gpsdata.ascentrate);
     snprintf(s_data.slope,      sizeof(s_data.slope),      "%u",   s_gpsdata.slope);
-    
+
     #if DEBUG
     snprintf(s_data.debug1, sizeof(s_data.debug1),
       //"#%d d[0]:%d A:%u\nalt:%u asc:%u\nascr:%u sl:%u\npos:%ld|%ld #%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
-      "#%d us:%d|%d A:%u\nalt:%u asc:%u\npos:%d|%d #%u\n%d %d %d %d\nD:%.1f km T:%u\n%.1f avg:%.1f",
+      "#%d us:%d|%d A:%u\nalt:%u asc:%u\npos:%d|%d #%u\nscale:%d\nD:%.1f km T:%u\n%.1f avg:%.1f",
       s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
       s_gpsdata.altitude, s_gpsdata.ascent,
       //s_gpsdata.ascentrate, s_gpsdata.slope,
       s_gpsdata.xpos, s_gpsdata.ypos, nb_points,
-      new_tuple->value->data[13], new_tuple->value->data[14], new_tuple->value->data[15], new_tuple->value->data[16],
+      map_scale,
       s_gpsdata.distance, s_gpsdata.time,
       s_gpsdata.speed, s_gpsdata.avgspeed
     );
@@ -596,10 +611,16 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     update_location();
     
-    //if (s_data.page_number == PAGE_SPEED) {
-    //  layer_mark_dirty(&s_data.speed_layer.layer);
-    //}
-  
+    if (s_data.page_number == PAGE_SPEED) {
+      layer_mark_dirty(&s_data.page_speed);
+    }
+    if (s_data.page_number == PAGE_ALTITUDE) {
+      layer_mark_dirty(&s_data.page_altitude);
+    }
+    if (s_data.page_number == PAGE_LIVE_TRACKING) {
+      layer_mark_dirty(&s_data.page_live_tracking);
+    }
+      
     break;
   case STATE_CHANGED:
     if (new_tuple->value->uint8 != old_tuple->value->uint8) {
@@ -902,6 +923,13 @@ s_gpsdata.nb_received=0;
 
   action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
   //action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &reset_button.bmp);
+
+
+  // Reduce the sniff interval for more responsive messaging at the expense of
+  // increased energy consumption by the Bluetooth module
+  // The sniff interval will be restored by the system after the app has been
+  // unloaded
+  app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
 
   uint8_t data[20];
   for(int i=0; i < 20; i++) {
