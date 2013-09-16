@@ -6,13 +6,30 @@
 
 // 5DD35873-3BB6-44D6-8255-0E61BC3B97F5
 #define MY_UUID { 0x5D, 0xD3, 0x58, 0x73, 0x3B, 0xB6, 0x44, 0xD6, 0x82, 0x55, 0x0E, 0x61, 0xBC, 0x3B, 0x97, 0xF5 }
-PBL_APP_INFO(MY_UUID,
-             "Pebble Bike 1.3.0-beta3", "N Jackson",
-             1, 0, /* App version */
-             RESOURCE_ID_IMAGE_MENU_ICON,
-             APP_INFO_STANDARD_APP);
 
-#define ROCKSHOT true
+#define PRODUCTION true
+
+#if PRODUCTION
+  #define DEBUG false
+  #define ROCKSHOT false
+
+  PBL_APP_INFO(MY_UUID,
+     "Pebble Bike 1.3.0-beta3", "N Jackson",
+     1, 0, /* App version */
+     RESOURCE_ID_IMAGE_MENU_ICON,
+     APP_INFO_STANDARD_APP);
+#endif
+
+#if !PRODUCTION
+  #define DEBUG true
+  #define ROCKSHOT true
+
+  PBL_APP_INFO(MY_UUID,
+     "PB 1.3.0-beta3", "N Jackson",
+     1, 0, /* App version */
+     RESOURCE_ID_IMAGE_MENU_ICON,
+     APP_INFO_STANDARD_APP);
+#endif
 
 #if ROCKSHOT
 #include "rockshot.h"
@@ -130,6 +147,7 @@ void update_map(bool force_recenter) {
     layer_set_frame(&path_layer, pathFrame);  
   }
 
+  #if DEBUG
   snprintf(s_data.debug2, sizeof(s_data.debug2),
     "#12 nbpts:%u\npos : %d|%d\nx|y:%d|%d\ndebug:%u|%u\nscale:%d\nvsize:%d|%d",
     nb_points,
@@ -139,6 +157,7 @@ void update_map(bool force_recenter) {
     map_scale,
     MAP_VSIZE_X, MAP_VSIZE_Y
   );
+  #endif
 
   // Update the layer
   layer_mark_dirty(&path_layer);    
@@ -300,8 +319,11 @@ void update_layers() {
   layer_set_hidden(&s_data.page_altitude, true);
   layer_set_hidden(&s_data.page_live_tracking, true);
   layer_set_hidden(&s_data.page_map, true);
+
+  #if DEBUG
   layer_set_hidden(&s_data.page_debug1, true);
   layer_set_hidden(&s_data.page_debug2, true);
+  #endif
   if (s_data.page_number == PAGE_SPEED) {
     layer_set_hidden(&s_data.page_speed, false);
 //    layer_mark_dirty(&s_data.speed_layer.layer);
@@ -318,13 +340,14 @@ void update_layers() {
 	  layer_set_hidden(&s_data.page_map, false);
       //vibes_short_pulse();
   }
+  #if DEBUG
   if (s_data.page_number == PAGE_DEBUG1) {
 	  layer_set_hidden(&s_data.page_debug1, false);
   }
   if (s_data.page_number == PAGE_DEBUG2) {
 	  layer_set_hidden(&s_data.page_debug2, false);
   }
-
+  #endif
 }
 
 void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
@@ -557,7 +580,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%u",   s_gpsdata.ascentrate);
     snprintf(s_data.slope,      sizeof(s_data.slope),      "%u",   s_gpsdata.slope);
     
-    
+    #if DEBUG
     snprintf(s_data.debug1, sizeof(s_data.debug1),
       //"#%d d[0]:%d A:%u\nalt:%u asc:%u\nascr:%u sl:%u\npos:%ld|%ld #%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
       "#%d us:%d|%d A:%u\nalt:%u asc:%u\npos:%d|%d #%u\n%d %d %d %d\nD:%.1f km T:%u\n%.1f avg:%.1f",
@@ -569,7 +592,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       s_gpsdata.distance, s_gpsdata.time,
       s_gpsdata.speed, s_gpsdata.avgspeed
     );
-    
+    #endif
+
     update_location();
     
     //if (s_data.page_number == PAGE_SPEED) {
@@ -756,6 +780,7 @@ void page_live_tracking_layer_init(Window* window) {
 	  layer_set_hidden(&s_data.page_live_tracking, true);
 }
 
+#if DEBUG
 void page_debug1_layer_init(Window* window) {
 	  layer_init(&s_data.page_debug1, GRect(0,TOPBAR_HEIGHT,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
 	  layer_add_child(&window->layer, &s_data.page_debug1);
@@ -784,6 +809,7 @@ void page_debug2_layer_init(Window* window) {
 
 	  layer_set_hidden(&s_data.page_debug2, true);
 }
+#endif
 void topbar_layer_init(Window* window) {
   int16_t w = SCREEN_W - MENU_WIDTH;
 
@@ -858,10 +884,11 @@ void handle_init(AppContextRef ctx) {
   
   
   page_map_layer_init(window);
-  
+
+  #if DEBUG
   page_debug1_layer_init(window);
   page_debug2_layer_init(window);
-
+  #endif
 
 s_gpsdata.xpos=0;
 s_gpsdata.ypos=0;

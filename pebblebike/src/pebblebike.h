@@ -41,7 +41,15 @@ enum {
   PAGE_DEBUG1 = 4,
   PAGE_DEBUG2 = 5,
 };
-#define NUMBER_OF_PAGES 6
+
+#if DEBUG
+  #define NUMBER_OF_PAGES 6
+#endif
+
+#if !DEBUG
+  #define NUMBER_OF_PAGES 4
+#endif
+
 
 
 #define CHAR_WIDTH 35
@@ -95,9 +103,12 @@ typedef struct SpeedLayer {
   Layer page_altitude;
   Layer page_live_tracking;
   Layer page_map;
+
+  #if DEBUG
   Layer page_debug1;
   Layer page_debug2;
-
+  #endif
+  
   TopBarLayer topbar_layer;
 
   SpeedLayer speed_layer;
@@ -114,8 +125,10 @@ typedef struct SpeedLayer {
   FieldLayer altitude_accuracy;
 
   TextLayer live_tracking_layer;
+  #if DEBUG
   TextLayer debug1_layer;
   TextLayer debug2_layer;
+  #endif
 
   char time[6]; // xx:xx, \0 terminated
   char speed[16];
@@ -127,8 +140,10 @@ typedef struct SpeedLayer {
   char slope[8];
   char accuracy[5];
   char friends[90];
+  #if DEBUG
   char debug1[200];
   char debug2[200];
+  #endif
   char unitsSpeed[8];
   char unitsDistance[8];
   uint8_t state;
