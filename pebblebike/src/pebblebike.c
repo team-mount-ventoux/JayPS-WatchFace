@@ -89,7 +89,8 @@ GRect pathFrame;
 void update_map(bool force_recenter);
 void update_location() {
   
-  if (s_gpsdata.xpos == xposprev && s_gpsdata.ypos == yposprev) {
+  if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < 3*3) {
+      // distance with previous position < 3*10 (m)
       /*snprintf(s_data.debug2, sizeof(s_data.debug2),
         "#11 nbpoints:%u\npos : %ld|%ld\nposprev : %ld|%ld\n",
         nb_points,
