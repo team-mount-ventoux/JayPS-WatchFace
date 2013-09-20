@@ -168,4 +168,5 @@ static struct GPSData {
   uint8_t accuracy;
   int16_t xpos;
   int16_t ypos;
+  uint16_t bearing;
 } s_gpsdata;

@@ -68,7 +68,7 @@ GFont font_12, font_18, font_24;
 // map layer
 Layer path_layer;
 
-#define NUM_POINTS 1100
+#define NUM_POINTS 1050
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
 int nb_points = 0;
@@ -393,45 +393,23 @@ void click_config_provider(ClickConfig **config, void *context) {
   config[BUTTON_ID_DOWN]->long_click.handler = (ClickHandler) handle_bottombutton_longclick;  
   config[BUTTON_ID_UP]->long_click.handler = (ClickHandler) handle_topbutton_longclick;  
 }
-/*
-static void app_send_failed(DictionaryIterator* failed, AppMessageResult reason, void* context) {
-  // TODO: error handling
-}
-*/
+
 int nb_sync_error_callback = 0;
-static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-  (void) dict_error;
+int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
+void my_in_drp_handler(void *context, AppMessageResult app_message_error) {
+  // incoming message dropped
   (void) app_message_error;
   (void) context;
 
   #if DEBUG
-  
-  if (dict_error != DICT_OK || app_message_error != APP_MSG_OK) {
+  if (app_message_error != APP_MSG_OK) {
     //vibes_short_pulse();
     nb_sync_error_callback++;
   }
   
-  char debug1[16];
+  //char debug1[16];
   char debug2[16];
 
-  switch (dict_error) {
-    case DICT_OK:
-      //The operation returned successfully.
-      strncpy(debug1, "OK", 16);
-      break;
-    case DICT_NOT_ENOUGH_STORAGE:
-      strncpy(debug1, "STO", 16);
-      //There was not enough backing storage to complete the operation.
-      break;
-    case DICT_INVALID_ARGS:
-      //One or more arguments were invalid or uninitialized.
-      strncpy(debug1, "INV", 16);
-      break;
-    case DICT_INTERNAL_INCONSISTENCY:
-      //The lengths and/or count of the dictionary its tuples are inconsistent.
-      strncpy(debug1, "INC", 16);
-      break;
-  }
   switch (app_message_error) {
     case APP_MSG_OK:
       // All good, operation was successful.
@@ -479,10 +457,11 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
       break;
   }
   snprintf(s_data.debug2, sizeof(s_data.debug2),
-    "#%d\ndict_error:\n%d - %s\n\napp_msg_err:\n%d - %s",
+    "#%d\napp_msg_err:\n%d - %s\ntpl_live:%d\ntpl_altitude:%d\ntpl_state:%d",
     nb_sync_error_callback,
-    dict_error, debug1,
-    app_message_error, debug2
+    app_message_error, debug2,
+    nb_tuple_live, nb_tuple_altitude, nb_tuple_state
+
   );
   layer_mark_dirty(&s_data.page_debug2);
   #endif
@@ -521,70 +500,73 @@ void change_units(uint8_t units, bool force) {
   layer_mark_dirty(&s_data.avgmph_layer.layer);
 }
 int nbchange_state=0;
-void change_state(uint8_t state, int force) {
-    //uint8_t state0 = s_data.state;
-  /*
+void change_state(uint8_t state) {
   if (state == s_data.state) {
-  //if ((state == s_data.state) && !force) {
     return;
   }
-  */
   //vibes_short_pulse();
   s_data.state = state;
 
-/*
-    snprintf(s_data.debug2, sizeof(s_data.debug2),
-      "change_state #%d\ns:%d f:%d\ns_data.state0:%d\ns_data.state:%d",
-      nbchange_state,
-      state, force,
-      state0,
-      s_data.state
-      );
-*/
   update_buttons(s_data.state);
   
   nbchange_state++;
 }
-static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
-  (void) old_tuple;
-  
-  switch (key) {
 
-  case LIVE_TRACKING_FRIENDS:
-    strncpy(s_data.friends, new_tuple->value->cstring, 90-1);
-    break;
+static void my_in_rcv_handler(DictionaryIterator *iter, void *context) {
+  Tuple *tuple_live = dict_find(iter, LIVE_TRACKING_FRIENDS);
+  Tuple *tuple_altitude = dict_find(iter, ALTITUDE_DATA);
+  Tuple *tuple_state = dict_find(iter, STATE_CHANGED);
 
-  case ALTITUDE_DATA:
-    change_units((new_tuple->value->data[0] & 0b00000001) >> 0, false);
-    //change_state((new_tuple->value->data[0] & 0b00000010) >> 1, 0);
+  if (tuple_live) {
+    nb_tuple_live++;
+    strncpy(s_data.friends, tuple_live->value->cstring, 90-1);
+  }
+
+  if (tuple_altitude) {
+    nb_tuple_altitude++;
+    change_units((tuple_altitude->value->data[0] & 0b00000001) >> 0, false);
+    change_state((tuple_altitude->value->data[0] & 0b00000010) >> 1);
     
-    s_gpsdata.accuracy = new_tuple->value->data[1];
-    s_gpsdata.distance = (float) (new_tuple->value->data[2] + 256 * new_tuple->value->data[3]) / 100; // in km or miles
-    s_gpsdata.time = new_tuple->value->data[4] + 256 * new_tuple->value->data[5];
+    s_gpsdata.accuracy = tuple_altitude->value->data[1];
+    s_gpsdata.distance = (float) (tuple_altitude->value->data[2] + 256 * tuple_altitude->value->data[3]) / 100; // in km or miles
+    s_gpsdata.time = tuple_altitude->value->data[4] + 256 * tuple_altitude->value->data[5];
     if (s_gpsdata.time != 0) {
       s_gpsdata.avgspeed = s_gpsdata.distance / (float) s_gpsdata.time * 3600; // km/h or mph
     } else {
       s_gpsdata.avgspeed = 0;
     }
-    s_gpsdata.speed = ((float) (new_tuple->value->data[17] + 256 * new_tuple->value->data[18])) / 10;
-    
-    s_gpsdata.altitude = new_tuple->value->data[6] + 256 * new_tuple->value->data[7];
-    s_gpsdata.ascent = new_tuple->value->data[8] + 256 * new_tuple->value->data[9];
+    s_gpsdata.speed = ((float) (tuple_altitude->value->data[17] + 256 * tuple_altitude->value->data[18])) / 10;
+    s_gpsdata.altitude = tuple_altitude->value->data[6] + 256 * tuple_altitude->value->data[7];
+    if (tuple_altitude->value->data[9] >= 128) {
+      s_gpsdata.ascent = -1 * (tuple_altitude->value->data[8] + 256 * (tuple_altitude->value->data[9] - 128));
+    } else {
+      s_gpsdata.ascent = tuple_altitude->value->data[8] + 256 * tuple_altitude->value->data[9];
+    }
 
-    //TODO: negative values
-    s_gpsdata.ascentrate = new_tuple->value->data[10] + 256 * new_tuple->value->data[11];
-    s_gpsdata.slope = new_tuple->value->data[12];
+    if (tuple_altitude->value->data[11] >= 128) {
+      s_gpsdata.ascentrate = -1 * (tuple_altitude->value->data[10] + 256 * (tuple_altitude->value->data[11] - 128));
+    } else {
+      s_gpsdata.ascentrate = tuple_altitude->value->data[10] + 256 * tuple_altitude->value->data[11];
+    }
+    if (tuple_altitude->value->data[12] >= 128) {
+      s_gpsdata.slope = -1 * (tuple_altitude->value->data[12] - 128);
+    } else {
+      s_gpsdata.slope = tuple_altitude->value->data[12];
+    }
+
+
     
-    if (new_tuple->value->data[14] >= 128) { 
-        s_gpsdata.xpos = -1 * (new_tuple->value->data[13] + 256 * (new_tuple->value->data[14] - 128));
+    if (tuple_altitude->value->data[14] >= 128) { 
+        s_gpsdata.xpos = -1 * (tuple_altitude->value->data[13] + 256 * (tuple_altitude->value->data[14] - 128));
     } else {
-        s_gpsdata.xpos = new_tuple->value->data[13] + 256 * new_tuple->value->data[14];
+        s_gpsdata.xpos = tuple_altitude->value->data[13] + 256 * tuple_altitude->value->data[14];
     }
-    if (new_tuple->value->data[16] >= 128) { 
-        s_gpsdata.ypos = -1 * (new_tuple->value->data[15] + 256 * (new_tuple->value->data[16] - 128));
+    if (tuple_altitude->value->data[16] >= 128) { 
+        s_gpsdata.ypos = -1 * (tuple_altitude->value->data[15] + 256 * (tuple_altitude->value->data[16] - 128));
     } else {
-        s_gpsdata.ypos = new_tuple->value->data[15] + 256 * new_tuple->value->data[16];
+        s_gpsdata.ypos = tuple_altitude->value->data[15] + 256 * tuple_altitude->value->data[16];
     }
+    s_gpsdata.bearing = 360 * tuple_altitude->value->data[19] / 256;
 
     snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
     snprintf(s_data.distance,   sizeof(s_data.distance),   "%.1f", s_gpsdata.distance);
@@ -592,19 +574,19 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     snprintf(s_data.speed,      sizeof(s_data.speed),      "%.1f", s_gpsdata.speed);
     
     snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
-    snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%u",   s_gpsdata.ascent);
-    snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%u",   s_gpsdata.ascentrate);
-    snprintf(s_data.slope,      sizeof(s_data.slope),      "%u",   s_gpsdata.slope);
+    snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
+    snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
+    snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
 
     #if DEBUG
     snprintf(s_data.debug1, sizeof(s_data.debug1),
       //"#%d d[0]:%d A:%u\nalt:%u asc:%u\nascr:%u sl:%u\npos:%ld|%ld #%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
-      "#%d us:%d|%d A:%u\nalt:%u asc:%u\npos:%d|%d #%u\nscale:%d\nD:%.1f km T:%u\n%.1f avg:%.1f",
+      "#%d us:%d|%d A:%u\nalt:%u asc:%d\npos:%d|%d #%u\ns:%d b:%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
       s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
       s_gpsdata.altitude, s_gpsdata.ascent,
       //s_gpsdata.ascentrate, s_gpsdata.slope,
       s_gpsdata.xpos, s_gpsdata.ypos, nb_points,
-      map_scale,
+      map_scale,s_gpsdata.bearing,
       s_gpsdata.distance, s_gpsdata.time,
       s_gpsdata.speed, s_gpsdata.avgspeed
     );
@@ -621,21 +603,27 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     if (s_data.page_number == PAGE_LIVE_TRACKING) {
       layer_mark_dirty(&s_data.page_live_tracking);
     }
-      
-    break;
-  case STATE_CHANGED:
-    if (new_tuple->value->uint8 != old_tuple->value->uint8) {
-      //vibes_short_pulse();
-      change_state(new_tuple->value->uint8, 1);
+    #if DEBUG    
+    if (s_data.page_number == PAGE_DEBUG1) {
+      layer_mark_dirty(&s_data.page_debug1);
     }
-    break;
-  //case MEASUREMENT_UNITS:
-    //change_units(new_tuple->value->uint8, false);
-    //break;
-  default:
-    return;
+    if (s_data.page_number == PAGE_DEBUG2) {
+      layer_mark_dirty(&s_data.page_debug2);
+    }
+    #endif
   }
 
+  if (tuple_state) {
+    nb_tuple_state++;
+    //vibes_short_pulse();
+    change_state(tuple_state->value->uint8);
+  }
+
+  snprintf(s_data.debug2, sizeof(s_data.debug2),
+    "sync_error:%d\ntpl_live:%d\ntpl_altitude:%d\ntpl_state:%d",
+    nb_sync_error_callback,
+    nb_tuple_live, nb_tuple_altitude, nb_tuple_state
+  ); 
 }
 
 
@@ -932,31 +920,7 @@ s_gpsdata.nb_received=0;
   // unloaded
   app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
 
-  uint8_t data[20];
-  for(int i=0; i < 20; i++) {
-    data[i] = 0;
-  }
-
-  Tuplet initial_values[] = {
-    //TupletCString(SPEED_TEXT, "0.0"),
-    //TupletCString(DISTANCE_TEXT, "-"),
-    //TupletCString(AVGSPEED_TEXT, "-"),
-    TupletInteger(STATE_CHANGED,STATE_STOP), //stopped
-    //TupletInteger(MEASUREMENT_UNITS,UNITS_IMPERIAL), //stopped
-    //TupletCString(ALTITUDE_TEXT, "-"),
-    //TupletCString(ASCENT_TEXT, "-"),
-    //TupletCString(ASCENTRATE_TEXT, "-"),
-    //TupletCString(SLOPE_TEXT, "-"),
-    //TupletCString(ACCURACY_TEXT, "-"),
-    //TupletCString(LIVE_TRACKING_FRIENDS, "+ Live Tracking +\nSetup your account in the android app\nOr join the beta:\npebblebike.com\n/live"),
-    TupletCString(LIVE_TRACKING_FRIENDS, "+ Live Tracking +\nSetup your account\n\nOr join the beta:\npebblebike.com\n/live"),
-    //TupletInteger(XPOS, 0),
-    //TupletInteger(YPOS, 0),
-    TupletBytes(ALTITUDE_DATA, data, 20),
-  };
-
-  app_sync_init(&s_data.sync, s_data.sync_buffer, 200, initial_values, ARRAY_LENGTH(initial_values),
-                sync_tuple_changed_callback, sync_error_callback, NULL);
+  strncpy(s_data.friends, "+ Live Tracking +\nSetup your account\n\nOr join the beta:\npebblebike.com\n/live", 90-1);
 
   window_stack_push(window, true /* Animated */);
   
@@ -1010,7 +974,11 @@ void pbl_main(void *params) {
       .buffer_sizes = {
         .inbound = 200,
         .outbound = 256,
-      }
+      },
+      .default_callbacks.callbacks = {
+        .in_received = my_in_rcv_handler,
+        .in_dropped = my_in_drp_handler,
+      },
     }
   };
   #if ROCKSHOT
