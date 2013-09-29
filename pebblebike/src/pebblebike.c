@@ -67,8 +67,9 @@ GFont font_12, font_18, font_24;
 
 // map layer
 Layer path_layer;
+Layer bearing_layer;
 
-#define NUM_POINTS 1050
+#define NUM_POINTS 950
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
 int nb_points = 0;
@@ -85,6 +86,19 @@ int map_scale = MAP_SCALE_MIN * 2;
 int32_t xposprev = 0, yposprev = 0;
 
 GRect pathFrame;
+
+
+const GPathInfo BEARING_PATH_POINTS = {
+  4,
+  (GPoint []) {
+    {0, 3},
+    {-4, 6},
+    {0, -6},
+    {4, 6},
+  }
+};
+
+GPath bearing_gpath;
 
 void update_map(bool force_recenter);
 void update_location() {
@@ -161,7 +175,8 @@ void update_map(bool force_recenter) {
   #endif
 */
   // Update the layer
-  layer_mark_dirty(&path_layer);    
+  layer_mark_dirty(&path_layer);
+  layer_mark_dirty(&bearing_layer);
 }
 
 void path_layer_update_callback(Layer *me, GContext *ctx) {
@@ -190,9 +205,25 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
         p1
     );
   }
-
 }
+void bearing_layer_update_callback(Layer *me, GContext *ctx) {
+  int x, y;
+  
+  x = (XINI + (s_gpsdata.xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+  y = (YINI - (s_gpsdata.ypos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
 
+  gpath_move_to(&bearing_gpath, GPoint(x + pathFrame.origin.x, y + pathFrame.origin.y));  
+  
+  gpath_rotate_to(&bearing_gpath, (TRIG_MAX_ANGLE / 360) * s_gpsdata.bearing);
+
+  // Fill the path:
+  //graphics_context_set_fill_color(ctx, GColorBlack);
+  //gpath_draw_filled(ctx, &bearing_gpath);
+  
+  // Stroke the path:
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+  gpath_draw_outline(ctx, &bearing_gpath);
+}
 void page_map_layer_init(Window* window) {
 
   for (int i = 0; i < NUM_POINTS; i++) {
@@ -209,6 +240,13 @@ void page_map_layer_init(Window* window) {
   layer_set_frame(&path_layer, pathFrame);
   path_layer.update_proc = path_layer_update_callback;
   layer_add_child(&s_data.page_map, &path_layer);
+  
+  layer_init(&bearing_layer, GRect(0, 0, SCREEN_W, SCREEN_H));
+  bearing_layer.update_proc = bearing_layer_update_callback;
+  layer_add_child(&s_data.page_map, &bearing_layer);
+
+  gpath_init(&bearing_gpath, &BEARING_PATH_POINTS);
+  gpath_move_to(&bearing_gpath, GPoint(SCREEN_W/2, SCREEN_H/2));
     
   layer_set_hidden(&s_data.page_map, true);
   
