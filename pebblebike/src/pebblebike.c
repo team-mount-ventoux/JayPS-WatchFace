@@ -7,14 +7,14 @@
 // 5DD35873-3BB6-44D6-8255-0E61BC3B97F5
 #define MY_UUID { 0x5D, 0xD3, 0x58, 0x73, 0x3B, 0xB6, 0x44, 0xD6, 0x82, 0x55, 0x0E, 0x61, 0xBC, 0x3B, 0x97, 0xF5 }
 
-#define PRODUCTION false
+#define PRODUCTION true
 
 #if PRODUCTION
   #define DEBUG false
   #define ROCKSHOT false
 
   PBL_APP_INFO(MY_UUID,
-     "Pebble Bike 1.3.0-beta3", "N Jackson",
+     "Pebble Bike 1.3.0-beta4", "N Jackson",
      1, 0, /* App version */
      RESOURCE_ID_IMAGE_MENU_ICON,
      APP_INFO_STANDARD_APP);
@@ -25,7 +25,7 @@
   #define ROCKSHOT true
 
   PBL_APP_INFO(MY_UUID,
-     "PB 1.3.0-beta3", "N Jackson",
+     "PB 1.3.0-beta4", "N Jackson",
      1, 0, /* App version */
      RESOURCE_ID_IMAGE_MENU_ICON,
      APP_INFO_STANDARD_APP);
@@ -657,11 +657,13 @@ static void my_in_rcv_handler(DictionaryIterator *iter, void *context) {
     change_state(tuple_state->value->uint8);
   }
 
+  #if DEBUG
   snprintf(s_data.debug2, sizeof(s_data.debug2),
     "sync_error:%d\ntpl_live:%d\ntpl_altitude:%d\ntpl_state:%d",
     nb_sync_error_callback,
     nb_tuple_live, nb_tuple_altitude, nb_tuple_state
-  ); 
+  );
+  #endif 
 }
 
 
