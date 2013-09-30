@@ -152,6 +152,8 @@ typedef struct SpeedLayer {
   int page_number;
   AppSync sync;
   uint8_t sync_buffer[200];
+  
+  int32_t android_version;
 } s_data;
 
 

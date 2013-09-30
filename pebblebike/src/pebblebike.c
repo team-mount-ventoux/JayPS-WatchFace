@@ -568,111 +568,118 @@ void change_state(uint8_t state) {
 }
 
 static void my_in_rcv_handler(DictionaryIterator *iter, void *context) {
-  Tuple *tuple_live = dict_find(iter, LIVE_TRACKING_FRIENDS);
-  Tuple *tuple_altitude = dict_find(iter, ALTITUDE_DATA);
-  Tuple *tuple_state = dict_find(iter, STATE_CHANGED);
-  Tuple *tuple_version_android = dict_find(iter, MSG_VERSION_ANDROID);
+  Tuple *tuple = dict_read_first(iter);
+  
+  while (tuple) {
+    switch (tuple->key) {
+      case LIVE_TRACKING_FRIENDS:
+        nb_tuple_live++;
+        strncpy(s_data.friends, tuple->value->cstring, 90-1);
+        break;
 
-  if (tuple_live) {
-    nb_tuple_live++;
-    strncpy(s_data.friends, tuple_live->value->cstring, 90-1);
-  }
+      case ALTITUDE_DATA:
+        nb_tuple_altitude++;
+        change_units((tuple->value->data[0] & 0b00000001) >> 0, false);
+        change_state((tuple->value->data[0] & 0b00000010) >> 1);
+        
+        s_gpsdata.accuracy = tuple->value->data[1];
+        s_gpsdata.distance = (float) (tuple->value->data[2] + 256 * tuple->value->data[3]) / 100; // in km or miles
+        s_gpsdata.time = tuple->value->data[4] + 256 * tuple->value->data[5];
+        if (s_gpsdata.time != 0) {
+          s_gpsdata.avgspeed = s_gpsdata.distance / (float) s_gpsdata.time * 3600; // km/h or mph
+        } else {
+          s_gpsdata.avgspeed = 0;
+        }
+        s_gpsdata.speed = ((float) (tuple->value->data[17] + 256 * tuple->value->data[18])) / 10;
+        s_gpsdata.altitude = tuple->value->data[6] + 256 * tuple->value->data[7];
+        if (tuple->value->data[9] >= 128) {
+          s_gpsdata.ascent = -1 * (tuple->value->data[8] + 256 * (tuple->value->data[9] - 128));
+        } else {
+          s_gpsdata.ascent = tuple->value->data[8] + 256 * tuple->value->data[9];
+        }
 
-  if (tuple_altitude) {
-    nb_tuple_altitude++;
-    change_units((tuple_altitude->value->data[0] & 0b00000001) >> 0, false);
-    change_state((tuple_altitude->value->data[0] & 0b00000010) >> 1);
-    
-    s_gpsdata.accuracy = tuple_altitude->value->data[1];
-    s_gpsdata.distance = (float) (tuple_altitude->value->data[2] + 256 * tuple_altitude->value->data[3]) / 100; // in km or miles
-    s_gpsdata.time = tuple_altitude->value->data[4] + 256 * tuple_altitude->value->data[5];
-    if (s_gpsdata.time != 0) {
-      s_gpsdata.avgspeed = s_gpsdata.distance / (float) s_gpsdata.time * 3600; // km/h or mph
-    } else {
-      s_gpsdata.avgspeed = 0;
-    }
-    s_gpsdata.speed = ((float) (tuple_altitude->value->data[17] + 256 * tuple_altitude->value->data[18])) / 10;
-    s_gpsdata.altitude = tuple_altitude->value->data[6] + 256 * tuple_altitude->value->data[7];
-    if (tuple_altitude->value->data[9] >= 128) {
-      s_gpsdata.ascent = -1 * (tuple_altitude->value->data[8] + 256 * (tuple_altitude->value->data[9] - 128));
-    } else {
-      s_gpsdata.ascent = tuple_altitude->value->data[8] + 256 * tuple_altitude->value->data[9];
-    }
-
-    if (tuple_altitude->value->data[11] >= 128) {
-      s_gpsdata.ascentrate = -1 * (tuple_altitude->value->data[10] + 256 * (tuple_altitude->value->data[11] - 128));
-    } else {
-      s_gpsdata.ascentrate = tuple_altitude->value->data[10] + 256 * tuple_altitude->value->data[11];
-    }
-    if (tuple_altitude->value->data[12] >= 128) {
-      s_gpsdata.slope = -1 * (tuple_altitude->value->data[12] - 128);
-    } else {
-      s_gpsdata.slope = tuple_altitude->value->data[12];
-    }
+        if (tuple->value->data[11] >= 128) {
+          s_gpsdata.ascentrate = -1 * (tuple->value->data[10] + 256 * (tuple->value->data[11] - 128));
+        } else {
+          s_gpsdata.ascentrate = tuple->value->data[10] + 256 * tuple->value->data[11];
+        }
+        if (tuple->value->data[12] >= 128) {
+          s_gpsdata.slope = -1 * (tuple->value->data[12] - 128);
+        } else {
+          s_gpsdata.slope = tuple->value->data[12];
+        }
 
 
-    
-    if (tuple_altitude->value->data[14] >= 128) { 
-        s_gpsdata.xpos = -1 * (tuple_altitude->value->data[13] + 256 * (tuple_altitude->value->data[14] - 128));
-    } else {
-        s_gpsdata.xpos = tuple_altitude->value->data[13] + 256 * tuple_altitude->value->data[14];
-    }
-    if (tuple_altitude->value->data[16] >= 128) { 
-        s_gpsdata.ypos = -1 * (tuple_altitude->value->data[15] + 256 * (tuple_altitude->value->data[16] - 128));
-    } else {
-        s_gpsdata.ypos = tuple_altitude->value->data[15] + 256 * tuple_altitude->value->data[16];
-    }
-    s_gpsdata.bearing = 360 * tuple_altitude->value->data[19] / 256;
+        
+        if (tuple->value->data[14] >= 128) { 
+            s_gpsdata.xpos = -1 * (tuple->value->data[13] + 256 * (tuple->value->data[14] - 128));
+        } else {
+            s_gpsdata.xpos = tuple->value->data[13] + 256 * tuple->value->data[14];
+        }
+        if (tuple->value->data[16] >= 128) { 
+            s_gpsdata.ypos = -1 * (tuple->value->data[15] + 256 * (tuple->value->data[16] - 128));
+        } else {
+            s_gpsdata.ypos = tuple->value->data[15] + 256 * tuple->value->data[16];
+        }
+        s_gpsdata.bearing = 360 * tuple->value->data[19] / 256;
 
-    snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
-    snprintf(s_data.distance,   sizeof(s_data.distance),   "%.1f", s_gpsdata.distance);
-    snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%.1f", s_gpsdata.avgspeed);
-    snprintf(s_data.speed,      sizeof(s_data.speed),      "%.1f", s_gpsdata.speed);
-    
-    snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
-    snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
-    snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
-    snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
+        snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
+        snprintf(s_data.distance,   sizeof(s_data.distance),   "%.1f", s_gpsdata.distance);
+        snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%.1f", s_gpsdata.avgspeed);
+        snprintf(s_data.speed,      sizeof(s_data.speed),      "%.1f", s_gpsdata.speed);
+        
+        snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
+        snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
+        snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
+        snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
 
-    #if DEBUG
-    snprintf(s_data.debug1, sizeof(s_data.debug1),
-      //"#%d d[0]:%d A:%u\nalt:%u asc:%u\nascr:%u sl:%u\npos:%ld|%ld #%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
-      "#%d us:%d|%d A:%u\nalt:%u asc:%d\npos:%d|%d #%u\ns:%d b:%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
-      s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
-      s_gpsdata.altitude, s_gpsdata.ascent,
-      //s_gpsdata.ascentrate, s_gpsdata.slope,
-      s_gpsdata.xpos, s_gpsdata.ypos, nb_points,
-      map_scale,s_gpsdata.bearing,
-      s_gpsdata.distance, s_gpsdata.time,
-      s_gpsdata.speed, s_gpsdata.avgspeed
-    );
-    #endif
+        #if DEBUG
+        snprintf(s_data.debug1, sizeof(s_data.debug1),
+          //"#%d d[0]:%d A:%u\nalt:%u asc:%u\nascr:%u sl:%u\npos:%ld|%ld #%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
+          "#%d us:%d|%d A:%u\nalt:%u asc:%d\npos:%d|%d #%u\ns:%d b:%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
+          s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
+          s_gpsdata.altitude, s_gpsdata.ascent,
+          //s_gpsdata.ascentrate, s_gpsdata.slope,
+          s_gpsdata.xpos, s_gpsdata.ypos, nb_points,
+          map_scale,s_gpsdata.bearing,
+          s_gpsdata.distance, s_gpsdata.time,
+          s_gpsdata.speed, s_gpsdata.avgspeed
+        );
+        #endif
 
-    update_location();
-    
-    if (s_data.page_number == PAGE_SPEED) {
-      layer_mark_dirty(&s_data.page_speed);
-    }
-    if (s_data.page_number == PAGE_ALTITUDE) {
-      layer_mark_dirty(&s_data.page_altitude);
-    }
-    if (s_data.page_number == PAGE_LIVE_TRACKING) {
-      layer_mark_dirty(&s_data.page_live_tracking);
-    }
-    #if DEBUG    
-    if (s_data.page_number == PAGE_DEBUG1) {
-      layer_mark_dirty(&s_data.page_debug1);
-    }
-    if (s_data.page_number == PAGE_DEBUG2) {
-      layer_mark_dirty(&s_data.page_debug2);
-    }
-    #endif
-  }
+        update_location();
+        
+        if (s_data.page_number == PAGE_SPEED) {
+          layer_mark_dirty(&s_data.page_speed);
+        }
+        if (s_data.page_number == PAGE_ALTITUDE) {
+          layer_mark_dirty(&s_data.page_altitude);
+        }
+        if (s_data.page_number == PAGE_LIVE_TRACKING) {
+          layer_mark_dirty(&s_data.page_live_tracking);
+        }
+        #if DEBUG    
+        if (s_data.page_number == PAGE_DEBUG1) {
+          layer_mark_dirty(&s_data.page_debug1);
+        }
+        if (s_data.page_number == PAGE_DEBUG2) {
+          layer_mark_dirty(&s_data.page_debug2);
+        }
+        #endif
+        break;
 
-  if (tuple_state) {
-    nb_tuple_state++;
-    //vibes_short_pulse();
-    change_state(tuple_state->value->uint8);
+      case STATE_CHANGED:
+        nb_tuple_state++;
+        //vibes_short_pulse();
+        change_state(tuple->value->uint8);
+        break;
+
+      case MSG_VERSION_ANDROID:
+        //vibes_short_pulse();
+        s_data.android_version = tuple->value->int32;
+        break;
+    }
+    tuple = dict_read_next(iter);
   }
 
   #if DEBUG
@@ -682,18 +689,6 @@ static void my_in_rcv_handler(DictionaryIterator *iter, void *context) {
     nb_tuple_live, nb_tuple_altitude, nb_tuple_state
   );
   #endif 
-
-  if (tuple_version_android) {
-    //vibes_short_pulse();
-    int32_t version;
-    version = tuple_version_android->value->int32;
-    #if DEBUG
-    snprintf(s_data.debug2, sizeof(s_data.debug2),
-      "version:%ld",
-      version
-    );
-    #endif     
-  }
 
 }
 
