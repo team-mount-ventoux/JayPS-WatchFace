@@ -7,7 +7,8 @@
 // 5DD35873-3BB6-44D6-8255-0E61BC3B97F5
 #define MY_UUID { 0x5D, 0xD3, 0x58, 0x73, 0x3B, 0xB6, 0x44, 0xD6, 0x82, 0x55, 0x0E, 0x61, 0xBC, 0x3B, 0x97, 0xF5 }
 
-#define PRODUCTION true
+#define PRODUCTION false
+#define VERSION_PEBBLE 15
 
 #if PRODUCTION
   #define DEBUG false
@@ -69,7 +70,7 @@ GFont font_12, font_18, font_24;
 Layer path_layer;
 Layer bearing_layer;
 
-#define NUM_POINTS 950
+#define NUM_POINTS 900
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
 int nb_points = 0;
@@ -353,6 +354,22 @@ static void send_cmd(uint8_t cmd) {
   app_message_out_send();
   app_message_out_release();
 }
+static void send_version() {
+  Tuplet value = TupletInteger(MSG_VERSION_PEBBLE, VERSION_PEBBLE);
+  
+  DictionaryIterator *iter;
+  app_message_out_get(&iter);
+  
+  if (iter == NULL)
+    return;
+  
+  dict_write_tuplet(iter, &value);
+  dict_write_end(iter);
+  
+  app_message_out_send();
+  app_message_out_release();
+}
+
 void update_layers() {
   layer_set_hidden(&s_data.page_speed, true);
   layer_set_hidden(&s_data.page_altitude, true);
@@ -554,6 +571,7 @@ static void my_in_rcv_handler(DictionaryIterator *iter, void *context) {
   Tuple *tuple_live = dict_find(iter, LIVE_TRACKING_FRIENDS);
   Tuple *tuple_altitude = dict_find(iter, ALTITUDE_DATA);
   Tuple *tuple_state = dict_find(iter, STATE_CHANGED);
+  Tuple *tuple_version_android = dict_find(iter, MSG_VERSION_ANDROID);
 
   if (tuple_live) {
     nb_tuple_live++;
@@ -664,6 +682,19 @@ static void my_in_rcv_handler(DictionaryIterator *iter, void *context) {
     nb_tuple_live, nb_tuple_altitude, nb_tuple_state
   );
   #endif 
+
+  if (tuple_version_android) {
+    //vibes_short_pulse();
+    int32_t version;
+    version = tuple_version_android->value->int32;
+    #if DEBUG
+    snprintf(s_data.debug2, sizeof(s_data.debug2),
+      "version:%ld",
+      version
+    );
+    #endif     
+  }
+
 }
 
 
@@ -963,6 +994,8 @@ s_gpsdata.nb_received=0;
   strncpy(s_data.friends, "+ Live Tracking +\nSetup your account\n\nOr join the beta:\npebblebike.com\n/live", 90-1);
 
   window_stack_push(window, true /* Animated */);
+  
+  send_version();
   
   #if ROCKSHOT
     rockshot_init(ctx);
