@@ -181,6 +181,8 @@ typedef struct LiveFriendData {
   float distance;
   uint16_t bearing;
   int16_t lastviewed;
+  TextLayer name_layer;
+  GRect name_frame;
 } LiveFriendData;
 static struct LiveData {
   uint8_t nb;

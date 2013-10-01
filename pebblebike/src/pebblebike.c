@@ -70,7 +70,12 @@ GFont font_12, font_18, font_24;
 Layer path_layer;
 Layer bearing_layer;
 
-#define NUM_POINTS 700
+#if ROCKSHOT
+#define NUM_POINTS 550
+#endif
+#if !ROCKSHOT
+#define NUM_POINTS 2200
+#endif
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
 int nb_points = 0;
@@ -214,13 +219,22 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
     graphics_draw_pixel(ctx, p0);
     graphics_draw_circle(ctx, p0, 3);
     //vibes_short_pulse();
+
+    s_live.friends[i].name_frame.origin.x = (pathFrame.origin.x)+p0.x + 6;
+    s_live.friends[i].name_frame.origin.y = (pathFrame.origin.y)+p0.y - 7;
+    layer_set_frame(&s_live.friends[i].name_layer.layer, s_live.friends[i].name_frame);
+        
     if (i == 0) {
       #if DEBUG
       snprintf(s_data.debug2, sizeof(s_data.debug2),
         "%d|%d\n"
+        "%d|%d\n"
+        "%d|%d\n"
         "%d|%d\n",
         s_live.friends[i].xpos,s_live.friends[i].ypos,
-        p0.x,p0.y
+        p0.x,p0.y,
+        pathFrame.origin.x,pathFrame.origin.y,
+        s_live.friends[i].name_frame.origin.x,s_live.friends[i].name_frame.origin.y        
       );
       #endif
     }
@@ -254,6 +268,17 @@ void page_map_layer_init(Window* window) {
   layer_init(&s_data.page_map, GRect(0,0,SCREEN_W,SCREEN_H));
   layer_add_child(&window->layer, &s_data.page_map);
 
+  for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
+    s_live.friends[i].name_frame = GRect(0, 15, 100, 15);
+    text_layer_init(&s_live.friends[i].name_layer, s_live.friends[i].name_frame);
+    text_layer_set_text(&s_live.friends[i].name_layer, s_live.friends[i].name);
+    text_layer_set_text_color(&s_live.friends[i].name_layer, GColorBlack);
+    text_layer_set_background_color(&s_live.friends[i].name_layer, GColorWhite);
+    text_layer_set_font(&s_live.friends[i].name_layer, font_12);
+    text_layer_set_text_alignment(&s_live.friends[i].name_layer, GTextAlignmentLeft);
+    layer_add_child(&s_data.page_map, &s_live.friends[i].name_layer.layer);
+  }
+
   pathFrame = GRect(0, 0, MAP_VSIZE_X, MAP_VSIZE_Y);
   layer_init(&path_layer, pathFrame);
   pathFrame.origin.x = -XINI + SCREEN_W/2;
@@ -268,7 +293,7 @@ void page_map_layer_init(Window* window) {
 
   gpath_init(&bearing_gpath, &BEARING_PATH_POINTS);
   gpath_move_to(&bearing_gpath, GPoint(SCREEN_W/2, SCREEN_H/2));
-    
+
   layer_set_hidden(&s_data.page_map, true);
   
 }
@@ -1096,6 +1121,7 @@ s_gpsdata.nb_received=0;
   strncpy(s_data.friends, "+ Live Tracking +\nSetup your account\n\nOr join the beta:\npebblebike.com\n/live", 90-1);
   s_live.nb = 0;
   for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
+    //snprintf(s_live.friends[i].name, sizeof(s_live.friends[i].name), "fr%d", i);
     strcpy(s_live.friends[i].name, "");
   }
 
