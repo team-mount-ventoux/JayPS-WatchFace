@@ -70,7 +70,7 @@ GFont font_12, font_18, font_24;
 Layer path_layer;
 Layer bearing_layer;
 
-#define NUM_POINTS 900
+#define NUM_POINTS 700
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
 int nb_points = 0;
@@ -206,6 +206,26 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
         p1
     );
   }
+  
+  for (int i = 0; i < s_live.nb; i++) {
+    p0.x = (XINI + (s_live.friends[i].xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+    p0.y = (YINI - (s_live.friends[i].ypos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+
+    graphics_draw_pixel(ctx, p0);
+    graphics_draw_circle(ctx, p0, 3);
+    //vibes_short_pulse();
+    if (i == 0) {
+      #if DEBUG
+      snprintf(s_data.debug2, sizeof(s_data.debug2),
+        "%d|%d\n"
+        "%d|%d\n",
+        s_live.friends[i].xpos,s_live.friends[i].ypos,
+        p0.x,p0.y
+      );
+      #endif
+    }
+  }  
+  
 }
 void bearing_layer_update_callback(Layer *me, GContext *ctx) {
   int x, y;
@@ -370,6 +390,23 @@ static void send_version() {
   app_message_out_release();
 }
 
+static void send_ask_name(int8_t live_max_name) {
+  Tuplet value = TupletInteger(MSG_LIVE_ASK_NAMES, live_max_name);
+  
+  DictionaryIterator *iter;
+  app_message_out_get(&iter);
+  
+  if (iter == NULL)
+    return;
+  
+  dict_write_tuplet(iter, &value);
+  dict_write_end(iter);
+  
+  app_message_out_send();
+  app_message_out_release();
+}
+
+
 void update_layers() {
   layer_set_hidden(&s_data.page_speed, true);
   layer_set_hidden(&s_data.page_altitude, true);
@@ -394,14 +431,17 @@ void update_layers() {
   }
   if (s_data.page_number == PAGE_MAP) {
 	  layer_set_hidden(&s_data.page_map, false);
+      layer_mark_dirty(&s_data.page_map); // TODO: really needed?
       //vibes_short_pulse();
   }
   #if DEBUG
   if (s_data.page_number == PAGE_DEBUG1) {
 	  layer_set_hidden(&s_data.page_debug1, false);
+      layer_mark_dirty(&s_data.page_debug1); // TODO: really needed?
   }
   if (s_data.page_number == PAGE_DEBUG2) {
 	  layer_set_hidden(&s_data.page_debug2, false);
+      layer_mark_dirty(&s_data.page_debug2); // TODO: really needed?
   }
   #endif
 }
@@ -569,12 +609,79 @@ void change_state(uint8_t state) {
 
 static void my_in_rcv_handler(DictionaryIterator *iter, void *context) {
   Tuple *tuple = dict_read_first(iter);
+  #define SIZE_OF_A_FRIEND 9
+  char friend[100];
+  int8_t live_max_name = -1;
+  
   
   while (tuple) {
     switch (tuple->key) {
-      case LIVE_TRACKING_FRIENDS:
+      case MSG_LIVE_NAME0:
+        //vibes_short_pulse();
+        strncpy(s_live.friends[0].name, tuple->value->cstring, 10);
+        break;
+      case MSG_LIVE_NAME1:
+        strncpy(s_live.friends[1].name, tuple->value->cstring, 10);
+        break;
+      case MSG_LIVE_NAME2:
+        strncpy(s_live.friends[2].name, tuple->value->cstring, 10);
+        break;
+      case MSG_LIVE_NAME3:
+        strncpy(s_live.friends[3].name, tuple->value->cstring, 10);
+        break;
+      case MSG_LIVE_NAME4:
+        strncpy(s_live.friends[4].name, tuple->value->cstring, 10);
+        break;
+                
+      case MSG_LIVE_SHORT:
         nb_tuple_live++;
-        strncpy(s_data.friends, tuple->value->cstring, 90-1);
+        strcpy(s_data.friends, "");
+
+        s_live.nb = tuple->value->data[0];
+        
+        for (int i = 0; i < s_live.nb; i++) {
+          if (strcmp(s_live.friends[i].name, "") != 0) {
+            // we already know the name
+            live_max_name = i;
+          } 
+            
+            
+          if (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1] >= 128) { 
+              s_live.friends[i].xpos = -1 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 0] + 256 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1] - 128));
+          } else {
+              s_live.friends[i].xpos = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 0] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1];
+          }
+          if (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3] >= 128) { 
+              s_live.friends[i].ypos = -1 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 2] + 256 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3] - 128));
+          } else {
+              s_live.friends[i].ypos = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 2] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3];
+          }
+          s_live.friends[i].distance = (float) (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 4] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 5]) * 10; // in km or miles
+          s_live.friends[i].bearing = 360 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 6] / 256;
+          s_live.friends[i].lastviewed = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 7] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 8]; // in seconds
+
+          if (i < 3) {
+            snprintf(friend, sizeof(friend),
+              "%d/%d %s %.0f(m)\n"
+              //"%d|%d\n"
+              "b:%u lv:%d(s)\n",
+              i, s_live.nb, s_live.friends[i].name, s_live.friends[i].distance,
+              //s_live.friends[i].xpos, s_live.friends[i].ypos,
+              s_live.friends[i].bearing, s_live.friends[i].lastviewed
+            );
+            
+            strcat(s_data.friends, friend);
+          }
+
+        }
+        if (s_data.page_number == PAGE_MAP) {
+          layer_mark_dirty(&s_data.page_map);
+        }
+        
+        if (live_max_name != s_live.nb) {
+            send_ask_name(live_max_name);
+        }
+          
         break;
 
       case ALTITUDE_DATA:
@@ -987,11 +1094,15 @@ s_gpsdata.nb_received=0;
   app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
 
   strncpy(s_data.friends, "+ Live Tracking +\nSetup your account\n\nOr join the beta:\npebblebike.com\n/live", 90-1);
+  s_live.nb = 0;
+  for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
+    strcpy(s_live.friends[i].name, "");
+  }
 
   window_stack_push(window, true /* Animated */);
   
   send_version();
-  
+
   #if ROCKSHOT
     rockshot_init(ctx);
   #endif

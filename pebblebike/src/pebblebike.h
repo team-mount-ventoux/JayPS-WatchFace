@@ -1,21 +1,15 @@
 enum {
-  
-  //SPEED_TEXT = 0x1,     // TUPLE_CSTR
-  //DISTANCE_TEXT = 0x2,  // TUPLE_CSTR
-  //AVGSPEED_TEXT = 0x3,  // TUPLE_CSTR
-  //MEASUREMENT_UNITS = 0x4, // TUPLE_INT
-  //ALTITUDE_TEXT = 0x5,   // TUPLE_CSTR
-  //ASCENT_TEXT = 0x6,     // TUPLE_CSTR
-  //ASCENTRATE_TEXT = 0x7, // TUPLE_CSTR
-  //SLOPE_TEXT = 0x8,      // TUPLE_CSTR
-  //ACCURACY_TEXT = 0x9,      // TUPLE_CSTR
-  LIVE_TRACKING_FRIENDS = 0x10, // TUPLE_CSTR
-  //XPOS = 0x11, // TUPLE_INT
-  //YPOS = 0x12, // TUPLE_INT
   ALTITUDE_DATA = 0x13, // TUPLE_BYTE_ARRAY
   STATE_CHANGED = 0x14,
   MSG_VERSION_PEBBLE = 0x15,
   MSG_VERSION_ANDROID = 0x16,
+  MSG_LIVE_SHORT = 0x17,
+  MSG_LIVE_ASK_NAMES = 0x18,
+  MSG_LIVE_NAME0 = 0x19,
+  MSG_LIVE_NAME1 = 0x20,
+  MSG_LIVE_NAME2 = 0x21,
+  MSG_LIVE_NAME3 = 0x22,
+  MSG_LIVE_NAME4 = 0x23,
 };
 
 enum {
@@ -174,3 +168,22 @@ static struct GPSData {
   int16_t ypos;
   uint16_t bearing;
 } s_gpsdata;
+
+
+//////////////
+// Live Data
+//////////////
+#define NUM_LIVE_FRIENDS 5
+typedef struct LiveFriendData {
+  char name[10];
+  int16_t xpos;
+  int16_t ypos;
+  float distance;
+  uint16_t bearing;
+  int16_t lastviewed;
+} LiveFriendData;
+static struct LiveData {
+  uint8_t nb;
+  LiveFriendData friends[NUM_LIVE_FRIENDS];
+} s_live;
+
