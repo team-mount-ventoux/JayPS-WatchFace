@@ -181,8 +181,7 @@ void update_map(bool force_recenter) {
   #endif
 */
   // Update the layer
-  layer_mark_dirty(&path_layer);
-  layer_mark_dirty(&bearing_layer);
+  layer_mark_dirty(&s_data.page_map);
 }
 
 void path_layer_update_callback(Layer *me, GContext *ctx) {
