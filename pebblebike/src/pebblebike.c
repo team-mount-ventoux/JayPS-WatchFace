@@ -264,8 +264,8 @@ void page_map_layer_init(Window* window) {
   for (int i = 0; i < NUM_POINTS; i++) {
     pts[i] = GPoint(0, 0);
   }
-    
-  layer_init(&s_data.page_map, GRect(0,0,SCREEN_W,SCREEN_H));
+
+  layer_init(&s_data.page_map, GRect(0,TOPBAR_HEIGHT,SCREEN_W,SCREEN_H-TOPBAR_HEIGHT));
   layer_add_child(&window->layer, &s_data.page_map);
 
   for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
