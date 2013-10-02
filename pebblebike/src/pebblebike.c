@@ -414,7 +414,7 @@ static void send_version() {
   app_message_out_release();
 }
 
-static void send_ask_name(int8_t live_max_name) {
+/*static void send_ask_name(int8_t live_max_name) {
   Tuplet value = TupletInteger(MSG_LIVE_ASK_NAMES, live_max_name);
   
   DictionaryIterator *iter;
@@ -428,7 +428,7 @@ static void send_ask_name(int8_t live_max_name) {
   
   app_message_out_send();
   app_message_out_release();
-}
+}*/
 
 
 void update_layers() {
@@ -702,9 +702,9 @@ static void my_in_rcv_handler(DictionaryIterator *iter, void *context) {
           layer_mark_dirty(&s_data.page_map);
         }
         
-        if (live_max_name != s_live.nb) {
-            send_ask_name(live_max_name);
-        }
+        //if (live_max_name != s_live.nb) {
+        //    send_ask_name(live_max_name);
+        //}
           
         break;
 
