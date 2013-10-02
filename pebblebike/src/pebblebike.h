@@ -1,3 +1,6 @@
+#ifndef PEBBLEBIKE_H
+#define PEBBLEBIKE_H
+
 enum {
   ALTITUDE_DATA = 0x13, // TUPLE_BYTE_ARRAY
   STATE_CHANGED = 0x14,
@@ -46,8 +49,6 @@ enum {
   #define NUMBER_OF_PAGES 4
 #endif
 
-
-
 #define CHAR_WIDTH 35
 #define DOT_WIDTH 15
 #define CHAR_HEIGHT 51
@@ -69,10 +70,6 @@ enum {
 #define ASCENT_RATE_UNIT_IMPERIAL "ft/h"
 
 
-
-
-
-
 typedef struct TopBarLayer {
   Layer layer;
   TextLayer time_layer;
@@ -84,7 +81,7 @@ typedef struct SpeedLayer {
       char* text;
  } SpeedLayer;
 
- typedef struct FieldLayer {
+typedef struct FieldLayer {
     Layer main_layer;
     TextLayer title_layer;
     TextLayer data_layer;
@@ -92,7 +89,7 @@ typedef struct SpeedLayer {
     char units[8];
   } FieldLayer;
 
- static struct AppData {
+typedef struct AppData {
   Window window;
 
   Layer page_speed;
@@ -148,10 +145,9 @@ typedef struct SpeedLayer {
   uint8_t sync_buffer[200];
   
   int32_t android_version;
-} s_data;
+} AppData;
 
-
-static struct GPSData {
+typedef struct GPSData {
   int nb_received;
   uint8_t units;
   uint16_t time;
@@ -167,7 +163,7 @@ static struct GPSData {
   int16_t xpos;
   int16_t ypos;
   uint16_t bearing;
-} s_gpsdata;
+} GPSData;
 
 
 //////////////
@@ -184,8 +180,17 @@ typedef struct LiveFriendData {
   TextLayer name_layer;
   GRect name_frame;
 } LiveFriendData;
-static struct LiveData {
+typedef struct LiveData {
   uint8_t nb;
   LiveFriendData friends[NUM_LIVE_FRIENDS];
-} s_live;
+} LiveData;
 
+extern GFont font_12, font_18, font_24;
+extern AppData s_data;
+extern GPSData s_gpsdata;
+extern LiveData s_live;
+
+void change_units(uint8_t units, bool force);
+void change_state(uint8_t state);
+
+#endif // PEBBLEBIKE_H
