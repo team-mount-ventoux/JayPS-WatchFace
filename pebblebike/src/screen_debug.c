@@ -3,6 +3,7 @@
 #include "pebblebike.h"
 #include "screen_debug.h"
 
+#if DEBUG
 void screen_debug1_layer_init(Window* window) {
   layer_init(&s_data.page_debug1, GRect(0,TOPBAR_HEIGHT,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
   layer_add_child(&window->layer, &s_data.page_debug1);
@@ -31,3 +32,4 @@ void screen_debug2_layer_init(Window* window) {
 
   layer_set_hidden(&s_data.page_debug2, true);
 }
+#endif
