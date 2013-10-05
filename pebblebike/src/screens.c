@@ -97,6 +97,7 @@ void topbar_layer_init(Window* window) {
   layer_add_child(&window->layer, &s_data.topbar_layer.time_layer.layer);
 
   // accuracy (1/3, right)
+  strcpy(s_data.accuracy, "-");
   text_layer_init(&s_data.topbar_layer.accuracy_layer, GRect(w*2/3,0,w/3,TOPBAR_HEIGHT));
   text_layer_set_text(&s_data.topbar_layer.accuracy_layer, s_data.accuracy);
   text_layer_set_text_color(&s_data.topbar_layer.accuracy_layer, GColorClear);

@@ -8,7 +8,7 @@ Layer path_layer;
 Layer bearing_layer;
 
 #if ROCKSHOT
-#define NUM_POINTS 550
+#define NUM_POINTS 500
 #endif
 #if !ROCKSHOT
 #define NUM_POINTS 2200

@@ -115,6 +115,10 @@ void screen_speed_layer_init(Window* window) {
   s_data.page_speed.update_proc = &page_speed_update_proc;
   layer_add_child(&window->layer, &s_data.page_speed);
 
+  strcpy(s_data.speed, "0.0");
+  strcpy(s_data.distance, "-");
+  strcpy(s_data.avgspeed, "-");
+
   speed_layer_init(&s_data.speed_layer,GRect(0,0,CANVAS_WIDTH-MENU_WIDTH,84));
   speed_layer_set_text(&s_data.speed_layer, s_data.speed);
   layer_add_child(&s_data.page_speed, &s_data.speed_layer.layer);
