@@ -109,6 +109,11 @@
         "type": "png",
         "defName": "IMAGE_RESET_BUTTON",
         "file": "images/reset_button.png"
-        }
+        },
+        {
+        "type": "png",
+        "defName": "IMAGE_MENU_BUTTON",
+        "file": "images/menu_button.png"
+        }        
  ]
 }

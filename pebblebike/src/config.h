@@ -6,7 +6,8 @@
 
 #define VERSION_PEBBLE 15
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 0
+#define VERSION_MINOR 3
+#define VERSION_TEXT "Version 1.3 beta5"
 #define APP_COMPANY "N Jackson & JayPS"
 
 #define PRODUCTION false
@@ -14,13 +15,13 @@
 #if PRODUCTION
   #define DEBUG false
   #define ROCKSHOT false
-  #define APP_NAME "PB 1.3.0"
+  #define APP_NAME "Pebble Bike 1.3.0"
 #endif
 
 #if !PRODUCTION
   #define DEBUG true
   #define ROCKSHOT true
-  #define APP_NAME "Pebble Bike 1.3.0-beta4"
+  #define APP_NAME "PB 1.3.0-beta5"
 #endif
 
 

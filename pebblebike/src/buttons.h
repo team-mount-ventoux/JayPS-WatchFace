@@ -3,7 +3,8 @@
 
 extern HeapBitmap start_button;
 extern HeapBitmap stop_button;
-extern HeapBitmap reset_button;
+//extern HeapBitmap reset_button;
+extern HeapBitmap menu_button;
 
 void buttons_update(uint8_t state);
 void buttons_init();

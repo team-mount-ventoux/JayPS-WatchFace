@@ -6,10 +6,12 @@
 #include "communication.h"
 #include "screens.h"
 #include "screen_map.h"
+#include "menu.h"
 
 HeapBitmap start_button;
 HeapBitmap stop_button;
-HeapBitmap reset_button;
+//HeapBitmap reset_button;
+HeapBitmap menu_button;
 
 void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
   vibes_short_pulse();
@@ -29,7 +31,11 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
   update_screens();
 }
 void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
-  screen_map_zoom_out(2);
+  if (s_data.page_number == PAGE_MAP) {
+    screen_map_zoom_out(2);
+  } else {
+    menu_show();
+  }
 }
 void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context) {
   screen_map_zoom_in(2);  
@@ -60,10 +66,12 @@ void buttons_update(uint8_t state) {
 void buttons_init() {
   heap_bitmap_init(&start_button,RESOURCE_ID_IMAGE_START_BUTTON);
   heap_bitmap_init(&stop_button,RESOURCE_ID_IMAGE_STOP_BUTTON);
-  heap_bitmap_init(&reset_button,RESOURCE_ID_IMAGE_RESET_BUTTON);
+  //heap_bitmap_init(&reset_button,RESOURCE_ID_IMAGE_RESET_BUTTON);
+  heap_bitmap_init(&menu_button,RESOURCE_ID_IMAGE_MENU_BUTTON);
 }
 void buttons_deinit() {
   heap_bitmap_deinit(&start_button);
   heap_bitmap_deinit(&stop_button);
-  heap_bitmap_deinit(&reset_button);
+  //heap_bitmap_deinit(&reset_button);
+  heap_bitmap_deinit(&menu_button);
 }

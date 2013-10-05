@@ -116,4 +116,5 @@ void action_bar_init(Window* window) {
 
   action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
   //action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &reset_button.bmp);
+  action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &menu_button.bmp);
 }
