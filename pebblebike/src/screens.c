@@ -9,7 +9,7 @@ ActionBarLayer action_bar;
 void update_screens() {
   layer_set_hidden(&s_data.page_speed, true);
   layer_set_hidden(&s_data.page_altitude, true);
-  layer_set_hidden(&s_data.page_live_tracking, true);
+  layer_set_hidden((Layer *) &s_data.page_live_tracking, true);
   layer_set_hidden(&s_data.page_map, true);
 
   #if DEBUG
@@ -26,7 +26,7 @@ void update_screens() {
     layer_set_hidden(&s_data.page_altitude, false);
   }
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
-    layer_set_hidden(&s_data.page_live_tracking, false);
+    layer_set_hidden((Layer *) &s_data.page_live_tracking, false);
   }
   if (s_data.page_number == PAGE_MAP) {
     layer_set_hidden(&s_data.page_map, false);

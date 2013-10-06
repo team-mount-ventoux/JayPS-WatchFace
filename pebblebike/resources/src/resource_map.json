@@ -124,6 +124,16 @@
         "type": "png",
         "defName": "IMAGE_NEXT_BUTTON",
         "file": "images/next_button.png"
+        },
+        {
+        "type": "png",
+        "defName": "IMAGE_MENU_UP_BUTTON",
+        "file": "images/menu_up_button.png"
+        },
+        {
+        "type": "png",
+        "defName": "IMAGE_MENU_DOWN_BUTTON",
+        "file": "images/menu_down_button.png"
         }
  ]
 }

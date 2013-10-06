@@ -98,7 +98,7 @@ typedef struct AppData {
 
   Layer page_speed;
   Layer page_altitude;
-  Layer page_live_tracking;
+  MenuLayer page_live_tracking;
   Layer page_map;
 
   #if DEBUG
@@ -136,7 +136,6 @@ typedef struct AppData {
   char ascentrate[8];
   char slope[8];
   char accuracy[5];
-  char friends[90];
   #if DEBUG
   char debug1[200];
   char debug2[200];
@@ -179,6 +178,7 @@ typedef struct GPSData {
 #define NUM_LIVE_FRIENDS 5
 typedef struct LiveFriendData {
   char name[10];
+  char subtitle[20];
   int16_t xpos;
   int16_t ypos;
   float distance;

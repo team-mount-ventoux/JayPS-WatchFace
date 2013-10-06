@@ -62,7 +62,7 @@ void change_state(uint8_t state) {
   }
   s_data.state = state;
 
-  buttons_update(s_data.state);
+  buttons_update();
   
   nbchange_state++;
 }

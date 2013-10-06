@@ -131,7 +131,7 @@ void communication_in_dropped_callback(void *context, AppMessageResult app_messa
 void communication_in_received_callback(DictionaryIterator *iter, void *context) {
   Tuple *tuple = dict_read_first(iter);
   #define SIZE_OF_A_FRIEND 9
-  char friend[100];
+  //char friend[100];
   //int8_t live_max_name = -1;
   
   
@@ -156,7 +156,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 
       case MSG_LIVE_SHORT:
         nb_tuple_live++;
-        strcpy(s_data.friends, "");
+        //strcpy(s_data.friends, "");
 
         s_live.nb = tuple->value->data[0];
         
@@ -181,6 +181,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           s_live.friends[i].bearing = 360 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 6] / 256;
           s_live.friends[i].lastviewed = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 7] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 8]; // in seconds
 
+          /*
           if (i < 3) {
             snprintf(friend, sizeof(friend),
               "%d/%d %s %.0f(m)\n"
@@ -193,6 +194,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             
             strcat(s_data.friends, friend);
           }
+          */
 
         }
         if (s_data.page_number == PAGE_MAP) {
@@ -293,7 +295,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           layer_mark_dirty(&s_data.page_altitude);
         }
         if (s_data.page_number == PAGE_LIVE_TRACKING) {
-          layer_mark_dirty(&s_data.page_live_tracking);
+          layer_mark_dirty((Layer *) &s_data.page_live_tracking);
         }
         #if DEBUG    
         if (s_data.page_number == PAGE_DEBUG1) {
