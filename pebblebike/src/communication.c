@@ -209,6 +209,9 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         nb_tuple_altitude++;
         change_units((tuple->value->data[0] & 0b00000001) >> 0, false);
         change_state((tuple->value->data[0] & 0b00000010) >> 1);
+        s_data.debug = (tuple->value->data[0] & 0b00000100) >> 2;
+        s_data.live = (tuple->value->data[0] & 0b00001000) >> 3;
+        s_data.refresh_code = (tuple->value->data[0] & 0b00110000) >> 4;
         
         s_gpsdata.accuracy = tuple->value->data[1];
         s_gpsdata.distance = (float) (tuple->value->data[2] + 256 * tuple->value->data[3]) / 100; // in km or miles
@@ -263,12 +266,18 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
         #if DEBUG
         snprintf(s_data.debug1, sizeof(s_data.debug1),
-          //"#%d d[0]:%d A:%u\nalt:%u asc:%u\nascr:%u sl:%u\npos:%ld|%ld #%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
-          "#%d us:%d|%d A:%u\nalt:%u asc:%d\npos:%d|%d #%u\ns:%d b:%u\nD:%.1f km T:%u\n%.1f avg:%.1f",
+          "#%d us:%d|%d A:%u\n"
+          "alt:%u asc:%d\n"
+          "pos:%d|%d #%u\n"
+          //"%d|%d|%d\n"
+          "s:%d b:%u\n"
+          "D:%.1f km T:%u\n"
+          "%.1f avg:%.1f\n",
           s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
           s_gpsdata.altitude, s_gpsdata.ascent,
           //s_gpsdata.ascentrate, s_gpsdata.slope,
           s_gpsdata.xpos, s_gpsdata.ypos, nb_points,
+          //s_data.debug, s_data.live, s_data.refresh_code,
           map_scale,s_gpsdata.bearing,
           s_gpsdata.distance, s_gpsdata.time,
           s_gpsdata.speed, s_gpsdata.avgspeed

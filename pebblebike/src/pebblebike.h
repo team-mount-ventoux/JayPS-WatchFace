@@ -140,6 +140,9 @@ typedef struct AppData {
   char unitsSpeed[8];
   char unitsDistance[8];
   uint8_t state;
+  uint8_t live;
+  uint8_t debug;
+  uint8_t refresh_code;
   int page_number;
   AppSync sync;
   uint8_t sync_buffer[200];
