@@ -24,6 +24,6 @@
   #define APP_NAME "PB 1.3.0-beta5"
 #endif
 
-
+#define ORUXMAP true
 
 #endif // CONFIG_H

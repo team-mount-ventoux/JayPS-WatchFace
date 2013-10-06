@@ -5,12 +5,26 @@
 #include "pebblebike.h"
 #include "communication.h"
 
+#define MENU_HELP_BUTTONS true
+#if ORUXMAP
+  #if ROCKSHOT
+    // save static memory, no menu "buttons"
+    #undef MENU_HELP_BUTTONS
+    #define MENU_HELP_BUTTONS false
+  #endif
+#endif
+
 static Window window;
 static SimpleMenuLayer menu_layer;
-static SimpleMenuSection menu_sections[3]; // Sections
-static SimpleMenuItem menu_section0_items[2]; // Section 0 (Actions)
-static SimpleMenuItem menu_section1_items[3]; // Section 1 (Buttons)
-static SimpleMenuItem menu_section2_items[3]; // Section 2 (About)
+static SimpleMenuSection menu_sections[4]; // Sections
+static SimpleMenuItem menu_section0_items[2]; // Section Actions
+#if ORUXMAP
+static SimpleMenuItem menu_section_orux_items[3]; // Section OruxMap
+#endif
+#if MENU_HELP_BUTTONS
+static SimpleMenuItem menu_section1_items[3]; // Section Buttons
+#endif
+static SimpleMenuItem menu_section2_items[3]; // Section About
 
 /**
  * Private functions
@@ -20,7 +34,21 @@ void handle_appear(Window *window)
 {
   scroll_layer_set_frame(&menu_layer.menu.scroll_layer, window->layer.bounds);
 }
-
+#if ORUXMAP
+void menu_orux_callback(int index, void *context) {
+  switch (index) {
+    case 0:
+      send_cmd(ORUXMAPS_START_RECORD_CONTINUE_PRESS);
+      break;
+    case 1:
+      send_cmd(ORUXMAPS_STOP_RECORD_PRESS);
+      break;
+    case 2:
+      send_cmd(ORUXMAPS_NEW_WAYPOINT_PRESS);
+      break;
+  }  
+}
+#endif
 
 void menu_start_stop_data_callback(int index, void *context) {
   if(s_data.state == STATE_STOP)
@@ -47,7 +75,7 @@ void init_settings_window()
   window_set_background_color(&window, GColorWhite);
   int i = 0, s = 0;
     
-  // Section "Acions"
+  // Section "Actions"
   i = 0;
   menu_section0_items[i++] = (SimpleMenuItem) {
     .title = (s_data.state == STATE_STOP) ? "Start GPS" : "Stop GPS",
@@ -65,7 +93,31 @@ void init_settings_window()
     .num_items = ARRAY_LENGTH(menu_section0_items)
   };
 
-  
+  #if ORUXMAP
+  // Section "Orux"
+  i = 0;
+  menu_section_orux_items[i++] = (SimpleMenuItem) {
+    .title = "Start OruxMap",
+    .subtitle = "Continue previous track",
+    .callback = &menu_orux_callback,
+  };
+  menu_section_orux_items[i++] = (SimpleMenuItem) {
+    .title = "Stop OruxMap",
+    .callback = &menu_orux_callback,
+  };
+  menu_section_orux_items[i++] = (SimpleMenuItem) {
+    .title = "Add waypoint",
+    .callback = &menu_orux_callback,
+  };  
+  // Header
+  menu_sections[s++] = (SimpleMenuSection) {
+    .title = "OruxMap Integration",
+    .items = menu_section_orux_items,
+    .num_items = ARRAY_LENGTH(menu_section_orux_items)
+  };
+  #endif
+
+  #if MENU_HELP_BUTTONS
   // Section "Buttons"
   i = 0;
   menu_section1_items[i++] = (SimpleMenuItem) {
@@ -85,7 +137,8 @@ void init_settings_window()
     .title = "Buttons",
     .items = menu_section1_items,
     .num_items = ARRAY_LENGTH(menu_section1_items)
-  };  
+  };
+  #endif
   
   
   // Section "About"

@@ -29,7 +29,7 @@
 #include "pebble_os.h"
 #include "pebble_app.h"
 
-#define MAX_SCREENSHOTS 2
+#define MAX_SCREENSHOTS 1
 
 void rockshot_main(PebbleAppHandlers* handlers);
 void rockshot_init(AppContextRef* ctx);

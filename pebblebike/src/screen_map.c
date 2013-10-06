@@ -8,10 +8,10 @@ Layer path_layer;
 Layer bearing_layer;
 
 #if ROCKSHOT
-#define NUM_POINTS 70
+#define NUM_POINTS 800
 #endif
 #if !ROCKSHOT
-#define NUM_POINTS 2200
+#define NUM_POINTS 1600
 #endif
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
