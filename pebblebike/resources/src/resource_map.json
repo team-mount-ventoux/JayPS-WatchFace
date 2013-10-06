@@ -114,6 +114,16 @@
         "type": "png",
         "defName": "IMAGE_MENU_BUTTON",
         "file": "images/menu_button.png"
-        }        
+        },
+        {
+        "type": "png",
+        "defName": "IMAGE_ZOOM_BUTTON",
+        "file": "images/zoom_button.png"
+        },
+        {
+        "type": "png",
+        "defName": "IMAGE_NEXT_BUTTON",
+        "file": "images/next_button.png"
+        }
  ]
 }

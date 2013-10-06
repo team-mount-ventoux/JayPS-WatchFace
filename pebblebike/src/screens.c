@@ -115,6 +115,7 @@ void action_bar_init(Window* window) {
                                              click_config_provider);
 
   action_bar_layer_set_icon(&action_bar, BUTTON_ID_UP, &start_button.bmp);
+  action_bar_layer_set_icon(&action_bar, BUTTON_ID_SELECT, &next_button.bmp);
   //action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &reset_button.bmp);
   action_bar_layer_set_icon(&action_bar, BUTTON_ID_DOWN, &menu_button.bmp);
 }
