@@ -85,7 +85,7 @@ void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *c
 
 void screen_live_menu(bool up) {
   //vibes_short_pulse();
-  menu_layer_set_selected_next(&s_data.page_live_tracking, up, MenuRowAlignNone, true);
+  menu_layer_set_selected_next(&s_data.page_live_tracking, up, MenuRowAlignTop, true);
 }
 
 
