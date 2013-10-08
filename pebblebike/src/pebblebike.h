@@ -190,6 +190,7 @@ typedef struct LiveFriendData {
 typedef struct LiveData {
   uint8_t nb;
   LiveFriendData friends[NUM_LIVE_FRIENDS];
+  LiveFriendData *sorted_friends[NUM_LIVE_FRIENDS];
 } LiveData;
 
 extern GFont font_12, font_18, font_24;

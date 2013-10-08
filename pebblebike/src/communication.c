@@ -3,6 +3,7 @@
 #include "pebblebike.h"
 #include "communication.h"
 #include "screen_map.h"
+#include "screen_live.h"
 
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
@@ -197,6 +198,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           */
 
         }
+        screen_live_menu_update();
         if (s_data.page_number == PAGE_MAP) {
           layer_mark_dirty(&s_data.page_map);
         }

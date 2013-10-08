@@ -53,19 +53,19 @@ void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *c
      case 0:
       if (s_live.nb > 0) {
         if (cell_index->row < s_live.nb) {
-          if (s_live.friends[cell_index->row].distance < 1000) {
-            snprintf(s_live.friends[cell_index->row].subtitle, sizeof(s_live.friends[cell_index->row].subtitle),
+          if (s_live.sorted_friends[cell_index->row]->distance < 1000) {
+            snprintf(s_live.sorted_friends[cell_index->row]->subtitle, sizeof(s_live.sorted_friends[cell_index->row]->subtitle),
               "%.0fm %u° %ds",
-              s_live.friends[cell_index->row].distance,s_live.friends[cell_index->row].bearing, s_live.friends[cell_index->row].lastviewed
+              s_live.sorted_friends[cell_index->row]->distance,s_live.sorted_friends[cell_index->row]->bearing, s_live.sorted_friends[cell_index->row]->lastviewed
             );                  
           } else {
-            snprintf(s_live.friends[cell_index->row].subtitle, sizeof(s_live.friends[cell_index->row].subtitle),
+            snprintf(s_live.sorted_friends[cell_index->row]->subtitle, sizeof(s_live.sorted_friends[cell_index->row]->subtitle),
               "%.1fkm %u° %ds",
-              s_live.friends[cell_index->row].distance/1000,s_live.friends[cell_index->row].bearing, s_live.friends[cell_index->row].lastviewed
+              s_live.sorted_friends[cell_index->row]->distance/1000,s_live.sorted_friends[cell_index->row]->bearing, s_live.sorted_friends[cell_index->row]->lastviewed
             );
           }
           
-          menu_cell_basic_draw(ctx, cell_layer, s_live.friends[cell_index->row].name, s_live.friends[cell_index->row].subtitle, NULL);
+          menu_cell_basic_draw(ctx, cell_layer, s_live.sorted_friends[cell_index->row]->name, s_live.sorted_friends[cell_index->row]->subtitle, NULL);
         } else {
           //menu_cell_basic_draw(ctx, cell_layer, "2", "subtitle", NULL);
         }
@@ -88,7 +88,21 @@ void screen_live_menu(bool up) {
   menu_layer_set_selected_next(&s_data.page_live_tracking, up, MenuRowAlignTop, true);
 }
 
-
+void screen_live_menu_update() {
+  // sort sorted_friends by distance
+  // the algo is not optimised (O(n²)) but it should be a problem because we only got few friends and there are almost sorted
+  LiveFriendData *tmp;
+  for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
+    for(int j = i + 1; j < NUM_LIVE_FRIENDS; j++) {
+      if (s_live.sorted_friends[i]->distance > s_live.sorted_friends[j]->distance) {
+        tmp = s_live.sorted_friends[i];
+        s_live.sorted_friends[i] = s_live.sorted_friends[j];
+        s_live.sorted_friends[j] = tmp;
+      }
+    }
+  }
+  menu_layer_reload_data(&s_data.page_live_tracking);
+}
 void screen_live_layer_init(Window* window) {
   GRect bounds = GRect(0,TOPBAR_HEIGHT,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT);
 
@@ -115,5 +129,6 @@ void screen_live_layer_init(Window* window) {
   for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
     //snprintf(s_live.friends[i].name, sizeof(s_live.friends[i].name), "fr%d", i);
     strcpy(s_live.friends[i].name, "");
+    s_live.sorted_friends[i] = &s_live.friends[i];
   }
 }
