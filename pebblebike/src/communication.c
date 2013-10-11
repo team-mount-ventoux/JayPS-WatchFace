@@ -160,6 +160,9 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         //strcpy(s_data.friends, "");
 
         s_live.nb = tuple->value->data[0];
+        if (s_live.nb > NUM_LIVE_FRIENDS) {
+          s_live.nb = NUM_LIVE_FRIENDS;
+        }
         
         for (int i = 0; i < s_live.nb; i++) {
           /*if (strcmp(s_live.friends[i].name, "") != 0) {

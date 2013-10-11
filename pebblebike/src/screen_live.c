@@ -92,8 +92,8 @@ void screen_live_menu_update() {
   // sort sorted_friends by distance
   // the algo is not optimised (O(n²)) but it should be a problem because we only got few friends and there are almost sorted
   LiveFriendData *tmp;
-  for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
-    for(int j = i + 1; j < NUM_LIVE_FRIENDS; j++) {
+  for(int i = 0; i < s_live.nb; i++) {
+    for(int j = i + 1; j < s_live.nb; j++) {
       if (s_live.sorted_friends[i]->distance > s_live.sorted_friends[j]->distance) {
         tmp = s_live.sorted_friends[i];
         s_live.sorted_friends[i] = s_live.sorted_friends[j];
@@ -129,6 +129,7 @@ void screen_live_layer_init(Window* window) {
   for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
     //snprintf(s_live.friends[i].name, sizeof(s_live.friends[i].name), "fr%d", i);
     strcpy(s_live.friends[i].name, "");
+    s_live.friends[i].distance = 0;
     s_live.sorted_friends[i] = &s_live.friends[i];
   }
 }
