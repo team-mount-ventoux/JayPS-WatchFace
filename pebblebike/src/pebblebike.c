@@ -105,7 +105,7 @@ void handle_init(AppContextRef ctx) {
   // increased energy consumption by the Bluetooth module
   // The sniff interval will be restored by the system after the app has been
   // unloaded
-  app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
+  //app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
 
   window_stack_push(window, true /* Animated */);
   
