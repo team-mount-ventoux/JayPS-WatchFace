@@ -47,23 +47,43 @@ void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t 
 
 // This is the menu item draw callback where you specify what each item should look like
 void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-
+  char subtitle[20];
+  
   // Determine which section we're going to draw in
   switch (cell_index->section) {
      case 0:
       if (s_live.nb > 0) {
         if (cell_index->row < s_live.nb) {
           if (s_live.sorted_friends[cell_index->row]->distance < 1000) {
-            snprintf(s_live.sorted_friends[cell_index->row]->subtitle, sizeof(s_live.sorted_friends[cell_index->row]->subtitle),
-              "%.0fm %u° %ds",
-              s_live.sorted_friends[cell_index->row]->distance,s_live.sorted_friends[cell_index->row]->bearing, s_live.sorted_friends[cell_index->row]->lastviewed
+            snprintf(subtitle, sizeof(subtitle),
+              "%.0fm",
+              s_live.sorted_friends[cell_index->row]->distance
             );                  
           } else {
-            snprintf(s_live.sorted_friends[cell_index->row]->subtitle, sizeof(s_live.sorted_friends[cell_index->row]->subtitle),
-              "%.1fkm %u° %ds",
-              s_live.sorted_friends[cell_index->row]->distance/1000,s_live.sorted_friends[cell_index->row]->bearing, s_live.sorted_friends[cell_index->row]->lastviewed
+            snprintf(subtitle, sizeof(subtitle),
+              "%.1fkm",
+              s_live.sorted_friends[cell_index->row]->distance/1000
             );
           }
+          snprintf(subtitle, sizeof(subtitle),
+            "%s %u°",
+            subtitle, s_live.sorted_friends[cell_index->row]->bearing
+          ); 
+          if (s_live.sorted_friends[cell_index->row]->lastviewed < 60) {
+            snprintf(subtitle, sizeof(subtitle),
+              "%s %d\"",
+              subtitle, s_live.sorted_friends[cell_index->row]->lastviewed
+            );
+          } else {
+            snprintf(subtitle, sizeof(subtitle),
+              "%s %d'%d\"",
+              subtitle, s_live.sorted_friends[cell_index->row]->lastviewed/60, s_live.sorted_friends[cell_index->row]->lastviewed%60
+            );
+          }
+          snprintf(s_live.sorted_friends[cell_index->row]->subtitle, sizeof(s_live.sorted_friends[cell_index->row]->subtitle),
+            "%s",
+            subtitle
+          );
           
           menu_cell_basic_draw(ctx, cell_layer, s_live.sorted_friends[cell_index->row]->name, s_live.sorted_friends[cell_index->row]->subtitle, NULL);
         } else {
