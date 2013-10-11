@@ -10,7 +10,7 @@
 #define VERSION_TEXT "Version 1.3 beta6"
 #define APP_COMPANY "N Jackson & JayPS"
 
-#define PRODUCTION true
+#define PRODUCTION false
 
 #if PRODUCTION
   #define DEBUG false
