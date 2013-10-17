@@ -129,6 +129,17 @@ void update_map(bool force_recenter) {
   );
   #endif
 */
+
+  // update name_layers before marking page_map dirty to have them correctly positioned on the map
+  GPoint p0;
+  for (int i = 0; i < s_live.nb; i++) {
+    p0.x = (XINI + (s_live.friends[i].xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+    p0.y = (YINI - (s_live.friends[i].ypos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+    s_live.friends[i].name_frame.origin.x = (pathFrame.origin.x)+p0.x + 6;
+    s_live.friends[i].name_frame.origin.y = (pathFrame.origin.y)+p0.y - 7;
+    layer_set_frame(&s_live.friends[i].name_layer.layer, s_live.friends[i].name_frame);
+  }
+  
   // Update the layer
   layer_mark_dirty(&s_data.page_map);
 }
@@ -166,12 +177,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
     graphics_draw_pixel(ctx, p0);
     graphics_draw_circle(ctx, p0, 3);
-    //vibes_short_pulse();
 
-    s_live.friends[i].name_frame.origin.x = (pathFrame.origin.x)+p0.x + 6;
-    s_live.friends[i].name_frame.origin.y = (pathFrame.origin.y)+p0.y - 7;
-    layer_set_frame(&s_live.friends[i].name_layer.layer, s_live.friends[i].name_frame);
-        
     if (i == 0) {
       #if DEBUG
       snprintf(s_data.debug2, sizeof(s_data.debug2),
