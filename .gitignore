@@ -17,7 +17,7 @@
 *.app
 
 .waf-*
-/adventuretracker/build/
-/adventuretracker/.lock-waf_darwin_build
-build
-/pebblebike/.lock-waf_darwin_build
+*.kdev*
+
+/pebblebike/build
+/pebblebike/.lock-waf_*

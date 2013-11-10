@@ -1,0 +1,132 @@
+{
+  "uuid": "5DD35873-3BB6-44D6-8255-0E61BC3B97F5",
+  "shortName": "PB 1.3.0-beta6",
+  "longName": "PB 1.3.0-beta6",
+  "companyName": "N Jackson & JayPS",
+  "versionCode": 1,
+  "versionLabel": "1.3.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {},
+  "resources": {
+    "media": [
+      {
+        "type": "font",
+        "name": "FONT_ROBOTO_CONDENSED_12",
+        "file": "fonts/Roboto-Condensed.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_ROBOTO_CONDENSED_18",
+        "file": "fonts/Roboto-Condensed.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_ROBOTO_BOLD_24",
+        "file": "fonts/Roboto-Bold.ttf"
+      },
+      {
+        "menuIcon": true,
+        "type": "png",
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/menu_icon_pebble_cycling.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_0",
+        "file": "images/num_0.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_1",
+        "file": "images/num_1.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_2",
+        "file": "images/num_2.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_3",
+        "file": "images/num_3.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_4",
+        "file": "images/num_4.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_5",
+        "file": "images/num_5.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_6",
+        "file": "images/num_6.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_7",
+        "file": "images/num_7.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_8",
+        "file": "images/num_8.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_9",
+        "file": "images/num_9.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NUM_DOT",
+        "file": "images/num_dot.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_START_BUTTON",
+        "file": "images/start_button.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_STOP_BUTTON",
+        "file": "images/stop_button.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_RESET_BUTTON",
+        "file": "images/reset_button.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_MENU_BUTTON",
+        "file": "images/menu_button.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_ZOOM_BUTTON",
+        "file": "images/zoom_button.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_NEXT_BUTTON",
+        "file": "images/next_button.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_MENU_UP_BUTTON",
+        "file": "images/menu_up_button.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_MENU_DOWN_BUTTON",
+        "file": "images/menu_down_button.png"
+      }
+    ]
+  }
+}

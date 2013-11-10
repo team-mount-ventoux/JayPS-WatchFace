@@ -1,4 +1,4 @@
-#include "pebble_os.h"
+#include "pebble.h"
 #include "config.h"
 #include "pebblebike.h"
 #include "screens.h"
@@ -17,24 +17,33 @@ void page_altitude_update_proc(Layer *page_altitude, GContext* ctx) {
 
 
 void screen_altitude_layer_init(Window* window) {
-  layer_init(&s_data.page_altitude, GRect(0,0,SCREEN_W-MENU_WIDTH,SCREEN_H));
-  s_data.page_altitude.update_proc = &page_altitude_update_proc;
-  layer_add_child(&window->layer, &s_data.page_altitude);
+  s_data.page_altitude = layer_create(GRect(0,0,SCREEN_W-MENU_WIDTH,SCREEN_H));
+  layer_set_update_proc(s_data.page_altitude, page_altitude_update_proc);
+  layer_add_child(window_get_root_layer(window), s_data.page_altitude);
 
   strcpy(s_data.altitude, "-");
   strcpy(s_data.ascent, "-");
   strcpy(s_data.ascentrate, "-");
   strcpy(s_data.slope, "-");
-  
+
   int16_t w = (SCREEN_W - MENU_WIDTH) / 2; //61
   int16_t h = (SCREEN_H - TOPBAR_HEIGHT) / 2 - 1; // 75
 
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_layer,       0,     TOPBAR_HEIGHT + 0,     w, h, "Altitude", s_data.altitude, s_data.altitude_layer.units);
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent,      w + 1, TOPBAR_HEIGHT + 0,     w, h, "Ascent", s_data.ascent, s_data.altitude_ascent.units);
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_ascent_rate, 0,     TOPBAR_HEIGHT + h + 1, w, h, "Ascent rate", s_data.ascentrate, s_data.altitude_ascent_rate.units);
-  field_layer_init(&s_data.page_altitude, &s_data.altitude_slope,       w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Slope", s_data.slope, "%");
-  //field_layer_init(&s_data.page_altitude, &s_data.altitude_accuracy,    w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Accuracy", s_data.accuracy, "m");
+  field_layer_init(s_data.page_altitude, &s_data.altitude_layer,       0,     TOPBAR_HEIGHT + 0,     w, h, "Altitude", s_data.altitude, s_data.altitude_layer.units);
+  field_layer_init(s_data.page_altitude, &s_data.altitude_ascent,      w + 1, TOPBAR_HEIGHT + 0,     w, h, "Ascent", s_data.ascent, s_data.altitude_ascent.units);
+  field_layer_init(s_data.page_altitude, &s_data.altitude_ascent_rate, 0,     TOPBAR_HEIGHT + h + 1, w, h, "Ascent rate", s_data.ascentrate, s_data.altitude_ascent_rate.units);
+  field_layer_init(s_data.page_altitude, &s_data.altitude_slope,       w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Slope", s_data.slope, "%");
+  //field_layer_init(s_data.page_altitude, &s_data.altitude_accuracy,    w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Accuracy", s_data.accuracy, "m");
 
 
-  layer_set_hidden(&s_data.page_altitude, true);
+  layer_set_hidden(s_data.page_altitude, true);
 }
+
+void screen_altitude_layer_deinit() {
+  layer_destroy(s_data.page_altitude);
+  field_layer_deinit(&s_data.altitude_layer);
+  field_layer_deinit(&s_data.altitude_ascent);
+  field_layer_deinit(&s_data.altitude_ascent_rate);
+  field_layer_deinit(&s_data.altitude_slope);
+}
+

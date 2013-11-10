@@ -2,55 +2,57 @@
 #define PEBBLEBIKE_H
 
 enum {
-  ALTITUDE_DATA = 0x13, // TUPLE_BYTE_ARRAY
-  STATE_CHANGED = 0x14,
-  MSG_VERSION_PEBBLE = 0x15,
-  MSG_VERSION_ANDROID = 0x16,
-  MSG_LIVE_SHORT = 0x17,
-  //MSG_LIVE_ASK_NAMES = 0x18,
-  MSG_LIVE_NAME0 = 0x19,
-  MSG_LIVE_NAME1 = 0x20,
-  MSG_LIVE_NAME2 = 0x21,
-  MSG_LIVE_NAME3 = 0x22,
-  MSG_LIVE_NAME4 = 0x23,
+    ALTITUDE_DATA = 0x13, // TUPLE_BYTE_ARRAY
+    STATE_CHANGED = 0x14,
+    MSG_VERSION_PEBBLE = 0x15,
+    MSG_VERSION_ANDROID = 0x16,
+    MSG_LIVE_SHORT = 0x17,
+    //MSG_LIVE_ASK_NAMES = 0x18,
+    MSG_LIVE_NAME0 = 0x19,
+    MSG_LIVE_NAME1 = 0x20,
+    MSG_LIVE_NAME2 = 0x21,
+    MSG_LIVE_NAME3 = 0x22,
+    MSG_LIVE_NAME4 = 0x23,
 };
 
 enum {
-  STATE_STOP = 0,
-  STATE_START = 1,
+    STATE_STOP = 0,
+    STATE_START = 1,
 };
 
 enum {
-  PLAY_PRESS = 0x0,
-  STOP_PRESS = 0x1,
-  REFRESH_PRESS = 0x2,
-  CMD_BUTTON_PRESS = 0x4,
-  
-  ORUXMAPS_START_RECORD_CONTINUE_PRESS = 0x5,
-  ORUXMAPS_STOP_RECORD_PRESS = 0x6,
-  ORUXMAPS_NEW_WAYPOINT_PRESS = 0x7,
+    PLAY_PRESS = 0x0,
+    STOP_PRESS = 0x1,
+    REFRESH_PRESS = 0x2,
+    CMD_BUTTON_PRESS = 0x4,
+
+    ORUXMAPS_START_RECORD_CONTINUE_PRESS = 0x5,
+    ORUXMAPS_STOP_RECORD_PRESS = 0x6,
+    ORUXMAPS_NEW_WAYPOINT_PRESS = 0x7,
 };
 
 enum {
-  UNITS_IMPERIAL = 0x0,
-  UNITS_METRIC = 0x1,
+    UNITS_IMPERIAL = 0x0,
+    UNITS_METRIC = 0x1,
 };
 
 enum {
-  PAGE_SPEED = 0,
-  PAGE_ALTITUDE = 1,
-  PAGE_LIVE_TRACKING = 2,
-  PAGE_MAP = 3,
-  PAGE_DEBUG1 = 4,
-  PAGE_DEBUG2 = 5,
+    PAGE_SPEED = 0,
+    PAGE_ALTITUDE = 1,
+    PAGE_LIVE_TRACKING = 2,
+    PAGE_MAP = 3,
+    PAGE_DEBUG1 = 4,
+    PAGE_DEBUG2 = 5,
 };
+#define PAGE_FIRST PAGE_SPEED
+
 
 #if DEBUG
-  #define NUMBER_OF_PAGES 6
+#define NUMBER_OF_PAGES 6
 #endif
 
 #if !DEBUG
-  #define NUMBER_OF_PAGES 4
+#define NUMBER_OF_PAGES 4
 #endif
 
 #define CHAR_WIDTH 35
@@ -75,100 +77,100 @@ enum {
 
 
 typedef struct TopBarLayer {
-  Layer layer;
-  TextLayer time_layer;
-  TextLayer accuracy_layer;
+    Layer *layer;
+    TextLayer *time_layer;
+    TextLayer *accuracy_layer;
 } TopBarLayer;
 
 typedef struct SpeedLayer {
-      Layer layer;
-      char* text;
- } SpeedLayer;
+    Layer *layer;
+    char* text;
+} SpeedLayer;
 
 typedef struct FieldLayer {
-    Layer main_layer;
-    TextLayer title_layer;
-    TextLayer data_layer;
-    TextLayer unit_layer;
+    Layer *main_layer;
+    TextLayer *title_layer;
+    TextLayer *data_layer;
+    TextLayer *unit_layer;
     char units[8];
-  } FieldLayer;
+} FieldLayer;
 
 typedef struct AppData {
-  Window window;
+    Window *window;
 
-  Layer page_speed;
-  Layer page_altitude;
-  MenuLayer page_live_tracking;
-  Layer page_map;
+    Layer *page_speed;
+    Layer *page_altitude;
+    MenuLayer *page_live_tracking;
+    Layer *page_map;
 
-  #if DEBUG
-  Layer page_debug1;
-  Layer page_debug2;
-  #endif
-  
-  TopBarLayer topbar_layer;
+//#if DEBUG
+    Layer *page_debug1;
+    Layer *page_debug2;
+//#endif
 
-  SpeedLayer speed_layer;
-  TextLayer distance_layer;
-  TextLayer avgspeed_layer;
-  TextLayer mph_layer;
-  TextLayer avgmph_layer;
-  TextLayer miles_layer;
+    TopBarLayer topbar_layer;
 
-  FieldLayer altitude_layer;
-  FieldLayer altitude_ascent;
-  FieldLayer altitude_ascent_rate;
-  FieldLayer altitude_slope;
-  FieldLayer altitude_accuracy;
+    SpeedLayer speed_layer;
+    TextLayer *distance_layer;
+    TextLayer *avgspeed_layer;
+    TextLayer *mph_layer;
+    TextLayer *avgmph_layer;
+    TextLayer *miles_layer;
 
-  TextLayer live_tracking_layer;
-  #if DEBUG
-  TextLayer debug1_layer;
-  TextLayer debug2_layer;
-  #endif
+    FieldLayer altitude_layer;
+    FieldLayer altitude_ascent;
+    FieldLayer altitude_ascent_rate;
+    FieldLayer altitude_slope;
+    FieldLayer altitude_accuracy;
 
-  char time[6]; // xx:xx, \0 terminated
-  char speed[16];
-  char distance[6];
-  char avgspeed[6];
-  char altitude[6];
-  char ascent[8];
-  char ascentrate[8];
-  char slope[8];
-  char accuracy[5];
-  #if DEBUG
-  char debug1[200];
-  char debug2[200];
-  #endif
-  char unitsSpeed[8];
-  char unitsDistance[8];
-  uint8_t state;
-  uint8_t live;
-  uint8_t debug;
-  uint8_t refresh_code;
-  int page_number;
-  AppSync sync;
-  uint8_t sync_buffer[200];
-  
-  int32_t android_version;
+    TextLayer *live_tracking_layer;
+//#if DEBUG
+    TextLayer *debug1_layer;
+    TextLayer *debug2_layer;
+//#endif
+
+    char time[6]; // xx:xx, \0 terminated
+    char speed[16];
+    char distance[6];
+    char avgspeed[6];
+    char altitude[6];
+    char ascent[8];
+    char ascentrate[8];
+    char slope[8];
+    char accuracy[5];
+//#if DEBUG
+    char debug1[200];
+    char debug2[200];
+//#endif
+    char unitsSpeed[8];
+    char unitsDistance[8];
+    uint8_t state;
+    uint8_t live;
+    uint8_t debug;
+    uint8_t refresh_code;
+    int page_number;
+    AppSync sync;
+    uint8_t sync_buffer[200];
+
+    int32_t android_version;
 } AppData;
 
 typedef struct GPSData {
-  int nb_received;
-  uint8_t units;
-  uint16_t time;
-  float speed;
-  float distance;
-  float avgspeed;
-  int16_t altitude;
-  int16_t ascent;
-  int16_t ascentrate;
-  
-  int8_t slope;
-  uint8_t accuracy;
-  int16_t xpos;
-  int16_t ypos;
-  uint16_t bearing;
+    int nb_received;
+    uint8_t units;
+    uint16_t time;
+    float speed;
+    float distance;
+    float avgspeed;
+    int16_t altitude;
+    int16_t ascent;
+    int16_t ascentrate;
+
+    int8_t slope;
+    uint8_t accuracy;
+    int16_t xpos;
+    int16_t ypos;
+    uint16_t bearing;
 } GPSData;
 
 
@@ -177,20 +179,20 @@ typedef struct GPSData {
 //////////////
 #define NUM_LIVE_FRIENDS 5
 typedef struct LiveFriendData {
-  char name[10];
-  char subtitle[20];
-  int16_t xpos;
-  int16_t ypos;
-  float distance;
-  uint16_t bearing;
-  int16_t lastviewed;
-  TextLayer name_layer;
-  GRect name_frame;
+    char name[10];
+    char subtitle[20];
+    int16_t xpos;
+    int16_t ypos;
+    float distance;
+    uint16_t bearing;
+    int16_t lastviewed;
+    TextLayer *name_layer;
+    GRect name_frame;
 } LiveFriendData;
 typedef struct LiveData {
-  uint8_t nb;
-  LiveFriendData friends[NUM_LIVE_FRIENDS];
-  LiveFriendData *sorted_friends[NUM_LIVE_FRIENDS];
+    uint8_t nb;
+    LiveFriendData friends[NUM_LIVE_FRIENDS];
+    LiveFriendData *sorted_friends[NUM_LIVE_FRIENDS];
 } LiveData;
 
 extern GFont font_12, font_18, font_24;
@@ -198,7 +200,9 @@ extern AppData s_data;
 extern GPSData s_gpsdata;
 extern LiveData s_live;
 
-void change_units(uint8_t units, bool force);
+extern char tmp[255];
+
+void change_units(uint8_t units, bool first_time);
 void change_state(uint8_t state);
 
 #endif // PEBBLEBIKE_H
