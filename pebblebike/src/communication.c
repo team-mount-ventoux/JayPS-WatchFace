@@ -4,6 +4,7 @@
 #include "communication.h"
 #include "screen_map.h"
 #include "screen_live.h"
+#include "ftoa.h"
 
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
@@ -132,6 +133,7 @@ void communication_in_dropped_callback(void *context, AppMessageResult app_messa
 void communication_in_received_callback(DictionaryIterator *iter, void *context) {
   Tuple *tuple = dict_read_first(iter);
   #define SIZE_OF_A_FRIEND 9
+  char tmp[10];
   //char friend[100];
   //int8_t live_max_name = -1;
   
@@ -262,9 +264,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         s_gpsdata.bearing = 360 * tuple->value->data[19] / 256;
 
         snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
-        snprintf(s_data.distance,   sizeof(s_data.distance),   "%.1f", s_gpsdata.distance);
-        snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%.1f", s_gpsdata.avgspeed);
-        snprintf(s_data.speed,      sizeof(s_data.speed),      "%.1f", s_gpsdata.speed);
+        ftoa(s_gpsdata.distance, tmp, 10, 1);
+        snprintf(s_data.distance,   sizeof(s_data.distance),   "%s", tmp);
+        ftoa(s_gpsdata.avgspeed, tmp, 10, 1);
+        snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%s", tmp);
+        ftoa(s_gpsdata.speed, tmp, 10,  1);
+        snprintf(s_data.speed,      sizeof(s_data.speed),      "%s", tmp);
         
         snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
         snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
@@ -272,22 +277,27 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
 
         #if DEBUG
+        char tmp2[10];
+        char tmp3[10];
+        ftoa(s_gpsdata.distance, tmp, 10, 1);
+        ftoa(s_gpsdata.speed, tmp2, 10, 1);
+        ftoa(s_gpsdata.avgspeed, tmp3, 10, 1);
         snprintf(s_data.debug1, sizeof(s_data.debug1),
           "#%d us:%d|%d A:%u\n"
           "alt:%u asc:%d\n"
           "pos:%d|%d #%u\n"
           //"%d|%d|%d\n"
           "s:%d b:%u\n"
-          "D:%.1f km T:%u\n"
-          "%.1f avg:%.1f\n",
+          "D:%s km T:%u\n"
+          "%s avg:%s\n",
           s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
           s_gpsdata.altitude, s_gpsdata.ascent,
           //s_gpsdata.ascentrate, s_gpsdata.slope,
           s_gpsdata.xpos, s_gpsdata.ypos, nb_points,
           //s_data.debug, s_data.live, s_data.refresh_code,
           map_scale,s_gpsdata.bearing,
-          s_gpsdata.distance, s_gpsdata.time,
-          s_gpsdata.speed, s_gpsdata.avgspeed
+          tmp, s_gpsdata.time,
+          tmp2, tmp3
         );
         #endif
 

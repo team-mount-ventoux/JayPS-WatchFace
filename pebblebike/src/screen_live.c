@@ -2,6 +2,7 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "screen_live.h"
+#include "ftoa.h"
 
 #define NUM_MENU_SECTIONS 1
 #define NUM_FIRST_MENU_ITEMS 2
@@ -48,6 +49,7 @@ void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t 
 // This is the menu item draw callback where you specify what each item should look like
 void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
   char subtitle[20];
+  char tmp[10];
   
   // Determine which section we're going to draw in
   switch (cell_index->section) {
@@ -56,13 +58,14 @@ void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *c
         if (cell_index->row < s_live.nb) {
           if (s_live.sorted_friends[cell_index->row]->distance < 1000) {
             snprintf(subtitle, sizeof(subtitle),
-              "%.0fm",
-              s_live.sorted_friends[cell_index->row]->distance
+              "%dm",
+              (int) s_live.sorted_friends[cell_index->row]->distance
             );                  
           } else {
+            ftoa(s_live.sorted_friends[cell_index->row]->distance/1000, tmp, 10, 1);
             snprintf(subtitle, sizeof(subtitle),
-              "%.1fkm",
-              s_live.sorted_friends[cell_index->row]->distance/1000
+              "%skm",
+              tmp
             );
           }
           snprintf(subtitle, sizeof(subtitle),
