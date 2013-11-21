@@ -273,13 +273,14 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
 
 #if DEBUG
+            ftoa(s_gpsdata.distance, tmp, 10, 1);
             snprintf(s_data.debug1, sizeof(s_data.debug1),
                      "#%d us:%d|%d A:%u\n"
                      "alt:%u asc:%d\n"
                      "pos:%d|%d #%u\n"
                      //"%d|%d|%d\n"
                      "s:%d b:%u\n"
-                     "D:%.1f km T:%u\n"
+                     "D:%s km T:%u\n"
                      "%.1f avg:%.1f\n",
                      s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
                      s_gpsdata.altitude, s_gpsdata.ascent,
@@ -287,7 +288,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                      s_gpsdata.xpos, s_gpsdata.ypos, nb_points,
                      //s_data.debug, s_data.live, s_data.refresh_code,
                      map_scale,s_gpsdata.bearing,
-                     s_gpsdata.distance, s_gpsdata.time,
+                     tmp, s_gpsdata.time,
                      s_gpsdata.speed, s_gpsdata.avgspeed
                     );
 #endif
