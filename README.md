@@ -1,6 +1,6 @@
-AdventureTracker-PebbleWatchFace
+PebbleBike-PebbleWatchFace
 ==========================
 
-Pebble Watch Face for the Adventure Tracker App
+Pebble Watch Face for the Pebble Bike App
 
-Adventure tracker is a simple app show your current grid reference when hiking or current speed / distance when cycling.
+[Pebble Bike](http://www.pebblebike.com) is a GPS cycle computer for your Pebble smart watch, this simple app uses your phone's GPS to send speed, distance and altitude data to your Pebble.
