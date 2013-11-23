@@ -1,11 +1,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define PRODUCTION false
+#define PRODUCTION true
 
 
-#define VERSION_PEBBLE 18
-#define VERSION_TEXT "Version 1.3 beta7"
+#define VERSION_PEBBLE 19
+#define VERSION_TEXT "Version 1.3"
 #define APP_COMPANY "N Jackson & JayPS"
 
 #if PRODUCTION
