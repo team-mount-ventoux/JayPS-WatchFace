@@ -324,6 +324,11 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             //vibes_short_pulse();
             s_data.android_version = tuple->value->int32;
             break;
+
+        case MSG_BATTERY_LEVEL:
+          //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_BATTERY_LEVEL:%ld", tuple->value->int32);
+          s_data.phone_battery_level = tuple->value->int32;
+          break;
         }
         tuple = dict_read_next(iter);
     }

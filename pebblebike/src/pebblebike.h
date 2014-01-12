@@ -13,6 +13,7 @@ enum {
     MSG_LIVE_NAME2 = 0x21,
     MSG_LIVE_NAME3 = 0x22,
     MSG_LIVE_NAME4 = 0x23,
+    MSG_BATTERY_LEVEL = 0x24,
 };
 
 enum {
@@ -153,6 +154,7 @@ typedef struct AppData {
     uint8_t sync_buffer[200];
 
     int32_t android_version;
+    int32_t phone_battery_level;
 } AppData;
 
 typedef struct GPSData {
