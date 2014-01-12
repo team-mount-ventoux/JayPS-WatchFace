@@ -10,12 +10,10 @@
 
 #if PRODUCTION
   #define DEBUG false
-  #define ROCKSHOT false
 #endif
 
 #if !PRODUCTION
   #define DEBUG true
-  #define ROCKSHOT false
 #endif
 
 #define ORUXMAP true

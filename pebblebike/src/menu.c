@@ -5,13 +5,6 @@
 #include "communication.h"
 
 #define MENU_HELP_BUTTONS true
-#if ORUXMAP
-  #if ROCKSHOT
-    // save static memory, no menu "buttons"
-    #undef MENU_HELP_BUTTONS
-    #define MENU_HELP_BUTTONS false
-  #endif
-#endif
 
 static Window *window;
 static SimpleMenuLayer *menu_layer;

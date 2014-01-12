@@ -16,10 +16,6 @@
   #include "screen_debug.h"
 #endif
 
-#if ROCKSHOT
-  #include "rockshot.h"
-#endif
-
 GFont font_12, font_18, font_24;
 
 AppData s_data;
@@ -87,10 +83,6 @@ static void init(void) {
 
   s_data.phone_battery_level = -1;
 
-  #if ROCKSHOT
-    rockshot_main(&handlers);
-  #endif
-
   font_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_12));
   font_18 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_18));
   font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
@@ -136,10 +128,6 @@ static void init(void) {
   tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
   
   send_version();
-
-  #if ROCKSHOT
-    rockshot_init(ctx);
-  #endif
 }
 static void deinit(void) {
   app_sync_deinit(&s_data.sync);

@@ -7,13 +7,9 @@
 Layer *path_layer;
 Layer *bearing_layer;
 
-#if ROCKSHOT
-  #define NUM_POINTS 450
-#endif
-#if !ROCKSHOT
-  //#define NUM_POINTS 1600
-  #define NUM_POINTS 160
-#endif
+//#define NUM_POINTS 1600
+#define NUM_POINTS 500
+
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
 int map_scale = MAP_SCALE_MIN * 2;
