@@ -23,7 +23,10 @@ static SimpleMenuItem menu_section0_items[2]; // Section Actions
 #if MENU_HELP_BUTTONS
   static SimpleMenuItem menu_section1_items[3]; // Section Buttons
 #endif
-static SimpleMenuItem menu_section2_items[3]; // Section About
+static SimpleMenuItem menu_section2_items[5]; // Section About
+
+char phone_battery_level[6];
+char pebble_battery_level[6];
 
 /**
  * Private functions
@@ -151,6 +154,23 @@ void init_settings_window()
   menu_section2_items[i++] = (SimpleMenuItem) {
     .title = "More info",
     .subtitle = "http://pebblebike.com",
+  };
+
+  BatteryChargeState charge_state = battery_state_service_peek();
+  snprintf(pebble_battery_level, sizeof(pebble_battery_level), "%d %%", charge_state.charge_percent);
+  menu_section2_items[i++] = (SimpleMenuItem) {
+    .title = "Pebble battery",
+    .subtitle = pebble_battery_level,
+  };
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "phone_battery_level:%ld", s_data.phone_battery_level);
+  if (s_data.phone_battery_level > 0) {
+    snprintf(phone_battery_level, sizeof(phone_battery_level), "%ld %%", s_data.phone_battery_level);
+  } else {
+    snprintf(phone_battery_level, sizeof(phone_battery_level), "-");
+  }
+  menu_section2_items[i++] = (SimpleMenuItem) {
+    .title = "Phone battery",
+    .subtitle = phone_battery_level,
   };
   // Header
   menu_sections[s++] = (SimpleMenuSection) {

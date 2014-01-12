@@ -84,6 +84,9 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void init(void) {
+
+  s_data.phone_battery_level = -1;
+
   #if ROCKSHOT
     rockshot_main(&handlers);
   #endif
