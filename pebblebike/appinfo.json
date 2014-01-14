@@ -126,6 +126,11 @@
         "type": "png",
         "name": "IMAGE_MENU_DOWN_BUTTON",
         "file": "images/menu_down_button.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_BLUETOOTH",
+        "file": "images/bluetooth.png"
       }
     ]
   }

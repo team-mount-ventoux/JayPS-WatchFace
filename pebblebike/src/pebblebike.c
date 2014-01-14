@@ -79,6 +79,10 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
   layer_mark_dirty(s_data.topbar_layer.layer);
 }
 
+void bt_callback(bool connected) {
+  topbar_toggle_bluetooth_icon(connected);
+}
+
 static void init(void) {
 
   s_data.phone_battery_level = -1;
@@ -126,6 +130,7 @@ static void init(void) {
   window_stack_push(s_data.window, true /* Animated */);
   
   tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
+  bluetooth_connection_service_subscribe(bt_callback);
   
   send_version();
 }
@@ -152,6 +157,7 @@ static void deinit(void) {
   buttons_deinit();
 
   tick_timer_service_unsubscribe();
+  bluetooth_connection_service_unsubscribe();
 }
 
 int main(void) {

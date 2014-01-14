@@ -8,6 +8,7 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
 void field_layer_deinit(FieldLayer* field_layer);
 void topbar_layer_init(Window* window);
 void topbar_layer_deinit();
+void topbar_toggle_bluetooth_icon(bool connected);
 void action_bar_init(Window* window);
 void action_bar_deinit();
 
