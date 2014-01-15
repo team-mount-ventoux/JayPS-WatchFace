@@ -109,6 +109,7 @@ void topbar_layer_init(Window* window) {
   s_data.topbar_layer.bluetooth_layer = bitmap_layer_create(s_data.topbar_layer.bluetooth_image->bounds);
   bitmap_layer_set_bitmap(s_data.topbar_layer.bluetooth_layer, s_data.topbar_layer.bluetooth_image);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer));
+  layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !bluetooth_connection_service_peek());
 
   // accuracy (1/3, right)
   strcpy(s_data.accuracy, "-");
