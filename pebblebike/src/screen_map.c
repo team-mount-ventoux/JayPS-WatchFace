@@ -7,8 +7,13 @@
 Layer *path_layer;
 Layer *bearing_layer;
 
-//#define NUM_POINTS 1600
-#define NUM_POINTS 500
+#if !DEBUG
+  //#define NUM_POINTS 1600
+  #define NUM_POINTS 500
+#endif
+#if DEBUG
+  #define NUM_POINTS 200
+#endif
 
 GPoint pts[NUM_POINTS];
 int cur_point = 0;

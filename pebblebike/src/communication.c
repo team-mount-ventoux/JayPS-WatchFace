@@ -115,6 +115,14 @@ void communication_in_dropped_callback(AppMessageResult reason, void *context) {
         // The support library did not have sufficient application memory to perform the requested operation. 
         strncpy(debug2, "OUT", 16);
         break;
+      case APP_MSG_CLOSED:
+        // App message was closed
+        strncpy(debug2, "CLO", 16);
+        break;
+      case APP_MSG_INTERNAL_ERROR:
+        // An internal OS error prevented APP_MSG from completing an operation.
+        strncpy(debug2, "INT", 16);
+        break;
     }
     snprintf(s_data.debug2, sizeof(s_data.debug2),
       "#%d\napp_msg_err:\n%d - %s\ntpl_live:%d\ntpl_altitude:%d\ntpl_state:%d",
@@ -281,7 +289,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                      //"%d|%d|%d\n"
                      "s:%d b:%u\n"
                      "D:%s km T:%u\n"
-                     "%.1f avg:%.1f\n",
+                     "%d avg:%d\n",
                      s_gpsdata.nb_received++, s_gpsdata.units, s_data.state, s_gpsdata.accuracy,
                      s_gpsdata.altitude, s_gpsdata.ascent,
                      //s_gpsdata.ascentrate, s_gpsdata.slope,
@@ -289,7 +297,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                      //s_data.debug, s_data.live, s_data.refresh_code,
                      map_scale,s_gpsdata.bearing,
                      tmp, s_gpsdata.time,
-                     s_gpsdata.speed, s_gpsdata.avgspeed
+                     (int) s_gpsdata.speed, (int) s_gpsdata.avgspeed
                     );
 #endif
 
@@ -332,7 +340,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         }
         tuple = dict_read_next(iter);
     }
-
+/*
 #if DEBUG
     snprintf(s_data.debug2, sizeof(s_data.debug2),
              "sync_error:%d\ntpl_live:%d\ntpl_altitude:%d\ntpl_state:%d",
@@ -340,5 +348,5 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
              nb_tuple_live, nb_tuple_altitude, nb_tuple_state
             );
 #endif
-
+*/
 }

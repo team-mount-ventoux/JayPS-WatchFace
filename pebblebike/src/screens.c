@@ -125,9 +125,9 @@ void topbar_layer_init(Window* window) {
 void topbar_toggle_bluetooth_icon(bool connected) {
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !connected);
   if (connected) {
-    vibes_short_pulse();
+    //vibes_short_pulse();
   } else {
-    vibes_double_pulse();
+    vibes_short_pulse();
   }
 }
 
