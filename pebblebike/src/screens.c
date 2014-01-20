@@ -80,6 +80,9 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
 
 }
 void field_layer_deinit(FieldLayer* field_layer) {
+  layer_remove_from_parent(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer));
+  bitmap_layer_destroy(s_data.topbar_layer.bluetooth_layer);
+  gbitmap_destroy(s_data.topbar_layer.bluetooth_image);
   layer_destroy(field_layer->main_layer);
   text_layer_destroy(field_layer->title_layer);
   text_layer_destroy(field_layer->data_layer);
@@ -101,6 +104,13 @@ void topbar_layer_init(Window* window) {
   text_layer_set_text_alignment(s_data.topbar_layer.time_layer, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_data.topbar_layer.time_layer));
 
+  // bluetooth icon
+  s_data.topbar_layer.bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
+  s_data.topbar_layer.bluetooth_layer = bitmap_layer_create(s_data.topbar_layer.bluetooth_image->bounds);
+  bitmap_layer_set_bitmap(s_data.topbar_layer.bluetooth_layer, s_data.topbar_layer.bluetooth_image);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer));
+  layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !bluetooth_connection_service_peek());
+
   // accuracy (1/3, right)
   strcpy(s_data.accuracy, "-");
   s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(w*2/3,0,w/3,TOPBAR_HEIGHT));
@@ -112,6 +122,15 @@ void topbar_layer_init(Window* window) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_data.topbar_layer.accuracy_layer));
 
 }
+void topbar_toggle_bluetooth_icon(bool connected) {
+  layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !connected);
+  if (connected) {
+    //vibes_short_pulse();
+  } else {
+    vibes_short_pulse();
+  }
+}
+
 void topbar_layer_deinit() {
   layer_destroy(s_data.topbar_layer.layer);
   text_layer_destroy(s_data.topbar_layer.time_layer);

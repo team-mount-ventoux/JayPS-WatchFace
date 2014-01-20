@@ -81,6 +81,8 @@ typedef struct TopBarLayer {
     Layer *layer;
     TextLayer *time_layer;
     TextLayer *accuracy_layer;
+    GBitmap *bluetooth_image;
+    BitmapLayer *bluetooth_layer;
 } TopBarLayer;
 
 typedef struct SpeedLayer {
