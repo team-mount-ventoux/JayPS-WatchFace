@@ -127,7 +127,7 @@ void screen_speed_layer_init(Window* window) {
   layer_add_child(s_data.page_speed, s_data.speed_layer.layer);
 
 
-  s_data.mph_layer = text_layer_create(GRect(0, 58, CANVAS_WIDTH - MENU_WIDTH, 21));
+  s_data.mph_layer = text_layer_create(GRect(0, 58, CANVAS_WIDTH - MENU_WIDTH, 22));
   text_layer_set_text(s_data.mph_layer, s_data.unitsSpeed);
   text_layer_set_text_color(s_data.mph_layer, GColorWhite);
   text_layer_set_background_color(s_data.mph_layer, GColorClear);
@@ -163,7 +163,7 @@ void screen_speed_layer_init(Window* window) {
   layer_add_child(s_data.page_speed, text_layer_get_layer(avg_layer));
 
 
-  s_data.avgmph_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 136, 66 - MENU_WIDTH / 2, 14));
+  s_data.avgmph_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 136, 66 - MENU_WIDTH / 2, 15));
   text_layer_set_text(s_data.avgmph_layer, s_data.unitsSpeed);
   text_layer_set_text_color(s_data.avgmph_layer, GColorBlack);
   text_layer_set_background_color(s_data.avgmph_layer, GColorClear);
