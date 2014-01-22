@@ -46,6 +46,8 @@ void change_units(uint8_t units, bool first_time) {
     layer_mark_dirty(text_layer_get_layer(s_data.miles_layer));
     layer_mark_dirty(text_layer_get_layer(s_data.mph_layer));
     layer_mark_dirty(text_layer_get_layer(s_data.avgmph_layer));
+  } else {
+    strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
   }
 }
 

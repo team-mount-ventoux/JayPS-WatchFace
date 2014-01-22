@@ -22,6 +22,9 @@ void update_screens() {
 //    layer_mark_dirty(&s_data.distance_layer.layer);
 //    layer_mark_dirty(&s_data.avgspeed_layer.layer);
   }
+  if (s_data.page_number == PAGE_HEARTRATE) {
+    layer_set_hidden(s_data.page_speed, false);
+  }
   if (s_data.page_number == PAGE_ALTITUDE) {
     layer_set_hidden(s_data.page_altitude, false);
   }

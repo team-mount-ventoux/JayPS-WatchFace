@@ -7,6 +7,7 @@
 #include "screen_map.h"
 #include "screen_live.h"
 #include "menu.h"
+#include "utils/ftoa.h"
 
 GBitmap *start_button;
 GBitmap *stop_button;
@@ -36,6 +37,9 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
   int prev_page_number = s_data.page_number;
   s_data.page_number++;
 
+  if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
+    s_data.page_number++;
+  }
   if (!s_data.debug) {
     if (s_data.page_number == PAGE_DEBUG1 || s_data.page_number == PAGE_DEBUG2) {
       // debug option not checked on android app
@@ -57,6 +61,16 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
     action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
   } else if (s_data.page_number == PAGE_MAP) {
     action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
+  }
+  if (s_data.page_number == PAGE_SPEED) {
+    char tmp[10];
+    ftoa(s_gpsdata.speed, tmp, 10,  1);
+    snprintf(s_data.speed, sizeof(s_data.speed), "%s", tmp);
+    strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
+  }
+  if (s_data.page_number == PAGE_HEARTRATE) {
+    snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
+    strncpy(s_data.unitsSpeedOrHeartRate, HEART_RATE_UNIT, 8);
   }
   update_screens();
 }

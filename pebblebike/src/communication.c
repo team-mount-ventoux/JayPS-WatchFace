@@ -266,14 +266,21 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 s_gpsdata.ypos = tuple->value->data[15] + 256 * tuple->value->data[16];
             }
             s_gpsdata.bearing = 360 * tuple->value->data[19] / 256;
+            s_gpsdata.heartrate = ((float) (tuple->value->data[17] + 256 * tuple->value->data[18])) / 10;
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
             ftoa(s_gpsdata.distance, tmp, 10, 1);
             snprintf(s_data.distance,   sizeof(s_data.distance),   "%s", tmp);
             ftoa(s_gpsdata.avgspeed, tmp, 10, 1);
             snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%s", tmp);
-            ftoa(s_gpsdata.speed, tmp, 10,  1);
-            snprintf(s_data.speed,      sizeof(s_data.speed),      "%s", tmp);
+
+            if (s_data.page_number == PAGE_HEARTRATE) {
+              snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
+            } else {
+              ftoa(s_gpsdata.speed, tmp, 10,  1);
+              snprintf(s_data.speed,      sizeof(s_data.speed),      "%s", tmp);
+            }
+
 
             snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
             snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
