@@ -47,7 +47,9 @@ enum {
     PAGE_DEBUG2 = 6,
 };
 #define PAGE_FIRST PAGE_SPEED
-
+enum {
+    PERSIST_UNITS_KEY = 0x0,
+};
 
 #if DEBUG
 #define NUMBER_OF_PAGES 7
