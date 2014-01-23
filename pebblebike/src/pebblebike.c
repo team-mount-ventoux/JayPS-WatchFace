@@ -28,6 +28,18 @@ void change_units(uint8_t units, bool first_time) {
     return;
   }
 
+  if (first_time) {
+    if (persist_exists(PERSIST_UNITS_KEY)) {
+      units = persist_read_int(PERSIST_UNITS_KEY);
+    } else {
+      // default value
+      units = UNITS_METRIC;
+    }
+  } else {
+    // save new value
+    persist_write_int(PERSIST_UNITS_KEY, units);
+  }
+
   s_gpsdata.units = units;
   if (s_gpsdata.units == UNITS_METRIC) {
     strncpy(s_data.unitsSpeed, SPEED_UNIT_METRIC, 8);
