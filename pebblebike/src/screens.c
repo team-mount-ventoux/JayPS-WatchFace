@@ -5,6 +5,7 @@
 #include "buttons.h"
 
 ActionBarLayer *action_bar;
+static AppTimer *disconnect_timer;
 
 void update_screens() {
   layer_set_hidden(s_data.page_speed, true);
@@ -122,12 +123,26 @@ void topbar_layer_init(Window* window) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_data.topbar_layer.accuracy_layer));
 
 }
+
+static void disconnect_timer_callback(void *data) {
+  disconnect_timer = NULL;
+  vibes_short_pulse();
+}
+
 void topbar_toggle_bluetooth_icon(bool connected) {
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !connected);
   if (connected) {
     //vibes_short_pulse();
+    if (disconnect_timer) {
+      app_timer_cancel(disconnect_timer);
+    }
   } else {
-    vibes_short_pulse();
+    if (s_data.debug) {
+      vibes_short_pulse();
+    } else {
+      // schedule a timer to viber in X milliseconds
+      disconnect_timer = app_timer_register(5000, disconnect_timer_callback, NULL);
+    }
   }
 }
 
@@ -135,7 +150,9 @@ void topbar_layer_deinit() {
   layer_destroy(s_data.topbar_layer.layer);
   text_layer_destroy(s_data.topbar_layer.time_layer);
   text_layer_destroy(s_data.topbar_layer.accuracy_layer);
-  
+  if (disconnect_timer) {
+    app_timer_cancel(disconnect_timer);
+  }
 }  
 void action_bar_init(Window* window) {
   // Initialize the action bar:
