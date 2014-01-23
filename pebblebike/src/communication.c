@@ -266,7 +266,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 s_gpsdata.ypos = tuple->value->data[15] + 256 * tuple->value->data[16];
             }
             s_gpsdata.bearing = 360 * tuple->value->data[19] / 256;
-            s_gpsdata.heartrate = ((float) (tuple->value->data[17] + 256 * tuple->value->data[18])) / 10;
+            s_gpsdata.heartrate = tuple->value->data[20];
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
             ftoa(s_gpsdata.distance, tmp, 10, 1);

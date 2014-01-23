@@ -50,11 +50,11 @@ enum {
 
 
 #if DEBUG
-#define NUMBER_OF_PAGES 6
+#define NUMBER_OF_PAGES 7
 #endif
 
 #if !DEBUG
-#define NUMBER_OF_PAGES 4
+#define NUMBER_OF_PAGES 5
 #endif
 
 #define CHAR_WIDTH 35
