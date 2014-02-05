@@ -39,11 +39,12 @@ enum {
 
 enum {
     PAGE_SPEED = 0,
-    PAGE_ALTITUDE = 1,
-    PAGE_LIVE_TRACKING = 2,
-    PAGE_MAP = 3,
-    PAGE_DEBUG1 = 4,
-    PAGE_DEBUG2 = 5,
+    PAGE_HEARTRATE = 1,
+    PAGE_ALTITUDE = 2,
+    PAGE_LIVE_TRACKING = 3,
+    PAGE_MAP = 4,
+    PAGE_DEBUG1 = 5,
+    PAGE_DEBUG2 = 6,
 };
 #define PAGE_FIRST PAGE_SPEED
 enum {
@@ -51,11 +52,11 @@ enum {
 };
 
 #if DEBUG
-#define NUMBER_OF_PAGES 6
+#define NUMBER_OF_PAGES 7
 #endif
 
 #if !DEBUG
-#define NUMBER_OF_PAGES 4
+#define NUMBER_OF_PAGES 5
 #endif
 
 #define CHAR_WIDTH 35
@@ -77,7 +78,7 @@ enum {
 #define ALTITUDE_UNIT_IMPERIAL "ft"
 #define ASCENT_RATE_UNIT_METRIC "m/h"
 #define ASCENT_RATE_UNIT_IMPERIAL "ft/h"
-
+#define HEART_RATE_UNIT "bpm"
 
 typedef struct TopBarLayer {
     Layer *layer;
@@ -147,6 +148,7 @@ typedef struct AppData {
     char debug1[200];
     char debug2[200];
 //#endif
+    char unitsSpeedOrHeartRate[8];
     char unitsSpeed[8];
     char unitsDistance[8];
     uint8_t state;
@@ -177,6 +179,7 @@ typedef struct GPSData {
     int16_t xpos;
     int16_t ypos;
     uint16_t bearing;
+    uint8_t heartrate;
 } GPSData;
 
 

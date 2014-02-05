@@ -59,6 +59,9 @@ void change_units(uint8_t units, bool first_time) {
     layer_mark_dirty(text_layer_get_layer(s_data.mph_layer));
     layer_mark_dirty(text_layer_get_layer(s_data.avgmph_layer));
   }
+  if (s_data.page_number == PAGE_SPEED) {
+    strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
+  }
 }
 
 void change_state(uint8_t state) {
@@ -103,6 +106,8 @@ static void init(void) {
   font_18 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_18));
   font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
   
+  s_gpsdata.heartrate = 255; // no data at startup
+
   // set default unit of measure
   change_units(UNITS_IMPERIAL, true);
   
