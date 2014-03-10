@@ -40,6 +40,9 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
   if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
     s_data.page_number++;
   }
+  if (s_data.page_number == PAGE_LIVE_TRACKING && s_data.live == 0) {
+    s_data.page_number++;
+  }
   if (!s_data.debug) {
     if (s_data.page_number == PAGE_DEBUG1 || s_data.page_number == PAGE_DEBUG2) {
       // debug option not checked on android app
