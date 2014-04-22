@@ -84,9 +84,6 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
 
 }
 void field_layer_deinit(FieldLayer* field_layer) {
-  layer_remove_from_parent(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer));
-  bitmap_layer_destroy(s_data.topbar_layer.bluetooth_layer);
-  gbitmap_destroy(s_data.topbar_layer.bluetooth_image);
   layer_destroy(field_layer->main_layer);
   text_layer_destroy(field_layer->title_layer);
   text_layer_destroy(field_layer->data_layer);
@@ -156,6 +153,9 @@ void topbar_layer_deinit() {
   if (disconnect_timer) {
     app_timer_cancel(disconnect_timer);
   }
+  layer_remove_from_parent(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer));
+  bitmap_layer_destroy(s_data.topbar_layer.bluetooth_layer);
+  gbitmap_destroy(s_data.topbar_layer.bluetooth_image);
 }  
 void action_bar_init(Window* window) {
   // Initialize the action bar:
