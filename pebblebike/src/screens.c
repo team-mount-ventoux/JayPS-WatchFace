@@ -49,6 +49,17 @@ void update_screens() {
   #endif
 }
 
+void set_layer_attr(TextLayer *textlayer, const char *text ,GFont font, Layer *ParentLayer)
+{
+  text_layer_set_text(textlayer, text);
+  //text_layer_set_text_alignment(textlayer, Alignment);
+  text_layer_set_text_alignment(textlayer, GTextAlignmentCenter);
+  text_layer_set_text_color(textlayer, GColorBlack);
+  text_layer_set_background_color(textlayer, GColorClear);
+  text_layer_set_font(textlayer, font);
+	if (ParentLayer != NULL)
+	layer_add_child(ParentLayer, text_layer_get_layer(textlayer));
+}
 
 void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t y, int16_t w, int16_t h, char* title_text, char* data_text, char* unit_text) {
   field_layer->main_layer = layer_create(GRect(x, y, w, h));
@@ -57,30 +68,15 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
 
   // title
   field_layer->title_layer = text_layer_create(GRect(1, 2, w - 2, 14));
-  text_layer_set_text(field_layer->title_layer, title_text);
-  text_layer_set_text_color(field_layer->title_layer, GColorBlack);
-  text_layer_set_background_color(field_layer->title_layer, GColorClear);
-  text_layer_set_font(field_layer->title_layer, font_12);
-  text_layer_set_text_alignment(field_layer->title_layer, GTextAlignmentCenter);
-  layer_add_child(field_layer->main_layer, text_layer_get_layer(field_layer->title_layer));
+  set_layer_attr(field_layer->title_layer, title_text, font_12, field_layer->main_layer);
 
   // data
   field_layer->data_layer = text_layer_create(GRect(1, 21, w - 2, 32));
-  text_layer_set_text_color(field_layer->data_layer, GColorBlack);
-  text_layer_set_background_color(field_layer->data_layer, GColorClear);
-  text_layer_set_font(field_layer->data_layer, font_24);
-  text_layer_set_text_alignment(field_layer->data_layer, GTextAlignmentCenter);
-  text_layer_set_text(field_layer->data_layer, data_text);
-  layer_add_child(field_layer->main_layer, text_layer_get_layer(field_layer->data_layer));
+  set_layer_attr(field_layer->data_layer, data_text, font_24, field_layer->main_layer);
 
   // unit
   field_layer->unit_layer = text_layer_create(GRect(1, h - 14, w - 2, 14));
-  text_layer_set_text(field_layer->unit_layer, unit_text);
-  text_layer_set_text_color(field_layer->unit_layer, GColorBlack);
-  text_layer_set_background_color(field_layer->unit_layer, GColorClear);
-  text_layer_set_font(field_layer->unit_layer, font_12);
-  text_layer_set_text_alignment(field_layer->unit_layer, GTextAlignmentCenter);
-  layer_add_child(field_layer->main_layer, text_layer_get_layer(field_layer->unit_layer));
+  set_layer_attr(field_layer->unit_layer, unit_text, font_12, field_layer->main_layer);
 
 }
 void field_layer_deinit(FieldLayer* field_layer) {
@@ -98,12 +94,7 @@ void topbar_layer_init(Window* window) {
 
   // time (centered in top bar)
   s_data.topbar_layer.time_layer = text_layer_create(GRect(0,0,w,TOPBAR_HEIGHT));
-  text_layer_set_text(s_data.topbar_layer.time_layer, s_data.time);
-  text_layer_set_text_color(s_data.topbar_layer.time_layer, GColorClear);
-  text_layer_set_background_color(s_data.topbar_layer.time_layer, GColorBlack);
-  text_layer_set_font(s_data.topbar_layer.time_layer, font_12);
-  text_layer_set_text_alignment(s_data.topbar_layer.time_layer, GTextAlignmentCenter);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_data.topbar_layer.time_layer));
+  set_layer_attr(s_data.topbar_layer.time_layer, s_data.time, font_12, window_get_root_layer(window));
 
   // bluetooth icon
   s_data.topbar_layer.bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
@@ -115,12 +106,8 @@ void topbar_layer_init(Window* window) {
   // accuracy (1/3, right)
   strcpy(s_data.accuracy, "-");
   s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(w*2/3,0,w/3,TOPBAR_HEIGHT));
-  text_layer_set_text(s_data.topbar_layer.accuracy_layer, s_data.accuracy);
-  text_layer_set_text_color(s_data.topbar_layer.accuracy_layer, GColorClear);
-  text_layer_set_background_color(s_data.topbar_layer.accuracy_layer, GColorBlack);
-  text_layer_set_font(s_data.topbar_layer.accuracy_layer, font_12);
+  set_layer_attr(s_data.topbar_layer.accuracy_layer, s_data.accuracy, font_12, window_get_root_layer(window));
   text_layer_set_text_alignment(s_data.topbar_layer.accuracy_layer, GTextAlignmentRight);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_data.topbar_layer.accuracy_layer));
 
 }
 
