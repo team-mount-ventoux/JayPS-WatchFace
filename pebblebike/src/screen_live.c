@@ -2,7 +2,6 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "screen_live.h"
-#include "utils/ftoa.h"
 
 #define NUM_MENU_SECTIONS 1
 #define NUM_FIRST_MENU_ITEMS 2
@@ -62,10 +61,10 @@ void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *c
                              (int) s_live.sorted_friends[cell_index->row]->distance
                             );
                 } else {
-                    ftoa(s_live.sorted_friends[cell_index->row]->distance/1000, tmp, 10, 1);
                     snprintf(subtitle, sizeof(subtitle),
-                             "%skm",
-                             tmp
+                             "%ld.%ldkm",
+                             s_live.sorted_friends[cell_index->row]->distance / 1000,
+			     s_live.sorted_friends[cell_index->row]->distance % 1000 / 100
                             );
                 }
                 snprintf(subtitle, sizeof(subtitle),

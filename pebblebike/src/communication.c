@@ -4,7 +4,6 @@
 #include "communication.h"
 #include "screen_map.h"
 #include "screen_live.h"
-#include "utils/ftoa.h"
 
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
@@ -137,7 +136,6 @@ void communication_in_dropped_callback(AppMessageResult reason, void *context) {
 void communication_in_received_callback(DictionaryIterator *iter, void *context) {
     Tuple *tuple = dict_read_first(iter);
 #define SIZE_OF_A_FRIEND 9
-    char tmp[10];
     //char friend[100];
     //int8_t live_max_name = -1;
 
@@ -187,7 +185,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 } else {
                     s_live.friends[i].ypos = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 2] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3];
                 }
-                s_live.friends[i].distance = (float) (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 4] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 5]) * 10; // in km or miles
+                s_live.friends[i].distance = (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 4] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 5]) * 10; // in m
                 s_live.friends[i].bearing = 360 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 6] / 256;
                 s_live.friends[i].lastviewed = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 7] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 8]; // in seconds
 
@@ -227,14 +225,14 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             s_data.refresh_code = (tuple->value->data[0] & 0b00110000) >> 4;
 
             s_gpsdata.accuracy = tuple->value->data[1];
-            s_gpsdata.distance = (float) (tuple->value->data[2] + 256 * tuple->value->data[3]) / 100; // in km or miles
+            s_gpsdata.distance100 = (tuple->value->data[2] + 256 * tuple->value->data[3]); // in 0.01km or 0.01miles
             s_gpsdata.time = tuple->value->data[4] + 256 * tuple->value->data[5];
             if (s_gpsdata.time != 0) {
-                s_gpsdata.avgspeed = s_gpsdata.distance / (float) s_gpsdata.time * 3600; // km/h or mph
+                s_gpsdata.avgspeed100 = 3600 * s_gpsdata.distance100 / s_gpsdata.time; // 0.01km/h or 0.01mph
             } else {
-                s_gpsdata.avgspeed = 0;
+                s_gpsdata.avgspeed100 = 0;
             }
-            s_gpsdata.speed = ((float) (tuple->value->data[17] + 256 * tuple->value->data[18])) / 10;
+            s_gpsdata.speed100 = ((tuple->value->data[17] + 256 * tuple->value->data[18])) * 10;
             s_gpsdata.altitude = tuple->value->data[6] + 256 * tuple->value->data[7];
             if (tuple->value->data[9] >= 128) {
                 s_gpsdata.ascent = -1 * (tuple->value->data[8] + 256 * (tuple->value->data[9] - 128));
@@ -269,16 +267,13 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             s_gpsdata.heartrate = tuple->value->data[20];
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
-            ftoa(s_gpsdata.distance, tmp, 10, 1);
-            snprintf(s_data.distance,   sizeof(s_data.distance),   "%s", tmp);
-            ftoa(s_gpsdata.avgspeed, tmp, 10, 1);
-            snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%s", tmp);
+            snprintf(s_data.distance,   sizeof(s_data.distance),   "%ld.%ld", s_gpsdata.distance100 / 100, s_gpsdata.distance100 % 100 / 10);
+            snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%ld.%ld", s_gpsdata.avgspeed100 / 100, s_gpsdata.avgspeed100 % 100 / 10);
 
             if (s_data.page_number == PAGE_HEARTRATE) {
               snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
             } else {
-              ftoa(s_gpsdata.speed, tmp, 10,  1);
-              snprintf(s_data.speed,      sizeof(s_data.speed),      "%s", tmp);
+              snprintf(s_data.speed,      sizeof(s_data.speed),      "%ld.%ld", s_gpsdata.speed100 / 100, s_gpsdata.speed100 % 100 / 10);
             }
 
 
