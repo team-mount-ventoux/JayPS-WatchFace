@@ -268,12 +268,14 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
             snprintf(s_data.distance,   sizeof(s_data.distance),   "%ld.%ld", s_gpsdata.distance100 / 100, s_gpsdata.distance100 % 100 / 10);
-            snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%ld.%ld", s_gpsdata.avgspeed100 / 100, s_gpsdata.avgspeed100 % 100 / 10);
+            // + 5: round instead of trunc
+            snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%ld.%ld", s_gpsdata.avgspeed100 / 100, (s_gpsdata.avgspeed100 % 100 + 5) / 10);
 
             if (s_data.page_number == PAGE_HEARTRATE) {
               snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
             } else {
-              snprintf(s_data.speed,      sizeof(s_data.speed),      "%ld.%ld", s_gpsdata.speed100 / 100, s_gpsdata.speed100 % 100 / 10);
+              // + 5: round instead of trunc
+              snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100 + 5) / 10);
             }
 
 
