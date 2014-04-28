@@ -7,7 +7,6 @@
 #include "screen_map.h"
 #include "screen_live.h"
 #include "menu.h"
-#include "utils/ftoa.h"
 
 GBitmap *start_button;
 GBitmap *stop_button;
@@ -66,9 +65,8 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
     action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
   }
   if (s_data.page_number == PAGE_SPEED) {
-    char tmp[10];
-    ftoa(s_gpsdata.speed, tmp, 10,  1);
-    snprintf(s_data.speed, sizeof(s_data.speed), "%s", tmp);
+    // + 5: round instead of trunc
+    snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100 + 5) / 10);
     strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
   }
   if (s_data.page_number == PAGE_HEARTRATE) {

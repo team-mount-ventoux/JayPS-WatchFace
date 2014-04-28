@@ -167,9 +167,9 @@ typedef struct GPSData {
     int nb_received;
     uint8_t units;
     uint16_t time;
-    float speed;
-    float distance;
-    float avgspeed;
+    int32_t speed100;
+    int32_t distance100;
+    int32_t avgspeed100;
     int16_t altitude;
     int16_t ascent;
     int16_t ascentrate;
@@ -192,7 +192,7 @@ typedef struct LiveFriendData {
     char subtitle[20];
     int16_t xpos;
     int16_t ypos;
-    float distance;
+    int32_t distance;
     uint16_t bearing;
     int16_t lastviewed;
     TextLayer *name_layer;
