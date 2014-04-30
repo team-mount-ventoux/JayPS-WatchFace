@@ -159,8 +159,8 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
     }
 
     for (int i = 0; i < ((nb_points > NUM_POINTS ? NUM_POINTS : nb_points) - 1); i++) {
-        p0 = pts[(cur_point-i) % NUM_POINTS];
-        p1 = pts[(cur_point-i-1) % NUM_POINTS];
+        p0 = pts[(NUM_POINTS+cur_point-i) % NUM_POINTS];
+        p1 = pts[(NUM_POINTS+cur_point-i-1) % NUM_POINTS];
 
         p0.x = (XINI + (p0.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
         p0.y = (YINI - (p0.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;

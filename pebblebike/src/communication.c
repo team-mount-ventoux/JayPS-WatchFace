@@ -138,6 +138,8 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 #define SIZE_OF_A_FRIEND 9
     //char friend[100];
     //int8_t live_max_name = -1;
+    uint16_t time0;
+    int16_t xpos = 0, ypos = 0;
 
 
     while (tuple) {
@@ -226,6 +228,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             s_gpsdata.accuracy = tuple->value->data[1];
             s_gpsdata.distance100 = (tuple->value->data[2] + 256 * tuple->value->data[3]); // in 0.01km or 0.01miles
+            time0 = s_gpsdata.time;
             s_gpsdata.time = tuple->value->data[4] + 256 * tuple->value->data[5];
             if (s_gpsdata.time != 0) {
                 s_gpsdata.avgspeed100 = 3600 * s_gpsdata.distance100 / s_gpsdata.time; // 0.01km/h or 0.01mph
@@ -254,15 +257,30 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
 
             if (tuple->value->data[14] >= 128) {
-                s_gpsdata.xpos = -1 * (tuple->value->data[13] + 256 * (tuple->value->data[14] - 128));
+                xpos = -1 * (tuple->value->data[13] + 256 * (tuple->value->data[14] - 128));
             } else {
-                s_gpsdata.xpos = tuple->value->data[13] + 256 * tuple->value->data[14];
+                xpos = tuple->value->data[13] + 256 * tuple->value->data[14];
             }
             if (tuple->value->data[16] >= 128) {
-                s_gpsdata.ypos = -1 * (tuple->value->data[15] + 256 * (tuple->value->data[16] - 128));
+                ypos = -1 * (tuple->value->data[15] + 256 * (tuple->value->data[16] - 128));
             } else {
-                s_gpsdata.ypos = tuple->value->data[15] + 256 * tuple->value->data[16];
+                ypos = tuple->value->data[15] + 256 * tuple->value->data[16];
             }
+
+            if ((xpos == 0 && ypos == 0) || (time0 > s_gpsdata.time)) {
+                // ignore old values (can happen if gps is stopped/restarted)
+                if (s_data.debug) {
+                    #if DEBUG
+                        APP_LOG(APP_LOG_LEVEL_DEBUG, "==> time0=%d t=%d xpos=%d ypos=%d", time0, s_gpsdata.time, xpos, ypos);      
+                        //vibes_short_pulse();
+                    #endif
+                }
+                xpos = s_gpsdata.xpos;
+                ypos = s_gpsdata.ypos;
+            }
+            s_gpsdata.xpos = xpos;
+            s_gpsdata.ypos = ypos;
+
             s_gpsdata.bearing = 360 * tuple->value->data[19] / 256;
             s_gpsdata.heartrate = tuple->value->data[20];
 
