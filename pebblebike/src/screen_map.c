@@ -2,6 +2,7 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "screen_map.h"
+#include "screens.h"
 
 // map layer
 Layer *path_layer;
@@ -227,12 +228,9 @@ void screen_map_layer_init(Window* window) {
     for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
         s_live.friends[i].name_frame = GRect(0, 15, 100, 15);
         s_live.friends[i].name_layer = text_layer_create(s_live.friends[i].name_frame);
-        text_layer_set_text(s_live.friends[i].name_layer, s_live.friends[i].name);
-        text_layer_set_text_color(s_live.friends[i].name_layer, GColorBlack);
-        text_layer_set_background_color(s_live.friends[i].name_layer, GColorWhite);
-        text_layer_set_font(s_live.friends[i].name_layer, font_12);
+  		set_layer_attr(s_live.friends[i].name_layer, s_live.friends[i].name, font_12, s_data.page_map);
         text_layer_set_text_alignment(s_live.friends[i].name_layer, GTextAlignmentLeft);
-        layer_add_child(s_data.page_map, text_layer_get_layer(s_live.friends[i].name_layer));
+
     }
 
     pathFrame = GRect(0, 0, MAP_VSIZE_X, MAP_VSIZE_Y);

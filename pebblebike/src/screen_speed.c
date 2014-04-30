@@ -2,6 +2,7 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "screen_speed.h"
+#include "screens.h"
 
 #define NUMBER_OF_IMAGES 11
 #define TOTAL_IMAGE_SLOTS 4
@@ -128,48 +129,23 @@ void screen_speed_layer_init(Window* window) {
 
 
   s_data.mph_layer = text_layer_create(GRect(0, 58, CANVAS_WIDTH - MENU_WIDTH, 22));
-  text_layer_set_text(s_data.mph_layer, s_data.unitsSpeedOrHeartRate);
-  text_layer_set_text_color(s_data.mph_layer, GColorWhite);
-  text_layer_set_background_color(s_data.mph_layer, GColorClear);
-  text_layer_set_font(s_data.mph_layer, font_18);
-  text_layer_set_text_alignment(s_data.mph_layer, GTextAlignmentCenter);
-  layer_add_child(s_data.page_speed, text_layer_get_layer(s_data.mph_layer));
+  set_layer_attr(s_data.mph_layer, s_data.unitsSpeedOrHeartRate, font_18, s_data.page_speed);
 
 
   distance_layer = text_layer_create(GRect(2, 91, 66 - MENU_WIDTH / 2, 14));
-  text_layer_set_text(distance_layer, "distance");
-  text_layer_set_text_color(distance_layer, GColorBlack);
-  text_layer_set_background_color(distance_layer, GColorClear);
-  text_layer_set_font(distance_layer, font_12);
-  text_layer_set_text_alignment(distance_layer, GTextAlignmentCenter);
-  layer_add_child(s_data.page_speed, text_layer_get_layer(distance_layer));
+  set_layer_attr(distance_layer, "distance", font_12, s_data.page_speed);
 
 
   s_data.miles_layer = text_layer_create(GRect(2, 136, 66 - MENU_WIDTH / 2, 14));
-  text_layer_set_text(s_data.miles_layer, s_data.unitsDistance);
-  text_layer_set_text_color(s_data.miles_layer, GColorBlack);
-  text_layer_set_background_color(s_data.miles_layer, GColorClear);
-  text_layer_set_font(s_data.miles_layer, font_12);
-  text_layer_set_text_alignment(s_data.miles_layer, GTextAlignmentCenter);
-  layer_add_child(s_data.page_speed, text_layer_get_layer(s_data.miles_layer));
+  set_layer_attr(s_data.miles_layer, s_data.unitsDistance, font_12, s_data.page_speed);
 
 
   avg_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 84, 66 - MENU_WIDTH / 2, 28));
-  text_layer_set_text(avg_layer, "average speed");
-  text_layer_set_text_color(avg_layer, GColorBlack);
-  text_layer_set_background_color(avg_layer, GColorClear);
-  text_layer_set_font(avg_layer, font_12);
-  text_layer_set_text_alignment(avg_layer, GTextAlignmentCenter);
-  layer_add_child(s_data.page_speed, text_layer_get_layer(avg_layer));
+  set_layer_attr(avg_layer, "average speed", font_12, s_data.page_speed);
 
 
   s_data.avgmph_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 136, 66 - MENU_WIDTH / 2, 15));
-  text_layer_set_text(s_data.avgmph_layer, s_data.unitsSpeed);
-  text_layer_set_text_color(s_data.avgmph_layer, GColorBlack);
-  text_layer_set_background_color(s_data.avgmph_layer, GColorClear);
-  text_layer_set_font(s_data.avgmph_layer, font_12);
-  text_layer_set_text_alignment(s_data.avgmph_layer, GTextAlignmentCenter);
-  layer_add_child(s_data.page_speed, text_layer_get_layer(s_data.avgmph_layer));
+  set_layer_attr(s_data.avgmph_layer, s_data.unitsSpeed, font_12, s_data.page_speed);
 
 
   Layer *window_layer = window_get_root_layer(window);
@@ -179,21 +155,11 @@ void screen_speed_layer_init(Window* window) {
 
 
   s_data.distance_layer = text_layer_create(GRect(1, 106, (SCREEN_W - MENU_WIDTH) / 2 - 2, 32));
-  text_layer_set_text_color(s_data.distance_layer, GColorBlack);
-  text_layer_set_background_color(s_data.distance_layer, GColorClear);
-  text_layer_set_font(s_data.distance_layer, font_24);
-  text_layer_set_text_alignment(s_data.distance_layer, GTextAlignmentCenter);
-  text_layer_set_text(s_data.distance_layer, s_data.distance);
-  layer_add_child(s_data.page_speed, text_layer_get_layer(s_data.distance_layer));
+  set_layer_attr(s_data.distance_layer, s_data.distance, font_24, s_data.page_speed);
 
 
   s_data.avgspeed_layer = text_layer_create(GRect((SCREEN_W - MENU_WIDTH) / 2 + 1, 106, (SCREEN_W - MENU_WIDTH) / 2 - 2, 32));
-  text_layer_set_text_color(s_data.avgspeed_layer, GColorBlack);
-  text_layer_set_background_color(s_data.avgspeed_layer, GColorClear);
-  text_layer_set_font(s_data.avgspeed_layer, font_24);
-  text_layer_set_text_alignment(s_data.avgspeed_layer, GTextAlignmentCenter);
-  text_layer_set_text(s_data.avgspeed_layer, s_data.avgspeed);
-  layer_add_child(s_data.page_speed, text_layer_get_layer(s_data.avgspeed_layer));
+  set_layer_attr(s_data.avgspeed_layer, s_data.avgspeed, font_24, s_data.page_speed);
 
   layer_set_hidden(s_data.page_speed, false);
   //vibes_double_pulse();
