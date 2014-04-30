@@ -1,10 +1,10 @@
 {
   "uuid": "5DD35873-3BB6-44D6-8255-0E61BC3B97F5",
   "shortName": "Pebble Bike",
-  "longName": "Pebble Bike 1.4.1",
+  "longName": "Pebble Bike 1.4.2",
   "companyName": "N Jackson & JayPS",
-  "versionCode": 26,
-  "versionLabel": "1.4.1",
+  "versionCode": 27,
+  "versionLabel": "1.4.2",
   "watchapp": {
     "watchface": false
   },
