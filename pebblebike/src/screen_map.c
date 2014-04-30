@@ -228,9 +228,7 @@ void screen_map_layer_init(Window* window) {
     for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
         s_live.friends[i].name_frame = GRect(0, 15, 100, 15);
         s_live.friends[i].name_layer = text_layer_create(s_live.friends[i].name_frame);
-  		set_layer_attr(s_live.friends[i].name_layer, s_live.friends[i].name, font_12, s_data.page_map);
-        text_layer_set_text_alignment(s_live.friends[i].name_layer, GTextAlignmentLeft);
-
+        set_layer_attr_full(s_live.friends[i].name_layer, s_live.friends[i].name, font_12, GTextAlignmentLeft, GColorBlack, GColorWhite, s_data.page_map);
     }
 
     pathFrame = GRect(0, 0, MAP_VSIZE_X, MAP_VSIZE_Y);

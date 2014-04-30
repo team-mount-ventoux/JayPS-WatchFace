@@ -49,16 +49,16 @@ void update_screens() {
   #endif
 }
 
-void set_layer_attr(TextLayer *textlayer, const char *text ,GFont font, Layer *ParentLayer)
+void set_layer_attr_full(TextLayer *textlayer, const char *text, GFont font, GTextAlignment text_alignment, GColor color, GColor bg_color, Layer *ParentLayer)
 {
   text_layer_set_text(textlayer, text);
-  //text_layer_set_text_alignment(textlayer, Alignment);
-  text_layer_set_text_alignment(textlayer, GTextAlignmentCenter);
-  text_layer_set_text_color(textlayer, GColorBlack);
-  text_layer_set_background_color(textlayer, GColorClear);
+  text_layer_set_text_alignment(textlayer, text_alignment);
+  text_layer_set_text_color(textlayer, color);
+  text_layer_set_background_color(textlayer, bg_color);
   text_layer_set_font(textlayer, font);
-	if (ParentLayer != NULL)
-	layer_add_child(ParentLayer, text_layer_get_layer(textlayer));
+  if (ParentLayer != NULL) {
+      layer_add_child(ParentLayer, text_layer_get_layer(textlayer));
+  }
 }
 
 void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t y, int16_t w, int16_t h, char* title_text, char* data_text, char* unit_text) {
@@ -68,15 +68,15 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
 
   // title
   field_layer->title_layer = text_layer_create(GRect(1, 2, w - 2, 14));
-  set_layer_attr(field_layer->title_layer, title_text, font_12, field_layer->main_layer);
+  set_layer_attr_full(field_layer->title_layer, title_text, font_12, GTextAlignmentCenter, GColorBlack, GColorClear, field_layer->main_layer);
 
   // data
   field_layer->data_layer = text_layer_create(GRect(1, 21, w - 2, 32));
-  set_layer_attr(field_layer->data_layer, data_text, font_24, field_layer->main_layer);
+  set_layer_attr_full(field_layer->data_layer, data_text, font_24, GTextAlignmentCenter, GColorBlack, GColorClear, field_layer->main_layer);
 
   // unit
   field_layer->unit_layer = text_layer_create(GRect(1, h - 14, w - 2, 14));
-  set_layer_attr(field_layer->unit_layer, unit_text, font_12, field_layer->main_layer);
+  set_layer_attr_full(field_layer->unit_layer, unit_text, font_12, GTextAlignmentCenter, GColorBlack, GColorClear, field_layer->main_layer);
 
 }
 void field_layer_deinit(FieldLayer* field_layer) {
@@ -94,7 +94,7 @@ void topbar_layer_init(Window* window) {
 
   // time (centered in top bar)
   s_data.topbar_layer.time_layer = text_layer_create(GRect(0,0,w,TOPBAR_HEIGHT));
-  set_layer_attr(s_data.topbar_layer.time_layer, s_data.time, font_12, window_get_root_layer(window));
+  set_layer_attr_full(s_data.topbar_layer.time_layer, s_data.time, font_12, GTextAlignmentCenter, GColorClear, GColorBlack, window_get_root_layer(window));
 
   // bluetooth icon
   s_data.topbar_layer.bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
@@ -106,8 +106,7 @@ void topbar_layer_init(Window* window) {
   // accuracy (1/3, right)
   strcpy(s_data.accuracy, "-");
   s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(w*2/3,0,w/3,TOPBAR_HEIGHT));
-  set_layer_attr(s_data.topbar_layer.accuracy_layer, s_data.accuracy, font_12, window_get_root_layer(window));
-  text_layer_set_text_alignment(s_data.topbar_layer.accuracy_layer, GTextAlignmentRight);
+  set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, font_12, GTextAlignmentRight, GColorClear, GColorBlack, window_get_root_layer(window));
 
 }
 
