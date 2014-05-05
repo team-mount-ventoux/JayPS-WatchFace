@@ -14,7 +14,7 @@ static SimpleMenuItem menu_section0_items[2]; // Section Actions
   static SimpleMenuItem menu_section_orux_items[3]; // Section OruxMap
 #endif
 #if MENU_HELP_BUTTONS
-  static SimpleMenuItem menu_section1_items[3]; // Section Buttons
+  static SimpleMenuItem menu_section1_items[4]; // Section Buttons
 #endif
 static SimpleMenuItem menu_section2_items[5]; // Section About
 
@@ -124,6 +124,10 @@ void init_settings_window()
     menu_section1_items[i++] = (SimpleMenuItem) {
       .title = "Down",
       .subtitle = "Menu / Zoom (map)",
+    };
+    menu_section1_items[i++] = (SimpleMenuItem) {
+      .title = "Back",
+      .subtitle = "Double click to exit",
     };
     // Header
     menu_sections[s++] = (SimpleMenuSection) {
