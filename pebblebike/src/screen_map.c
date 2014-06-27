@@ -9,7 +9,7 @@ Layer *path_layer;
 Layer *bearing_layer;
 
 #if !DEBUG
-  #define NUM_POINTS 1200
+  #define NUM_POINTS 1100
 #endif
 #if DEBUG
   #define NUM_POINTS 800
