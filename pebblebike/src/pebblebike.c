@@ -138,12 +138,8 @@ static void init(void) {
   // unloaded
   //app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
   
+  communication_init();
   
-  app_message_register_inbox_received(communication_in_received_callback);
-  app_message_register_inbox_dropped(communication_in_dropped_callback);
-  
-  app_message_open(/* size_inbound */ 124, /* size_outbound */ 256);
-
   window_stack_push(s_data.window, true /* Animated */);
   
   tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
@@ -152,6 +148,7 @@ static void init(void) {
   send_version();
 }
 static void deinit(void) {
+  communication_deinit();
   
   window_destroy(s_data.window);
 

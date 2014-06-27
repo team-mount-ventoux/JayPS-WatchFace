@@ -7,6 +7,19 @@
 
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
+static AppTimer *reset_data_timer;
+
+void communication_init() {
+  app_message_register_inbox_received(communication_in_received_callback);
+  app_message_register_inbox_dropped(communication_in_dropped_callback);
+
+  app_message_open(/* size_inbound */ 124, /* size_outbound */ 256);
+}
+void communication_deinit() {
+  if (reset_data_timer) {
+    app_timer_cancel(reset_data_timer);
+  }
+}
 
 void send_cmd(uint8_t cmd) {
     Tuplet value = TupletInteger(CMD_BUTTON_PRESS, cmd);
@@ -133,6 +146,25 @@ void communication_in_dropped_callback(AppMessageResult reason, void *context) {
   #endif
 }
 
+static void reset_data_timer_callback(void *data) {
+  reset_data_timer = NULL;
+
+  s_gpsdata.speed100 = 0;
+  if (s_gpsdata.heartrate != 255) {
+    s_gpsdata.heartrate = 0;
+  }
+  s_gpsdata.ascentrate = 0;
+  strcpy(s_data.speed, "0");
+  strcpy(s_data.ascentrate, "0");
+
+  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
+    layer_mark_dirty(s_data.page_speed);
+  }
+  if (s_data.page_number == PAGE_ALTITUDE) {
+    layer_mark_dirty(s_data.page_altitude);
+  }
+}
+
 void communication_in_received_callback(DictionaryIterator *iter, void *context) {
     Tuple *tuple = dict_read_first(iter);
 #define SIZE_OF_A_FRIEND 9
@@ -140,7 +172,6 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
     //int8_t live_max_name = -1;
     uint16_t time0;
     int16_t xpos = 0, ypos = 0;
-
 
     while (tuple) {
         switch (tuple->key) {
@@ -301,6 +332,14 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
             snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
             snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
+
+            // reset data (instant speed...) after X if no data is received
+            if (reset_data_timer) {
+              //APP_LOG(APP_LOG_LEVEL_DEBUG, "app_timer_cancel()");
+              app_timer_cancel(reset_data_timer);
+            }
+            // s_data.refresh_code == 3 => _refresh_interval [5;+inf
+            reset_data_timer = app_timer_register(s_data.refresh_code == 3 ? 60000 : 20000, reset_data_timer_callback, NULL);
 
 #if DEBUG
             ftoa(s_gpsdata.distance, tmp, 10, 1);
