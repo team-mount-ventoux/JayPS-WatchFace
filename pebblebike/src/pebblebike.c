@@ -152,7 +152,6 @@ static void init(void) {
   send_version();
 }
 static void deinit(void) {
-  app_sync_deinit(&s_data.sync);
   
   window_destroy(s_data.window);
 

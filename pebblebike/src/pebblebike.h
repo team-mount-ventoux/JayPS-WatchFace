@@ -156,8 +156,6 @@ typedef struct AppData {
     uint8_t debug;
     uint8_t refresh_code;
     int page_number;
-    AppSync sync;
-    uint8_t sync_buffer[200];
 
     int32_t android_version;
     int32_t phone_battery_level;
