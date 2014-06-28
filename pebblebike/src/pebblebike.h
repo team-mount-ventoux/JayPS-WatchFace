@@ -65,7 +65,7 @@ enum {
 
 #define CANVAS_WIDTH 144
 #define MENU_WIDTH 22
-#define TOPBAR_HEIGHT 15
+#define TOPBAR_HEIGHT 18
 
 #define SCREEN_W 144
 #define SCREEN_H 168

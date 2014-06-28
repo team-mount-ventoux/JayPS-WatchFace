@@ -94,7 +94,7 @@ void topbar_layer_init(Window* window) {
 
   // time (centered in top bar)
   s_data.topbar_layer.time_layer = text_layer_create(GRect(0,0,w,TOPBAR_HEIGHT));
-  set_layer_attr_full(s_data.topbar_layer.time_layer, s_data.time, font_12, GTextAlignmentCenter, GColorClear, GColorBlack, window_get_root_layer(window));
+  set_layer_attr_full(s_data.topbar_layer.time_layer, s_data.time, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16)), GTextAlignmentCenter, GColorClear, GColorBlack, window_get_root_layer(window));
 
   // bluetooth icon
   s_data.topbar_layer.bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
@@ -106,7 +106,7 @@ void topbar_layer_init(Window* window) {
   // accuracy (1/3, right)
   strcpy(s_data.accuracy, "-");
   s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(w*2/3,0,w/3,TOPBAR_HEIGHT));
-  set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, font_12, GTextAlignmentRight, GColorClear, GColorBlack, window_get_root_layer(window));
+  set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16)), GTextAlignmentRight, GColorClear, GColorBlack, window_get_root_layer(window));
 
 }
 
