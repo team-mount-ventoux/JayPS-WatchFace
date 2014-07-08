@@ -17,7 +17,7 @@ Layer *bearing_layer;
 
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
-int map_scale = MAP_SCALE_MIN * 2;
+int map_scale = MAP_SCALE_INI;
 int nb_points = 0;
 
 int32_t xposprev = 0, yposprev = 0;
