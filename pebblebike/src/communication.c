@@ -329,14 +329,26 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
             snprintf(s_data.distance,   sizeof(s_data.distance),   "%ld.%ld", s_gpsdata.distance100 / 100, s_gpsdata.distance100 % 100 / 10);
-            // + 5: round instead of trunc
-            snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%ld.%ld", (s_gpsdata.avgspeed100 + 5) / 100, ((s_gpsdata.avgspeed100 + 5) % 100) / 10);
+            if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
+              // pace: min per mile_or_km
+              snprintf(s_data.avgspeed, sizeof(s_data.avgspeed), "%ld:%ld", s_gpsdata.avgspeed100 / 100, (s_gpsdata.avgspeed100 % 100) * 3 / 5); // /100*60=/5*3
+              APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.avgspeed100:%ld => %s", s_gpsdata.avgspeed100, s_data.avgspeed);
+            } else {
+              // + 5: round instead of trunc
+              snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%ld.%ld", (s_gpsdata.avgspeed100 + 5) / 100, ((s_gpsdata.avgspeed100 + 5) % 100) / 10);
+            }
 
             if (s_data.page_number == PAGE_HEARTRATE) {
               snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
             } else {
-              // + 5: round instead of trunc
-              snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", (s_gpsdata.speed100 + 5) / 100, ((s_gpsdata.speed100 + 5) % 100) / 10);
+              if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
+                // pace: min per mile_or_km
+                snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100) * 3 / 5); // /100*60=/5*3
+                APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.speed100:%ld => %s", s_gpsdata.speed100, s_data.speed);
+              } else {
+                // + 5: round instead of trunc
+                snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", (s_gpsdata.speed100 + 5) / 100, ((s_gpsdata.speed100 + 5) % 100) / 10);
+              }
             }
 
 
