@@ -94,6 +94,11 @@
       },
       {
         "type": "png",
+        "name": "IMAGE_NUM_COLON",
+        "file": "images/num_colon.png"
+      },
+      {
+        "type": "png",
         "name": "IMAGE_START_BUTTON",
         "file": "images/start_button.png"
       },

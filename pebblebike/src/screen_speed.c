@@ -4,7 +4,7 @@
 #include "screen_speed.h"
 #include "screens.h"
 
-#define NUMBER_OF_IMAGES 11
+#define NUMBER_OF_IMAGES 12
 #define TOTAL_IMAGE_SLOTS 4
 #define NOT_USED -1
 
@@ -12,7 +12,7 @@ const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
   RESOURCE_ID_IMAGE_NUM_0, RESOURCE_ID_IMAGE_NUM_1, RESOURCE_ID_IMAGE_NUM_2,
   RESOURCE_ID_IMAGE_NUM_3, RESOURCE_ID_IMAGE_NUM_4, RESOURCE_ID_IMAGE_NUM_5,
   RESOURCE_ID_IMAGE_NUM_6, RESOURCE_ID_IMAGE_NUM_7, RESOURCE_ID_IMAGE_NUM_8,
-  RESOURCE_ID_IMAGE_NUM_9,RESOURCE_ID_IMAGE_NUM_DOT
+  RESOURCE_ID_IMAGE_NUM_9,RESOURCE_ID_IMAGE_NUM_DOT,RESOURCE_ID_IMAGE_NUM_COLON
 };
 
 GBitmap *images[TOTAL_IMAGE_SLOTS];
@@ -47,7 +47,8 @@ void speed_layer_update_proc(Layer *layer, GContext* ctx) {
         // convert commas to dots (older app sent localized numbers...)
         speed_layer->text[c] = '.';
       }
-      if (speed_layer->text[c] == '.') {
+      if (speed_layer->text[c] == '.' || speed_layer->text[c] == ':') {
+        // dot or colon, same width
         dots++;
       }
     }
@@ -72,11 +73,13 @@ void speed_layer_update_proc(Layer *layer, GContext* ctx) {
       int digit_value = -1;
       if (speed_layer->text[c] == '.') {
         digit_value = 10;
+      } else if (speed_layer->text[c] == ':') {
+        digit_value = 11;
       } else {
         digit_value = speed_layer->text[c] - '0';
       }
 
-      if (digit_value >= 0 && digit_value < 11) {
+      if (digit_value >= 0 && digit_value < 12) {
         images[c] = gbitmap_create_with_resource(IMAGE_RESOURCE_IDS[digit_value]);
         image_layers[c] = bitmap_layer_create(images[c]->bounds);
         bitmap_layer_set_bitmap(image_layers[c], images[c]);
@@ -90,7 +93,8 @@ void speed_layer_update_proc(Layer *layer, GContext* ctx) {
         image_slots[c] = digit_value;
       }
 
-      if (digit_value == 10) {
+      if (digit_value == 10 || digit_value == 11) {
+        // dot or colon, same width
         leftpos += DOT_WIDTH;
       } else {
         leftpos += CHAR_WIDTH;
