@@ -249,13 +249,25 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             break;
 
-        case ALTITUDE_DATA:
+        case MSG_LOCATION_DATA:
+        case MSG_LOCATION_DATA_V2:
             nb_tuple_altitude++;
-            change_units((tuple->value->data[0] & 0b00000001) >> 0, false);
-            change_state((tuple->value->data[0] & 0b00000010) >> 1);
-            s_data.debug = (tuple->value->data[0] & 0b00000100) >> 2;
-            s_data.live = (tuple->value->data[0] & 0b00001000) >> 3;
-            s_data.refresh_code = (tuple->value->data[0] & 0b00110000) >> 4;
+            if (tuple->key == MSG_LOCATION_DATA) {
+                APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA");
+                change_units((tuple->value->data[0] & 0b00000001) >> 0, false);
+                change_state((tuple->value->data[0] & 0b00000010) >> 1);
+                s_data.debug = (tuple->value->data[0] & 0b00000100) >> 2;
+                s_data.live = (tuple->value->data[0] & 0b00001000) >> 3;
+                s_data.refresh_code = (tuple->value->data[0] & 0b00110000) >> 4;
+            }
+            if (tuple->key == MSG_LOCATION_DATA_V2) {
+                APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA_v2");
+                change_units((tuple->value->data[0] & 0b00000111) >> 0, false);
+                change_state((tuple->value->data[0] & 0b00001000) >> 3);
+                s_data.debug = (tuple->value->data[0] & 0b00010000) >> 4;
+                s_data.live = (tuple->value->data[0] & 0b00100000) >> 5;
+                s_data.refresh_code = (tuple->value->data[0] & 0b11000000) >> 6;
+            }
 
             s_gpsdata.accuracy = tuple->value->data[1];
             s_gpsdata.distance100 = (tuple->value->data[2] + 256 * tuple->value->data[3]); // in 0.01km or 0.01miles
