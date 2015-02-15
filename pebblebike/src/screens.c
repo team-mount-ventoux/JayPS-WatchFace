@@ -157,3 +157,25 @@ void action_bar_init(Window* window) {
 void action_bar_deinit() {
  action_bar_layer_destroy(action_bar);
 }
+
+
+void screen_reset_instant_data() {
+  s_gpsdata.speed100 = 0;
+  if (s_gpsdata.heartrate != 255) {
+    s_gpsdata.heartrate = 0;
+  }
+  s_gpsdata.ascentrate = 0;
+  if (s_data.page_number == PAGE_SPEED && (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC)) {
+    strcpy(s_data.speed, "0:00");
+  } else {
+    strcpy(s_data.speed, "0");
+  }
+  strcpy(s_data.ascentrate, "0");
+
+  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
+    layer_mark_dirty(s_data.page_speed);
+  }
+  if (s_data.page_number == PAGE_ALTITUDE) {
+    layer_mark_dirty(s_data.page_altitude);
+  }
+}

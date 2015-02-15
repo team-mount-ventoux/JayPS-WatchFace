@@ -2,6 +2,7 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "communication.h"
+#include "screens.h"
 #include "screen_map.h"
 #include "screen_live.h"
 
@@ -149,20 +150,7 @@ void communication_in_dropped_callback(AppMessageResult reason, void *context) {
 static void reset_data_timer_callback(void *data) {
   reset_data_timer = NULL;
 
-  s_gpsdata.speed100 = 0;
-  if (s_gpsdata.heartrate != 255) {
-    s_gpsdata.heartrate = 0;
-  }
-  s_gpsdata.ascentrate = 0;
-  strcpy(s_data.speed, "0");
-  strcpy(s_data.ascentrate, "0");
-
-  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
-    layer_mark_dirty(s_data.page_speed);
-  }
-  if (s_data.page_number == PAGE_ALTITUDE) {
-    layer_mark_dirty(s_data.page_altitude);
-  }
+  screen_reset_instant_data();
 }
 
 void communication_in_received_callback(DictionaryIterator *iter, void *context) {

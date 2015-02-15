@@ -100,7 +100,9 @@ void change_state(uint8_t state) {
     return;
   }
   s_data.state = state;
-
+  if (s_data.state == STATE_STOP) {
+    screen_reset_instant_data();
+  }
   buttons_update();
   
   nbchange_state++;
@@ -159,6 +161,8 @@ static void init(void) {
     screen_debug1_layer_init(s_data.window);
     screen_debug2_layer_init(s_data.window);
   #endif
+
+  screen_reset_instant_data();
 
   action_bar_init(s_data.window);
   menu_init();

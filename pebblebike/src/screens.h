@@ -12,5 +12,6 @@ void topbar_toggle_bluetooth_icon(bool connected);
 void action_bar_init(Window* window);
 void action_bar_deinit();
 void set_layer_attr_full(TextLayer *textlayer, const char *text, GFont font, GTextAlignment text_alignment, GColor color, GColor bg_color, Layer *ParentLayer);
+void screen_reset_instant_data();
 
 #endif // SCREENS_H
