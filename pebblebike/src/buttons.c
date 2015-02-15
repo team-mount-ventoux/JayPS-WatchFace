@@ -66,7 +66,12 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
   }
   if (s_data.page_number == PAGE_SPEED) {
     // + 5: round instead of trunc
-    snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100 + 5) / 10);
+    if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
+      // pace: min per mile_or_km
+      snprintf(s_data.speed, sizeof(s_data.speed), "%ld:%.2ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100) * 3 / 5); // /100*60=/5*3
+    } else {
+      snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100 + 5) / 10);
+    }
     strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
   }
   if (s_data.page_number == PAGE_HEARTRATE) {
