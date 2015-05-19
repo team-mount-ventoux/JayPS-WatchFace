@@ -81,7 +81,7 @@ void speed_layer_update_proc(Layer *layer, GContext* ctx) {
 
       if (digit_value >= 0 && digit_value < 12) {
         images[c] = gbitmap_create_with_resource(IMAGE_RESOURCE_IDS[digit_value]);
-        image_layers[c] = bitmap_layer_create(images[c]->bounds);
+        image_layers[c] = bitmap_layer_create(gbitmap_get_bounds(images[c]));
         bitmap_layer_set_bitmap(image_layers[c], images[c]);
         
         GRect frame = layer_get_frame(bitmap_layer_get_layer(image_layers[c]));

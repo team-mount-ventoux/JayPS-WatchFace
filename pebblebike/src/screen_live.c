@@ -48,7 +48,7 @@ void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t 
 // This is the menu item draw callback where you specify what each item should look like
 void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
     char subtitle[20];
-    char tmp[10];
+    //char tmp[10];
 
     // Determine which section we're going to draw in
     switch (cell_index->section) {

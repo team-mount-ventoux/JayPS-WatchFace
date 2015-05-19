@@ -98,7 +98,7 @@ void topbar_layer_init(Window* window) {
 
   // bluetooth icon
   s_data.topbar_layer.bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
-  s_data.topbar_layer.bluetooth_layer = bitmap_layer_create(s_data.topbar_layer.bluetooth_image->bounds);
+  s_data.topbar_layer.bluetooth_layer = bitmap_layer_create(gbitmap_get_bounds(s_data.topbar_layer.bluetooth_image));
   bitmap_layer_set_bitmap(s_data.topbar_layer.bluetooth_layer, s_data.topbar_layer.bluetooth_image);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer));
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !bluetooth_connection_service_peek());

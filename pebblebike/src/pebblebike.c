@@ -148,8 +148,9 @@ static void init(void) {
 
   s_data.window = window_create();
   window_set_background_color(s_data.window, GColorWhite);
+# ifdef PBL_PLATFORM_APLITE
   window_set_fullscreen(s_data.window, true);
-
+# endif
   topbar_layer_init(s_data.window);
 
   screen_speed_layer_init(s_data.window);
