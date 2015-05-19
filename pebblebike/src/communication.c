@@ -23,6 +23,10 @@ void communication_deinit() {
 }
 
 void send_cmd(uint8_t cmd) {
+    if (!bluetooth_connection_service_peek()) {
+      vibes_double_pulse();
+    }
+
     Tuplet value = TupletInteger(CMD_BUTTON_PRESS, cmd);
 
     DictionaryIterator *iter;
