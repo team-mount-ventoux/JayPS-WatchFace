@@ -133,23 +133,23 @@ void screen_speed_layer_init(Window* window) {
 
 
   s_data.mph_layer = text_layer_create(GRect(0, 58, CANVAS_WIDTH - MENU_WIDTH, 22));
-  set_layer_attr_full(s_data.mph_layer, s_data.unitsSpeedOrHeartRate, font_18, GTextAlignmentCenter, GColorWhite, GColorClear, s_data.page_speed);
+  set_layer_attr_full(s_data.mph_layer, s_data.unitsSpeedOrHeartRate, font_18, GTextAlignmentCenter, GColorWhite, GColorBlack, s_data.page_speed);
 
 
   distance_layer = text_layer_create(GRect(2, 91, 66 - MENU_WIDTH / 2, 14));
-  set_layer_attr_full(distance_layer, "distance", font_12, GTextAlignmentCenter, GColorBlack, GColorClear, s_data.page_speed);
+  set_layer_attr_full(distance_layer, "distance", font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
 
   s_data.miles_layer = text_layer_create(GRect(2, 136, 66 - MENU_WIDTH / 2, 14));
-  set_layer_attr_full(s_data.miles_layer, s_data.unitsDistance, font_12, GTextAlignmentCenter, GColorBlack, GColorClear, s_data.page_speed);
+  set_layer_attr_full(s_data.miles_layer, s_data.unitsDistance, font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
 
   avg_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 84, 66 - MENU_WIDTH / 2, 28));
-  set_layer_attr_full(avg_layer, "average speed", font_12, GTextAlignmentCenter, GColorBlack, GColorClear, s_data.page_speed);
+  set_layer_attr_full(avg_layer, "average speed", font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
 
   s_data.avgmph_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 136, 66 - MENU_WIDTH / 2, 15));
-  set_layer_attr_full(s_data.avgmph_layer, s_data.unitsSpeed, font_12, GTextAlignmentCenter, GColorBlack, GColorClear, s_data.page_speed);
+  set_layer_attr_full(s_data.avgmph_layer, s_data.unitsSpeed, font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
 
   Layer *window_layer = window_get_root_layer(window);
@@ -159,11 +159,11 @@ void screen_speed_layer_init(Window* window) {
 
 
   s_data.distance_layer = text_layer_create(GRect(1, 106, (SCREEN_W - MENU_WIDTH) / 2 - 2, 32));
-  set_layer_attr_full(s_data.distance_layer, s_data.distance, font_24, GTextAlignmentCenter, GColorBlack, GColorClear, s_data.page_speed);
+  set_layer_attr_full(s_data.distance_layer, s_data.distance, font_24, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
 
   s_data.avgspeed_layer = text_layer_create(GRect((SCREEN_W - MENU_WIDTH) / 2 + 1, 106, (SCREEN_W - MENU_WIDTH) / 2 - 2, 32));
-  set_layer_attr_full(s_data.avgspeed_layer, s_data.avgspeed, font_24, GTextAlignmentCenter, GColorBlack, GColorClear, s_data.page_speed);
+  set_layer_attr_full(s_data.avgspeed_layer, s_data.avgspeed, font_24, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
   layer_set_hidden(s_data.page_speed, false);
   //vibes_double_pulse();
