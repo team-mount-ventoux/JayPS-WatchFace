@@ -16,7 +16,7 @@
   #include "screen_debug.h"
 #endif
 
-GFont font_12, font_18, font_24;
+GFont font_12, font_18, font_22_24;
 
 AppData s_data;
 GPSData s_gpsdata;
@@ -137,8 +137,11 @@ static void init(void) {
 
   font_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_12));
   font_18 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_18));
-  font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
-  
+# ifdef PBL_PLATFORM_APLITE
+  font_22_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
+# else
+  font_22_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_22));
+# endif
   s_gpsdata.heartrate = 255; // no data at startup
 
   // set default unit of measure

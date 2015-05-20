@@ -158,12 +158,12 @@ void screen_speed_layer_init(Window* window) {
   layer_add_child(s_data.page_speed, line_layer);
 
 
-  s_data.distance_layer = text_layer_create(GRect(1, 106, (SCREEN_W - MENU_WIDTH) / 2 - 2, 32));
-  set_layer_attr_full(s_data.distance_layer, s_data.distance, font_24, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
+  s_data.distance_layer = text_layer_create(GRect(1, 110, (SCREEN_W - MENU_WIDTH) / 2 - 2, 26));
+  set_layer_attr_full(s_data.distance_layer, s_data.distance, font_22_24, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
 
-  s_data.avgspeed_layer = text_layer_create(GRect((SCREEN_W - MENU_WIDTH) / 2 + 1, 106, (SCREEN_W - MENU_WIDTH) / 2 - 2, 32));
-  set_layer_attr_full(s_data.avgspeed_layer, s_data.avgspeed, font_24, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
+  s_data.avgspeed_layer = text_layer_create(GRect((SCREEN_W - MENU_WIDTH) / 2 + 1, 110, (SCREEN_W - MENU_WIDTH) / 2 - 2, 26));
+  set_layer_attr_full(s_data.avgspeed_layer, s_data.avgspeed, font_22_24, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
   layer_set_hidden(s_data.page_speed, false);
   //vibes_double_pulse();

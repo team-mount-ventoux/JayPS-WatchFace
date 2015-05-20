@@ -28,6 +28,11 @@
       },
       {
         "type": "font",
+        "name": "FONT_ROBOTO_BOLD_22",
+        "file": "fonts/Roboto-Bold.ttf"
+      },
+      {
+        "type": "font",
         "name": "FONT_ROBOTO_BOLD_24",
         "file": "fonts/Roboto-Bold.ttf"
       },

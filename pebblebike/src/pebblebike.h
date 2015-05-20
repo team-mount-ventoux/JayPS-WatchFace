@@ -69,7 +69,13 @@ enum {
 #define CHAR_HEIGHT 51
 
 #define CANVAS_WIDTH 144
-#define MENU_WIDTH 22
+#ifdef PBL_PLATFORM_APLITE
+// 20+2
+#  define MENU_WIDTH (ACTION_BAR_WIDTH+2)
+#else
+// 30
+#  define MENU_WIDTH (ACTION_BAR_WIDTH)
+#endif
 #define TOPBAR_HEIGHT 18
 
 #define SCREEN_W 144
@@ -211,7 +217,7 @@ typedef struct LiveData {
     LiveFriendData *sorted_friends[NUM_LIVE_FRIENDS];
 } LiveData;
 
-extern GFont font_12, font_18, font_24;
+extern GFont font_12, font_18, font_22_24;
 extern AppData s_data;
 extern GPSData s_gpsdata;
 extern LiveData s_live;

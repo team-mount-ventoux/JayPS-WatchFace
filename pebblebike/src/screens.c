@@ -72,7 +72,7 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
 
   // data
   field_layer->data_layer = text_layer_create(GRect(1, 21, w - 2, 32));
-  set_layer_attr_full(field_layer->data_layer, data_text, font_24, GTextAlignmentCenter, GColorBlack, GColorWhite, field_layer->main_layer);
+  set_layer_attr_full(field_layer->data_layer, data_text, font_22_24, GTextAlignmentCenter, GColorBlack, GColorWhite, field_layer->main_layer);
 
   // unit
   field_layer->unit_layer = text_layer_create(GRect(1, h - 14, w - 2, 14));
