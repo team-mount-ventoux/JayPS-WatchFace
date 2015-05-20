@@ -279,7 +279,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             } else {
                 s_gpsdata.avgspeed100 = 0;
             }
-            APP_LOG(APP_LOG_LEVEL_DEBUG, "dist=%ld, time=%d, avg=%ld", s_gpsdata.distance100, s_gpsdata.time, s_gpsdata.avgspeed100);
+            //APP_LOG(APP_LOG_LEVEL_DEBUG, "dist=%ld, time=%d, avg=%ld", s_gpsdata.distance100, s_gpsdata.time, s_gpsdata.avgspeed100);
             s_gpsdata.speed100 = ((tuple->value->data[17] + 256 * tuple->value->data[18])) * 10;
             s_gpsdata.altitude = tuple->value->data[6] + 256 * tuple->value->data[7];
             if (tuple->value->data[9] >= 128) {
@@ -334,7 +334,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
               // pace: min per mile_or_km
               snprintf(s_data.avgspeed, sizeof(s_data.avgspeed), "%ld:%.2ld", s_gpsdata.avgspeed100 / 100, (s_gpsdata.avgspeed100 % 100) * 3 / 5); // /100*60=/5*3
-              APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.avgspeed100:%ld => %s", s_gpsdata.avgspeed100, s_data.avgspeed);
+              //APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.avgspeed100:%ld => %s", s_gpsdata.avgspeed100, s_data.avgspeed);
             } else {
               // + 5: round instead of trunc
               snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%ld.%ld", (s_gpsdata.avgspeed100 + 5) / 100, ((s_gpsdata.avgspeed100 + 5) % 100) / 10);
@@ -346,7 +346,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
               if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
                 // pace: min per mile_or_km
                 snprintf(s_data.speed, sizeof(s_data.speed), "%ld:%.2ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100) * 3 / 5); // /100*60=/5*3
-                APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.speed100:%ld => %s", s_gpsdata.speed100, s_data.speed);
+                //APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.speed100:%ld => %s", s_gpsdata.speed100, s_data.speed);
               } else {
                 // + 5: round instead of trunc
                 snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", (s_gpsdata.speed100 + 5) / 100, ((s_gpsdata.speed100 + 5) % 100) / 10);
