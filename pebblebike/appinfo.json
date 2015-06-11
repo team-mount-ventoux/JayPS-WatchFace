@@ -9,7 +9,7 @@
     "watchface": false
   },
   "appKeys": {},
-  "resources": {
+  "resources": 
     "media": [
       {
         "type": "font",
@@ -38,112 +38,112 @@
       },
       {
         "menuIcon": true,
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_MENU_ICON",
         "file": "images/menu_icon_pebble_cycling.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_0",
         "file": "images/num_0.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_1",
         "file": "images/num_1.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_2",
         "file": "images/num_2.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_3",
         "file": "images/num_3.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_4",
         "file": "images/num_4.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_5",
         "file": "images/num_5.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_6",
         "file": "images/num_6.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_7",
         "file": "images/num_7.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_8",
         "file": "images/num_8.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_9",
         "file": "images/num_9.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_DOT",
         "file": "images/num_dot.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NUM_COLON",
         "file": "images/num_colon.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_START_BUTTON",
         "file": "images/start_button.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_STOP_BUTTON",
         "file": "images/stop_button.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_RESET_BUTTON",
         "file": "images/reset_button.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_MENU_BUTTON",
         "file": "images/menu_button.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_ZOOM_BUTTON",
         "file": "images/zoom_button.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_NEXT_BUTTON",
         "file": "images/next_button.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_MENU_UP_BUTTON",
         "file": "images/menu_up_button.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_MENU_DOWN_BUTTON",
         "file": "images/menu_down_button.png"
       },
       {
-        "type": "png",
+        "type": "pbi",
         "name": "IMAGE_BLUETOOTH",
         "file": "images/bluetooth.png"
       }
