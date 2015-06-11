@@ -9,7 +9,7 @@
     "watchface": false
   },
   "appKeys": {},
-  "resources": 
+  "resources": {
     "media": [
       {
         "type": "font",
