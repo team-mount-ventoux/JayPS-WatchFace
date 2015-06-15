@@ -6,6 +6,7 @@
 #include "screens.h"
 #include "screen_map.h"
 #include "screen_live.h"
+#include "screen_speed.h"
 #include "menu.h"
 
 GBitmap *start_button;
@@ -64,19 +65,8 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
   } else if (s_data.page_number == PAGE_MAP) {
     action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
   }
-  if (s_data.page_number == PAGE_SPEED) {
-    // + 5: round instead of trunc
-    if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
-      // pace: min per mile_or_km
-      snprintf(s_data.speed, sizeof(s_data.speed), "%ld:%.2ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100) * 3 / 5); // /100*60=/5*3
-    } else {
-      snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100 + 5) / 10);
-    }
-    strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
-  }
-  if (s_data.page_number == PAGE_HEARTRATE) {
-    snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
-    strncpy(s_data.unitsSpeedOrHeartRate, HEART_RATE_UNIT, 8);
+  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
+    screen_speed_show_speed(true);
   }
   update_screens();
 }
@@ -89,6 +79,9 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   } else {
     menu_show();
   }
+}
+void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context) {
+  screen_speed_start_rotation();
 }
 void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context) {
   screen_map_zoom_in(2);
@@ -109,6 +102,7 @@ void click_config_provider(void *context) {
 
   // long click config:
   window_long_click_subscribe(BUTTON_ID_DOWN, 1000, handle_bottombutton_longclick, NULL /* No handler on button release */);
+  window_long_click_subscribe(BUTTON_ID_SELECT, 1000, handle_selectbutton_longclick, NULL /* No handler on button release */);
   window_long_click_subscribe(BUTTON_ID_UP, 1000, handle_topbutton_longclick, NULL /* No handler on button release */);
   window_multi_click_subscribe(BUTTON_ID_BACK, 2, 2, 300, true, handle_backbutton_exit);
 }

@@ -24,6 +24,17 @@ TextLayer *avg_layer;
 Layer *line_layer;
 Layer *bottom_layer;
 
+enum {
+  ROTATION_DISABLED,
+  ROTATION_MIN,
+  ROTATION_SPEED = ROTATION_MIN,
+  ROTATION_HEARTRATE,
+  ROTATION_ALTITUDE,
+  ROTATION_MAX,
+};
+int rotation = ROTATION_DISABLED;
+static AppTimer *rotation_timer;
+
 void speed_layer_update_proc(Layer *layer, GContext* ctx) {
   SpeedLayer *speed_layer = &s_data.speed_layer;
 
@@ -187,4 +198,57 @@ void screen_speed_deinit() {
   layer_destroy(line_layer);
   text_layer_destroy(s_data.distance_layer);
   text_layer_destroy(s_data.avgspeed_layer);
+}
+
+void screen_speed_show_speed(bool force_units) {
+  if (s_data.page_number != PAGE_SPEED && s_data.page_number != PAGE_HEARTRATE) {
+    // nothing to do here
+    return;
+  }
+  if (s_data.page_number == PAGE_HEARTRATE || rotation == ROTATION_HEARTRATE) {
+    snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
+    if (force_units) {
+      strncpy(s_data.unitsSpeedOrHeartRate, HEART_RATE_UNIT, 8);
+    }
+  } else if (rotation == ROTATION_ALTITUDE) {
+    snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.altitude);
+    if (force_units) {
+      strncpy(s_data.unitsSpeedOrHeartRate, s_data.altitude_layer.units, 8);
+    }
+  } else {
+    if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
+      // pace: min per mile_or_km
+      snprintf(s_data.speed, sizeof(s_data.speed), "%ld:%.2ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100) * 3 / 5); // /100*60=/5*3
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.speed100:%ld => %s", s_gpsdata.speed100, s_data.speed);
+    } else {
+      // + 5: round instead of trunc
+      snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", (s_gpsdata.speed100 + 5) / 100, ((s_gpsdata.speed100 + 5) % 100) / 10);
+    }
+    if (force_units) {
+      strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
+    }
+  }
+}
+
+static void rotation_timer_callback(void *data) {
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "rotation_timer");
+  rotation_timer = app_timer_register(5000, rotation_timer_callback, NULL);
+  rotation++;
+  if (rotation == ROTATION_HEARTRATE && s_gpsdata.heartrate == 255) {
+    rotation++;
+  }
+  if (rotation == ROTATION_MAX) {
+    rotation = ROTATION_MIN;
+  }
+  screen_speed_show_speed(true);
+  update_screens();
+}
+void screen_speed_start_rotation() {
+  if (rotation_timer == NULL) {
+    rotation_timer = app_timer_register(5000, rotation_timer_callback, NULL);
+  } else {
+    app_timer_cancel(rotation_timer);
+    rotation_timer = NULL;
+    rotation = ROTATION_DISABLED;
+  }
 }

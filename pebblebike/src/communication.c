@@ -5,6 +5,7 @@
 #include "screens.h"
 #include "screen_map.h"
 #include "screen_live.h"
+#include "screen_speed.h"
 
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
@@ -245,7 +246,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         case MSG_LOCATION_DATA_V2:
             nb_tuple_altitude++;
             if (tuple->key == MSG_LOCATION_DATA) {
-                APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA");
+                //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA");
                 change_units((tuple->value->data[0] & 0b00000001) >> 0, false);
                 change_state((tuple->value->data[0] & 0b00000010) >> 1);
                 s_data.debug = (tuple->value->data[0] & 0b00000100) >> 2;
@@ -253,7 +254,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 s_data.refresh_code = (tuple->value->data[0] & 0b00110000) >> 4;
             }
             if (tuple->key == MSG_LOCATION_DATA_V2) {
-                APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA_v2");
+                //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA_v2");
                 change_units((tuple->value->data[0] & 0b00000111) >> 0, false);
                 change_state((tuple->value->data[0] & 0b00001000) >> 3);
                 s_data.debug = (tuple->value->data[0] & 0b00010000) >> 4;
@@ -340,24 +341,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
               snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%ld.%ld", (s_gpsdata.avgspeed100 + 5) / 100, ((s_gpsdata.avgspeed100 + 5) % 100) / 10);
             }
 
-            if (s_data.page_number == PAGE_HEARTRATE) {
-              snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
-            } else {
-              if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
-                // pace: min per mile_or_km
-                snprintf(s_data.speed, sizeof(s_data.speed), "%ld:%.2ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100) * 3 / 5); // /100*60=/5*3
-                //APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.speed100:%ld => %s", s_gpsdata.speed100, s_data.speed);
-              } else {
-                // + 5: round instead of trunc
-                snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", (s_gpsdata.speed100 + 5) / 100, ((s_gpsdata.speed100 + 5) % 100) / 10);
-              }
-            }
-
-
             snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
             snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
             snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
             snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
+
+            screen_speed_show_speed(false);
 
             // reset data (instant speed...) after X if no data is received
             if (reset_data_timer) {
