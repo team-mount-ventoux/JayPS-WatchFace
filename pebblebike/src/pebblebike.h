@@ -94,7 +94,26 @@ enum {
 #define ASCENT_RATE_UNIT_METRIC "m/h"
 #define ASCENT_RATE_UNIT_IMPERIAL "ft/h"
 #define HEART_RATE_UNIT "bpm"
-
+enum {
+    FIELD__MIN,
+    FIELD_ACCURACY = FIELD__MIN,
+    FIELD_ALTITUDE,
+    FIELD_ASCENT,
+    FIELD_ASCENTRATE,
+    FIELD_AVGSPEED,
+    FIELD_BEARING,
+    FIELD_CADENCE,
+    FIELD_DISTANCE,
+    FIELD_HEARTRATE,
+    FIELD_LAT,
+    FIELD_LON,
+    FIELD_MAXSPEED,
+    FIELD_NBASCENT,
+    FIELD_SLOPE,
+    FIELD_SPEED,
+    FIELD_TIME,
+    FIELD__MAX,
+};
 typedef struct TopBarLayer {
     Layer *layer;
     TextLayer *time_layer;
@@ -109,12 +128,21 @@ typedef struct SpeedLayer {
 } SpeedLayer;
 
 typedef struct FieldLayer {
+    uint8_t type;
     Layer *main_layer;
     TextLayer *title_layer;
     TextLayer *data_layer;
     TextLayer *unit_layer;
+    char title[20];
     char units[8];
 } FieldLayer;
+
+typedef struct ScreenALayer {
+    FieldLayer field_top;
+    FieldLayer field_bottom_left;
+    FieldLayer field_bottom_right;
+    SpeedLayer speed_layer;
+} ScreenALayer;
 
 typedef struct AppData {
     Window *window;
@@ -131,12 +159,7 @@ typedef struct AppData {
 
     TopBarLayer topbar_layer;
 
-    SpeedLayer speed_layer;
-    TextLayer *distance_layer;
-    TextLayer *avgspeed_layer;
-    TextLayer *mph_layer;
-    TextLayer *avgmph_layer;
-    TextLayer *miles_layer;
+    ScreenALayer screenA_layer;
 
     FieldLayer altitude_layer;
     FieldLayer altitude_ascent;

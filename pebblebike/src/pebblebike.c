@@ -86,9 +86,10 @@ void change_units(uint8_t units, bool first_time) {
       break;
   }
   if (!first_time) {
-    layer_mark_dirty(text_layer_get_layer(s_data.miles_layer));
-    layer_mark_dirty(text_layer_get_layer(s_data.mph_layer));
-    layer_mark_dirty(text_layer_get_layer(s_data.avgmph_layer));
+    //todo(custom) screen_speed_dirty
+    layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_top.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_bottom_left.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_bottom_right.unit_layer));
   }
   if (s_data.page_number == PAGE_SPEED) {
     strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);

@@ -9,10 +9,10 @@ Layer *path_layer;
 Layer *bearing_layer;
 
 #if !DEBUG
-  #define NUM_POINTS 750
+  #define NUM_POINTS 50
 #endif
 #if DEBUG
-  #define NUM_POINTS 600
+  #define NUM_POINTS 60
 #endif
 
 GPoint pts[NUM_POINTS];
