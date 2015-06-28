@@ -8,6 +8,7 @@
 #include "screen_live.h"
 #include "screen_speed.h"
 #include "menu.h"
+#include "screen_config.h"
 
 GBitmap *start_button;
 GBitmap *stop_button;
@@ -17,22 +18,6 @@ GBitmap *zoom_button;
 GBitmap *next_button;
 GBitmap *menu_up_button;
 GBitmap *menu_down_button;
-
-enum {
-  CONFIG_FIELD_DISABLED,
-  CONFIG_FIELD__MIN,
-  CONFIG_FIELD_TOP = CONFIG_FIELD__MIN,
-  CONFIG_FIELD_BOTTOM_LEFT,
-  CONFIG_FIELD_BOTTOM_RIGHT,
-  CONFIG_FIELD__MAX,
-};
-FieldLayer *cur_field;
-uint8_t config_field= CONFIG_FIELD_DISABLED;
-void config_start();
-void config_stop();
-void config_change_field();
-void config_change_type();
-static AppTimer *config_timer;
 
 void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
   vibes_short_pulse();
@@ -176,71 +161,4 @@ void buttons_deinit() {
   gbitmap_destroy(next_button);
   gbitmap_destroy(menu_up_button);
   gbitmap_destroy(menu_down_button);
-}
-bool config_hidden = false;
-void config_change_visibility(FieldLayer* field_layer, bool hidden) {
-  if (field_layer->title_layer != NULL) {
-    layer_set_hidden(text_layer_get_layer(field_layer->title_layer), hidden);
-  }
-  if (field_layer->data_layer != NULL) {
-    layer_set_hidden(text_layer_get_layer(field_layer->data_layer), hidden);
-  }
-  if (field_layer->unit_layer != NULL) {
-    layer_set_hidden(text_layer_get_layer(field_layer->unit_layer), hidden);  
-  }
-}
-static void config_timer_callback(void *data) {
-  config_hidden = !config_hidden;
-  config_timer = app_timer_register(config_hidden ? 200 : 1000, config_timer_callback, NULL);
-  config_change_visibility(cur_field, config_hidden);
-}
-void config_start() {
-  if (config_field == CONFIG_FIELD_DISABLED) {
-    vibes_short_pulse();
-    config_field = CONFIG_FIELD_TOP;
-    cur_field = &s_data.screenA_layer.field_top;
-    if (config_timer != NULL) {
-      app_timer_cancel(config_timer);
-    }
-    config_timer = app_timer_register(1000, config_timer_callback, NULL);
-    config_hidden = false;
-    screen_speed_update_config();
-  } else {
-    config_stop();
-  }
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "config_field %d", config_field);
-}
-void config_stop() {
-  config_field = CONFIG_FIELD_DISABLED;
-  config_change_visibility(cur_field, false);
-  app_timer_cancel(config_timer);
-  config_timer = NULL;
-  text_layer_set_text(s_data.topbar_layer.time_layer, s_data.time);
-  layer_mark_dirty(s_data.topbar_layer.layer);
-}
-void config_change_field() {
-  config_field++;
-  if (config_field == CONFIG_FIELD__MAX) {
-    config_field = CONFIG_FIELD__MIN;
-  }
-  config_change_visibility(cur_field, false);
-  if (config_field == CONFIG_FIELD_BOTTOM_LEFT) {
-    cur_field = &s_data.screenA_layer.field_bottom_left;
-  } else if (config_field == CONFIG_FIELD_BOTTOM_RIGHT) {
-    cur_field = &s_data.screenA_layer.field_bottom_right;    
-  } else {
-    //default
-    cur_field = &s_data.screenA_layer.field_top;
-  }
-  config_change_visibility(cur_field, true);
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "config_field %d", config_field);
-}
-void config_change_type() {
-  cur_field->type++;
-  if (cur_field->type == FIELD__MAX) {
-    cur_field->type = FIELD__MIN;
-  }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "type %d", cur_field->type);
-  screen_speed_update_config();
 }

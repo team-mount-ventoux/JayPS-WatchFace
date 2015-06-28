@@ -3,6 +3,7 @@
 #include "pebblebike.h"
 #include "screen_speed.h"
 #include "screens.h"
+#include "screen_config.h"
 
 #define NUMBER_OF_IMAGES 12
 #define TOTAL_IMAGE_SLOTS 4
@@ -128,13 +129,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_stroke_color(ctx, GColorBlack);
   graphics_draw_line(ctx, GPoint(72 - MENU_WIDTH / 2, 90), GPoint(72 - MENU_WIDTH / 2, 160));
 }
-//Debug stack overflow
-uint32_t stack_ini;
-
 void screen_speed_layer_init(Window* window) {
-  register uint32_t sp __asm__ ("sp");
-  stack_ini = sp;
-
   s_data.screenA_layer.field_top.type = FIELD_SPEED;
   s_data.screenA_layer.field_bottom_left.type = FIELD_DISTANCE;
   s_data.screenA_layer.field_bottom_right.type = FIELD_AVGSPEED;
@@ -242,112 +237,6 @@ void screen_speed_show_speed(bool force_units) {
       strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
     }
   }
-}
-const char *field_get_title(uint8_t field) {
-  switch(field) {
-    case FIELD_AVGSPEED: return "Avg speed"; break;
-    case FIELD_DISTANCE: return "Distance"; break;
-    case FIELD_ALTITUDE: return "Altitude"; break;
-    case FIELD_ASCENT: return "Ascent"; break;
-    case FIELD_SPEED: return "Speed"; break;
-    case FIELD_BEARING: return "Bearing"; break;
-    case FIELD_TIME: return "Time"; break;
-    case FIELD_MAXSPEED: return "Max speed"; break;
-    case FIELD_LAT: return "Lat"; break;
-    case FIELD_LON: return "Lon"; break;
-    case FIELD_ASCENTRATE: return "Ascent rate"; break;
-    case FIELD_NBASCENT: return "Nb ascent"; break;
-    case FIELD_SLOPE: return "Slope"; break;
-    case FIELD_ACCURACY: return "Accuracy"; break;
-    case FIELD_HEARTRATE: return "Heartrate"; break;
-    case FIELD_CADENCE: return "Cadence"; break;
-    default: return "Unknown";
-  }
-}
-const char *field_get_text(uint8_t field) {
-  switch(field) {
-    case FIELD_AVGSPEED: return s_data.avgspeed; break;
-    case FIELD_DISTANCE: return s_data.distance; break;
-    case FIELD_ALTITUDE: return s_data.altitude; break;
-    case FIELD_ASCENT: return s_data.ascent; break;
-    case FIELD_SPEED: return s_data.speed; break;
-    case FIELD_BEARING: return "Bearing"; break;
-    case FIELD_TIME: return "Time"; break;
-    case FIELD_MAXSPEED: return "Max speed"; break;
-    case FIELD_LAT: return "Lat"; break;
-    case FIELD_LON: return "Lon"; break;
-    case FIELD_ASCENTRATE: return s_data.ascentrate; break;
-    case FIELD_NBASCENT: return "Nb ascent"; break;
-    case FIELD_SLOPE: return s_data.slope; break;
-    case FIELD_ACCURACY: return s_data.accuracy; break;
-    case FIELD_HEARTRATE: return "hr"; break;
-    case FIELD_CADENCE: return "Cadence"; break;
-    default: return "-";
-    /*
-enum {
-    FIELD_BEARING,
-    FIELD_TIME,
-    FIELD_MAXSPEED,
-    FIELD_LAT,
-    FIELD_LON,
-    FIELD_ASCENTRATE,
-    FIELD_NBASCENT,
-    FIELD_SLOPE,
-    FIELD_ACCURACY,
-    FIELD_HEARTRATE,
-    FIELD_CADENCE,
-};
-        char time[6]; // xx:xx, \0 terminated
-    char ascentrate[8];
-    char slope[8];
-    char accuracy[5];*/
-  }
-    register uint32_t sp __asm__ ("sp");
-  printf("st:%d", (int) (stack_ini-sp));
-
-}
-const char *field_get_units(uint8_t field) {
-  switch(field) {
-    case FIELD_AVGSPEED: return s_data.unitsSpeed; break;
-    case FIELD_DISTANCE: return s_data.unitsDistance; break;
-    case FIELD_ALTITUDE: return s_data.altitude_layer.units; break;
-    case FIELD_ASCENT: return s_data.altitude_layer.units; break;
-    case FIELD_SPEED: return s_data.unitsSpeed; break;
-    case FIELD_BEARING: return "°"; break;
-    case FIELD_TIME: return "s"; break;
-    case FIELD_MAXSPEED: return s_data.unitsSpeed; break;
-    case FIELD_LAT: return ""; break;
-    case FIELD_LON: return ""; break;
-    case FIELD_ASCENTRATE: return s_data.altitude_ascent_rate.units; break;
-    case FIELD_NBASCENT: return ""; break;
-    case FIELD_SLOPE: return "%"; break;
-    case FIELD_ACCURACY: return "m"; break;
-    case FIELD_HEARTRATE: return "bpm"; break;
-    case FIELD_CADENCE: return "rpm"; break;
-    default: return "Unk";
-  }
-}
-void field_set_text(FieldLayer field_layer) {
-  if (field_layer.title_layer != NULL) {
-    text_layer_set_text(field_layer.title_layer, field_get_title(field_layer.type));
-  }
-  if (field_layer.data_layer != NULL) {
-    text_layer_set_text(field_layer.data_layer, field_get_text(field_layer.type));
-  }
-  if (field_layer.unit_layer != NULL) {
-    text_layer_set_text(field_layer.unit_layer, field_get_units(field_layer.type));
-  }
-}
-void screen_speed_update_config() {
-  field_set_text(s_data.screenA_layer.field_top);
-  field_set_text(s_data.screenA_layer.field_bottom_left);
-  field_set_text(s_data.screenA_layer.field_bottom_right);
-
-  text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(s_data.screenA_layer.field_top.type));
-  layer_mark_dirty(s_data.topbar_layer.layer);
-
-  //text_layer_set_text(s_data.screenA_layer.field_bottom_right.data_layer, field_get_text(s_data.screenA_layer.field_bottom_right.type));
-    //text_layer_set_text(s_data.screenA_layer.distance_layer, s_data.avgspeed);
 }
 
 static void rotation_timer_callback(void *data) {
