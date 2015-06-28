@@ -11,10 +11,20 @@ enum {
 };
 extern uint8_t config_field;
 
+typedef struct ConfigData {
+    uint8_t screenA_top_type;
+    uint8_t screenA_bottom_left_type;
+    uint8_t screenA_bottom_right_type;
+} ConfigData;
+extern ConfigData config;
+
 void config_start();
 void config_stop();
 void config_change_field();
 void config_change_type();
+void config_load();
+void config_save();
 void screen_speed_update_config();
+
 
 #endif // SCREEN_CONFIG_H

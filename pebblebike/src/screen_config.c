@@ -9,6 +9,8 @@ bool config_hidden = false;
 static AppTimer *config_timer;
 uint8_t config_field = CONFIG_FIELD_DISABLED;
 
+ConfigData config;
+
 const char *field_get_title(uint8_t field) {
   switch(field) {
     case FIELD_AVGSPEED: return "Avg speed"; break;
@@ -134,6 +136,7 @@ void config_stop() {
   config_timer = NULL;
   text_layer_set_text(s_data.topbar_layer.time_layer, s_data.time);
   layer_mark_dirty(s_data.topbar_layer.layer);
+  config_save();
 }
 void config_change_field() {
   config_field++;
@@ -160,4 +163,20 @@ void config_change_type() {
   }
   APP_LOG(APP_LOG_LEVEL_DEBUG, "type %d", cur_field->type);
   screen_speed_update_config();
+}
+
+void config_load() {
+  if (persist_exists(PERSIST_CONFIG_KEY)) {
+    persist_read_data(PERSIST_CONFIG_KEY, &config, sizeof(config));
+  } else {
+    config.screenA_top_type = FIELD_SPEED;
+    config.screenA_bottom_left_type = FIELD_DISTANCE;
+    config.screenA_bottom_right_type = FIELD_AVGSPEED;
+  }
+}
+void config_save() {
+  config.screenA_top_type = s_data.screenA_layer.field_top.type;
+  config.screenA_bottom_left_type = s_data.screenA_layer.field_bottom_left.type;
+  config.screenA_bottom_right_type = s_data.screenA_layer.field_bottom_right.type;
+  persist_write_data(PERSIST_CONFIG_KEY, &config, sizeof(config));
 }

@@ -12,6 +12,7 @@
 #include "screen_altitude.h"
 #include "screen_live.h"
 #include "screen_map.h"
+#include "screen_config.h"
 #if DEBUG
   #include "screen_debug.h"
 #endif
@@ -134,6 +135,8 @@ void bt_callback(bool connected) {
 
 static void init(void) {
 
+  config_load();
+
   s_data.phone_battery_level = -1;
 
   font_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_12));
@@ -179,6 +182,8 @@ static void init(void) {
   //app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
   
   communication_init();
+
+  screen_speed_update_config();
   
   window_stack_push(s_data.window, true /* Animated */);
   

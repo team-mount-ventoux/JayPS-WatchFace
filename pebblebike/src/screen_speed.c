@@ -130,10 +130,9 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_draw_line(ctx, GPoint(72 - MENU_WIDTH / 2, 90), GPoint(72 - MENU_WIDTH / 2, 160));
 }
 void screen_speed_layer_init(Window* window) {
-  s_data.screenA_layer.field_top.type = FIELD_SPEED;
-  s_data.screenA_layer.field_bottom_left.type = FIELD_DISTANCE;
-  s_data.screenA_layer.field_bottom_right.type = FIELD_AVGSPEED;
-
+  s_data.screenA_layer.field_top.type = config.screenA_top_type;
+  s_data.screenA_layer.field_bottom_left.type = config.screenA_bottom_left_type;
+  s_data.screenA_layer.field_bottom_right.type = config.screenA_bottom_right_type;
 
   s_data.page_speed = layer_create(GRect(0,TOPBAR_HEIGHT,CANVAS_WIDTH-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
   layer_set_update_proc(s_data.page_speed, page_speed_update_proc);

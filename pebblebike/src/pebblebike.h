@@ -54,6 +54,7 @@ enum {
 #define PAGE_FIRST PAGE_SPEED
 enum {
     PERSIST_UNITS_KEY = 0x0,
+    PERSIST_CONFIG_KEY = 0x1,
 };
 
 #if DEBUG
