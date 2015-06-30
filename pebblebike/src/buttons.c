@@ -95,14 +95,16 @@ void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context)
 void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context) {
   if (s_data.page_number == PAGE_MAP) {
     screen_map_zoom_in(2);
-  } else if (config_field == CONFIG_FIELD_DISABLED) {
-    config_start();
-    action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, menu_up_button);
-    action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_down_button);
-  } else {
-    config_stop();
-    buttons_update();
-    action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
+  } else if (s_data.page_number == PAGE_SPEED) {
+    if (config_field == CONFIG_FIELD_DISABLED) {
+      config_start();
+      action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, menu_up_button);
+      action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_down_button);
+    } else {
+      config_stop();
+      buttons_update();
+      action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
+    }
   }
 }
 void handle_backbutton_click(ClickRecognizerRef recognizer, void *context) {
