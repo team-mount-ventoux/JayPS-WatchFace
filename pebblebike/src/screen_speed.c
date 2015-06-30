@@ -157,7 +157,7 @@ void screen_speed_layer_init(Window* window) {
   // END top
 
   // BEGIN bottom left "distance"
-  s_data.screenA_layer.field_bottom_left.title_layer = text_layer_create(GRect(2, 91, 66 - MENU_WIDTH / 2, 14));
+  s_data.screenA_layer.field_bottom_left.title_layer = text_layer_create(GRect(2, 90, 66 - MENU_WIDTH / 2, 16));
   set_layer_attr_full(s_data.screenA_layer.field_bottom_left.title_layer, "distance", font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
   s_data.screenA_layer.field_bottom_left.unit_layer = text_layer_create(GRect(2, 136, 66 - MENU_WIDTH / 2, 14));
@@ -168,7 +168,7 @@ void screen_speed_layer_init(Window* window) {
   // END bottom left
 
   // BEGIN bottom right "avg"
-  s_data.screenA_layer.field_bottom_right.title_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 91, 66 - MENU_WIDTH / 2, 14));
+  s_data.screenA_layer.field_bottom_right.title_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 90, 66 - MENU_WIDTH / 2, 16));
   set_layer_attr_full(s_data.screenA_layer.field_bottom_right.title_layer, "avg speed", font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
 
   s_data.screenA_layer.field_bottom_right.unit_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 136, 66 - MENU_WIDTH / 2, 15));
