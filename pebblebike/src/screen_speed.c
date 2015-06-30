@@ -118,7 +118,7 @@ void speed_layer_init(SpeedLayer *speed_layer, GRect frame) {
   speed_layer->layer = layer_create(frame);
   layer_set_update_proc(speed_layer->layer, speed_layer_update_proc);
 }
-void speed_layer_set_text(SpeedLayer *speed_layer,char* textdata) {
+void speed_layer_set_text(SpeedLayer *speed_layer, char *textdata) {
   speed_layer->text = textdata;
 }
 void page_speed_update_proc(Layer *page_speed, GContext* ctx) {

@@ -1,6 +1,7 @@
 #include "pebble.h"
 #include "config.h"
 #include "pebblebike.h"
+#include "screen_speed.h"
 #include "screen_config.h"
 
 
@@ -87,6 +88,7 @@ void field_set_text(FieldLayer field_layer) {
 }
 void screen_speed_update_config() {
   field_set_text(s_data.screenA_layer.field_top);
+  speed_layer_set_text(&s_data.screenA_layer.speed_layer, (char *) field_get_text(s_data.screenA_layer.field_top.type));
   field_set_text(s_data.screenA_layer.field_bottom_left);
   field_set_text(s_data.screenA_layer.field_bottom_right);
 }
