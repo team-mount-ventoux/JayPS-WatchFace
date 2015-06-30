@@ -2,6 +2,7 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "screen_speed.h"
+#include "screens.h"
 #include "screen_config.h"
 
 
@@ -110,22 +111,17 @@ static void config_timer_callback(void *data) {
   config_change_visibility(cur_field, config_hidden);
 }
 void config_start() {
-  if (config_field == CONFIG_FIELD_DISABLED) {
-    vibes_short_pulse();
-    config_field = CONFIG_FIELD_TOP;
-    cur_field = &s_data.screenA_layer.field_top;
-    if (config_timer != NULL) {
-      app_timer_cancel(config_timer);
-    }
-    config_timer = app_timer_register(1000, config_timer_callback, NULL);
-    config_hidden = false;
-    screen_speed_update_config();
-    text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(s_data.screenA_layer.field_top.type));
-    layer_mark_dirty(s_data.topbar_layer.layer);    
-  } else {
-    config_stop();
+  vibes_short_pulse();
+  config_field = CONFIG_FIELD_TOP;
+  cur_field = &s_data.screenA_layer.field_top;
+  if (config_timer != NULL) {
+    app_timer_cancel(config_timer);
   }
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "config_field %d", config_field);
+  config_timer = app_timer_register(1000, config_timer_callback, NULL);
+  config_hidden = false;
+  screen_speed_update_config();
+  text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(s_data.screenA_layer.field_top.type));
+  layer_mark_dirty(s_data.topbar_layer.layer);
 }
 void config_stop() {
   config_field = CONFIG_FIELD_DISABLED;
@@ -154,10 +150,18 @@ void config_change_field() {
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "config_field %d", config_field);
 }
-void config_change_type() {
-  cur_field->type++;
-  if (cur_field->type == FIELD__MAX) {
-    cur_field->type = FIELD__MIN;
+void config_change_type(uint8_t direction) {
+  if (direction == CONFIG_CHANGE_TYPE_NEXT) {
+    cur_field->type++;
+    if (cur_field->type == FIELD__MAX) {
+      cur_field->type = FIELD__MIN;
+    }
+  } else {
+    // CONFIG_CHANGE_TYPE_PREVIOUS
+    if (cur_field->type == FIELD__MIN) {
+      cur_field->type = FIELD__MAX;
+    }
+    cur_field->type--;
   }
   APP_LOG(APP_LOG_LEVEL_DEBUG, "type %d", cur_field->type);
   screen_speed_update_config();
