@@ -21,11 +21,6 @@ void screen_altitude_layer_init(Window* window) {
   layer_set_update_proc(s_data.page_altitude, page_altitude_update_proc);
   layer_add_child(window_get_root_layer(window), s_data.page_altitude);
 
-  strcpy(s_data.altitude, "-");
-  strcpy(s_data.ascent, "-");
-  strcpy(s_data.ascentrate, "-");
-  strcpy(s_data.slope, "-");
-
   int16_t w = (SCREEN_W - MENU_WIDTH) / 2; //61
   int16_t h = (SCREEN_H - TOPBAR_HEIGHT) / 2 - 1; // 75
 

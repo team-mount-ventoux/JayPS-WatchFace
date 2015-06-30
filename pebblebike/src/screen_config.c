@@ -19,12 +19,12 @@ const char *field_get_title(uint8_t field) {
     case FIELD_ASCENT: return "Ascent"; break;
     case FIELD_SPEED: return "Speed"; break;
     case FIELD_BEARING: return "Bearing"; break;
-    case FIELD_TIME: return "Time"; break;
+    case FIELD_DURATION: return "Duration"; break;
     case FIELD_MAXSPEED: return "Max speed"; break;
-    case FIELD_LAT: return "Lat"; break;
-    case FIELD_LON: return "Lon"; break;
+    //case FIELD_LAT: return "Lat"; break;
+    //case FIELD_LON: return "Lon"; break;
     case FIELD_ASCENTRATE: return "Ascent rate"; break;
-    case FIELD_NBASCENT: return "Nb ascent"; break;
+    //case FIELD_NBASCENT: return "Nb ascent"; break;
     case FIELD_SLOPE: return "Slope"; break;
     case FIELD_ACCURACY: return "Accuracy"; break;
     case FIELD_HEARTRATE: return "Heartrate"; break;
@@ -39,17 +39,17 @@ const char *field_get_text(uint8_t field) {
     case FIELD_ALTITUDE: return s_data.altitude; break;
     case FIELD_ASCENT: return s_data.ascent; break;
     case FIELD_SPEED: return s_data.speed; break;
-    case FIELD_BEARING: return "Bearing"; break;
-    case FIELD_TIME: return "Time"; break;
-    case FIELD_MAXSPEED: return "Max speed"; break;
-    case FIELD_LAT: return "Lat"; break;
-    case FIELD_LON: return "Lon"; break;
+    case FIELD_BEARING: return s_data.bearing; break;
+    case FIELD_DURATION: return s_data.elapsedtime; break;
+    case FIELD_MAXSPEED: return s_data.maxspeed; break;
+    //case FIELD_LAT: return s_data.lat; break;
+    //case FIELD_LON: return s_data.lon; break;
     case FIELD_ASCENTRATE: return s_data.ascentrate; break;
-    case FIELD_NBASCENT: return "Nb ascent"; break;
+    //case FIELD_NBASCENT: return s_data.nbascent; break;
     case FIELD_SLOPE: return s_data.slope; break;
     case FIELD_ACCURACY: return s_data.accuracy; break;
-    case FIELD_HEARTRATE: return "hr"; break;
-    case FIELD_CADENCE: return "Cadence"; break;
+    case FIELD_HEARTRATE: return s_data.heartrate; break;
+    case FIELD_CADENCE: return s_data.cadence; break;
     default: return "-";
   }
 }
@@ -61,12 +61,12 @@ const char *field_get_units(uint8_t field) {
     case FIELD_ASCENT: return s_data.altitude_layer.units; break;
     case FIELD_SPEED: return s_data.unitsSpeed; break;
     case FIELD_BEARING: return "°"; break;
-    case FIELD_TIME: return "s"; break;
+    case FIELD_DURATION: return "s"; break;
     case FIELD_MAXSPEED: return s_data.unitsSpeed; break;
-    case FIELD_LAT: return ""; break;
-    case FIELD_LON: return ""; break;
+    //case FIELD_LAT: return ""; break;
+    //case FIELD_LON: return ""; break;
     case FIELD_ASCENTRATE: return s_data.altitude_ascent_rate.units; break;
-    case FIELD_NBASCENT: return ""; break;
+    //case FIELD_NBASCENT: return ""; break;
     case FIELD_SLOPE: return "%"; break;
     case FIELD_ACCURACY: return "m"; break;
     case FIELD_HEARTRATE: return "bpm"; break;
@@ -89,12 +89,6 @@ void screen_speed_update_config() {
   field_set_text(s_data.screenA_layer.field_top);
   field_set_text(s_data.screenA_layer.field_bottom_left);
   field_set_text(s_data.screenA_layer.field_bottom_right);
-
-  text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(s_data.screenA_layer.field_top.type));
-  layer_mark_dirty(s_data.topbar_layer.layer);
-
-  //text_layer_set_text(s_data.screenA_layer.field_bottom_right.data_layer, field_get_text(s_data.screenA_layer.field_bottom_right.type));
-    //text_layer_set_text(s_data.screenA_layer.distance_layer, s_data.avgspeed);
 }
 
 void config_change_visibility(FieldLayer* field_layer, bool hidden) {
@@ -124,6 +118,8 @@ void config_start() {
     config_timer = app_timer_register(1000, config_timer_callback, NULL);
     config_hidden = false;
     screen_speed_update_config();
+    text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(s_data.screenA_layer.field_top.type));
+    layer_mark_dirty(s_data.topbar_layer.layer);    
   } else {
     config_stop();
   }
@@ -163,6 +159,8 @@ void config_change_type() {
   }
   APP_LOG(APP_LOG_LEVEL_DEBUG, "type %d", cur_field->type);
   screen_speed_update_config();
+  text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(s_data.screenA_layer.field_top.type));
+  layer_mark_dirty(s_data.topbar_layer.layer);
 }
 
 void config_load() {

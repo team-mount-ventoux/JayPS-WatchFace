@@ -95,6 +95,7 @@ enum {
 #define ASCENT_RATE_UNIT_METRIC "m/h"
 #define ASCENT_RATE_UNIT_IMPERIAL "ft/h"
 #define HEART_RATE_UNIT "bpm"
+//TODO: don't use field values to sort (only to save - persistent)
 enum {
     FIELD__MIN,
     FIELD_ACCURACY = FIELD__MIN,
@@ -105,14 +106,14 @@ enum {
     FIELD_BEARING,
     FIELD_CADENCE,
     FIELD_DISTANCE,
+    FIELD_DURATION,
     FIELD_HEARTRATE,
-    FIELD_LAT,
-    FIELD_LON,
+    //FIELD_LAT,
+    //FIELD_LON,
     FIELD_MAXSPEED,
-    FIELD_NBASCENT,
+    //FIELD_NBASCENT,
     FIELD_SLOPE,
     FIELD_SPEED,
-    FIELD_TIME,
     FIELD__MAX,
 };
 typedef struct TopBarLayer {
@@ -183,6 +184,15 @@ typedef struct AppData {
     char ascentrate[8];
     char slope[8];
     char accuracy[5];
+    char bearing[4];
+    char elapsedtime[8];
+    char maxspeed[8];
+    //char lat[8];
+    //char lon[8];
+    //char nbascent[8];
+    char heartrate[8];
+    char cadence[8];
+
 //#if DEBUG
     char debug1[200];
     char debug2[200];
@@ -205,6 +215,7 @@ typedef struct GPSData {
     uint8_t units;
     uint16_t time;
     int32_t speed100;
+    int32_t maxspeed100;
     int32_t distance100;
     int32_t avgspeed100;
     int16_t altitude;
@@ -217,6 +228,7 @@ typedef struct GPSData {
     int16_t ypos;
     uint16_t bearing;
     uint8_t heartrate;
+    uint8_t cadence;
 } GPSData;
 
 

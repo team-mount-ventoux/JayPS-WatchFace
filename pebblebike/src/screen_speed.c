@@ -138,10 +138,6 @@ void screen_speed_layer_init(Window* window) {
   layer_set_update_proc(s_data.page_speed, page_speed_update_proc);
   layer_add_child(window_get_root_layer(window), s_data.page_speed);
 
-  strcpy(s_data.speed, "0.0");
-  strcpy(s_data.distance, "-");
-  strcpy(s_data.avgspeed, "-");
-
   speed_layer_init(&s_data.screenA_layer.speed_layer,GRect(0,0,CANVAS_WIDTH-MENU_WIDTH,84));
   speed_layer_set_text(&s_data.screenA_layer.speed_layer, s_data.speed);
   layer_add_child(s_data.page_speed, s_data.screenA_layer.speed_layer.layer);
@@ -209,10 +205,12 @@ void screen_speed_deinit() {
 }
 
 void screen_speed_show_speed(bool force_units) {
+  /*
+  TODO(config)
   if (s_data.page_number != PAGE_SPEED && s_data.page_number != PAGE_HEARTRATE) {
     // nothing to do here
     return;
-  }
+  }*/
   if (s_data.page_number == PAGE_HEARTRATE || rotation == ROTATION_HEARTRATE) {
     snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
     if (force_units) {
@@ -224,18 +222,12 @@ void screen_speed_show_speed(bool force_units) {
       strncpy(s_data.unitsSpeedOrHeartRate, s_data.altitude_layer.units, 8);
     }
   } else {
-    if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
-      // pace: min per mile_or_km
-      snprintf(s_data.speed, sizeof(s_data.speed), "%ld:%.2ld", s_gpsdata.speed100 / 100, (s_gpsdata.speed100 % 100) * 3 / 5); // /100*60=/5*3
-      //APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.speed100:%ld => %s", s_gpsdata.speed100, s_data.speed);
-    } else {
-      // + 5: round instead of trunc
-      snprintf(s_data.speed, sizeof(s_data.speed), "%ld.%ld", (s_gpsdata.speed100 + 5) / 100, ((s_gpsdata.speed100 + 5) % 100) / 10);
-    }
+    copy_speed(s_data.speed, sizeof(s_data.speed), s_gpsdata.speed100);
     if (force_units) {
       strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
     }
   }
+  copy_speed(s_data.maxspeed, sizeof(s_data.maxspeed), s_gpsdata.maxspeed100);
 }
 
 static void rotation_timer_callback(void *data) {

@@ -160,6 +160,23 @@ static void init(void) {
 # endif
   topbar_layer_init(s_data.window);
 
+  strcpy(s_data.speed, "0.0");
+  strcpy(s_data.distance, "-");
+  strcpy(s_data.avgspeed, "-");
+  strcpy(s_data.altitude, "-");
+  strcpy(s_data.ascent, "-");
+  strcpy(s_data.ascentrate, "-");
+  strcpy(s_data.slope, "-");
+  strcpy(s_data.accuracy, "-");
+  strcpy(s_data.bearing, "-");
+  strcpy(s_data.elapsedtime, "00:00:00");
+  strcpy(s_data.maxspeed, "-");
+  //strcpy(s_data.lat, "-");
+  //strcpy(s_data.lon, "-");
+  //strcpy(s_data.nbascent, "-");
+  strcpy(s_data.heartrate, "-");
+  strcpy(s_data.cadence, "-");
+
   screen_speed_layer_init(s_data.window);
   screen_altitude_layer_init(s_data.window);
   screen_live_layer_init(s_data.window);

@@ -7,6 +7,32 @@
 #include "screen_live.h"
 #include "screen_speed.h"
 
+enum {
+  BYTE_SETTINGS = 0,
+  BYTE_ACCURACY = 1,
+  BYTE_DISTANCE1 = 2,
+  BYTE_DISTANCE2 = 3,
+  BYTE_TIME1 = 4,
+  BYTE_TIME2 = 5,
+  BYTE_ALTITUDE1 = 6,
+  BYTE_ALTITUDE2 = 7,
+  BYTE_ASCENT1 = 8,
+  BYTE_ASCENT2 = 9,
+  BYTE_ASCENTRATE1 = 10,
+  BYTE_ASCENTRATE2 = 11,
+  BYTE_SLOPE = 12,
+  BYTE_XPOS1 = 13,
+  BYTE_XPOS2 = 14,
+  BYTE_YPOS1 = 15,
+  BYTE_YPOS2 = 16,
+  BYTE_SPEED1 = 17,
+  BYTE_SPEED2 = 18,
+  BYTE_BEARING = 19,
+  BYTE_HEARTRATE = 20,
+  BYTE_MAXSPEED1 = 21,
+  BYTE_MAXSPEED2 = 22,
+};
+
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
 static AppTimer *reset_data_timer;
@@ -265,7 +291,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             s_gpsdata.accuracy = tuple->value->data[1];
             s_gpsdata.distance100 = (tuple->value->data[2] + 256 * tuple->value->data[3]); // in 0.01km or 0.01miles
             time0 = s_gpsdata.time;
-            s_gpsdata.time = tuple->value->data[4] + 256 * tuple->value->data[5];
+            s_gpsdata.time = tuple->value->data[BYTE_TIME1] + 256 * tuple->value->data[BYTE_TIME2];
             if (s_gpsdata.time != 0) {
               if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
                 // pace: min per mile_or_km
@@ -281,7 +307,8 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 s_gpsdata.avgspeed100 = 0;
             }
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "dist=%ld, time=%d, avg=%ld", s_gpsdata.distance100, s_gpsdata.time, s_gpsdata.avgspeed100);
-            s_gpsdata.speed100 = ((tuple->value->data[17] + 256 * tuple->value->data[18])) * 10;
+            s_gpsdata.speed100 = ((tuple->value->data[BYTE_SPEED1] + 256 * tuple->value->data[BYTE_SPEED2])) * 10;
+            s_gpsdata.maxspeed100 = ((tuple->value->data[BYTE_MAXSPEED1] + 256 * tuple->value->data[BYTE_MAXSPEED2])) * 10;
             s_gpsdata.altitude = tuple->value->data[6] + 256 * tuple->value->data[7];
             if (tuple->value->data[9] >= 128) {
                 s_gpsdata.ascent = -1 * (tuple->value->data[8] + 256 * (tuple->value->data[9] - 128));
@@ -294,10 +321,10 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             } else {
                 s_gpsdata.ascentrate = tuple->value->data[10] + 256 * tuple->value->data[11];
             }
-            if (tuple->value->data[12] >= 128) {
-                s_gpsdata.slope = -1 * (tuple->value->data[12] - 128);
+            if (tuple->value->data[BYTE_SLOPE] >= 128) {
+                s_gpsdata.slope = -1 * (tuple->value->data[BYTE_SLOPE] - 128);
             } else {
-                s_gpsdata.slope = tuple->value->data[12];
+                s_gpsdata.slope = tuple->value->data[BYTE_SLOPE];
             }
 
 
@@ -327,24 +354,34 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             s_gpsdata.xpos = xpos;
             s_gpsdata.ypos = ypos;
 
-            s_gpsdata.bearing = 360 * tuple->value->data[19] / 256;
-            s_gpsdata.heartrate = tuple->value->data[20];
+            s_gpsdata.bearing = 360 * tuple->value->data[BYTE_BEARING] / 256;
+            s_gpsdata.heartrate = tuple->value->data[BYTE_HEARTRATE];
+            s_gpsdata.cadence = tuple->value->data[BYTE_HEARTRATE]; // TODO no specific field for the moment
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
             snprintf(s_data.distance,   sizeof(s_data.distance),   "%ld.%ld", s_gpsdata.distance100 / 100, s_gpsdata.distance100 % 100 / 10);
-            if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
-              // pace: min per mile_or_km
-              snprintf(s_data.avgspeed, sizeof(s_data.avgspeed), "%ld:%.2ld", s_gpsdata.avgspeed100 / 100, (s_gpsdata.avgspeed100 % 100) * 3 / 5); // /100*60=/5*3
-              //APP_LOG(APP_LOG_LEVEL_DEBUG, "s_gpsdata.avgspeed100:%ld => %s", s_gpsdata.avgspeed100, s_data.avgspeed);
-            } else {
-              // + 5: round instead of trunc
-              snprintf(s_data.avgspeed,   sizeof(s_data.avgspeed),   "%ld.%ld", (s_gpsdata.avgspeed100 + 5) / 100, ((s_gpsdata.avgspeed100 + 5) % 100) / 10);
-            }
-
+            copy_speed(s_data.avgspeed, sizeof(s_data.avgspeed), s_gpsdata.avgspeed100);
             snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
             snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
             snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
             snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
+            snprintf(s_data.bearing,    sizeof(s_data.bearing),    "%d",   s_gpsdata.bearing);
+            if (s_gpsdata.heartrate != 255) {
+              snprintf(s_data.heartrate,  sizeof(s_data.heartrate),  "%d",   s_gpsdata.heartrate);
+            } else {
+              strcpy(s_data.heartrate, "-");
+            }
+            if (s_gpsdata.cadence != 255) {
+              snprintf(s_data.cadence,  sizeof(s_data.cadence),  "%d",   s_gpsdata.cadence);
+            } else {
+              strcpy(s_data.cadence, "-");
+            }            
+            if (s_gpsdata.time / 3600 > 0) {
+              snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%d:%.2d:%.2d", s_gpsdata.time / 3600, (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
+            } else {
+              snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%d:%.2d", (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
+            }
+            //APP_LOG(APP_LOG_LEVEL_DEBUG, "t:%d => %s", s_gpsdata.time, s_data.elapsedtime);
 
             screen_speed_show_speed(false);
 

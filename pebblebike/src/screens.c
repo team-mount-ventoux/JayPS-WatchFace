@@ -104,7 +104,6 @@ void topbar_layer_init(Window* window) {
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !bluetooth_connection_service_peek());
 
   // accuracy (1/3, right)
-  strcpy(s_data.accuracy, "-");
   s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(w*2/3,0,w/3,TOPBAR_HEIGHT));
   set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16)), GTextAlignmentRight, GColorWhite, GColorBlack, window_get_root_layer(window));
 
@@ -178,4 +177,15 @@ void screen_reset_instant_data() {
   if (s_data.page_number == PAGE_ALTITUDE) {
     layer_mark_dirty(s_data.page_altitude);
   }
+}
+
+void copy_speed(char *speed, int8_t size, int32_t speed100) {
+  if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
+    // pace: min per mile_or_km
+    snprintf(speed, size, "%ld:%.2ld", speed100 / 100, (speed100 % 100) * 3 / 5); // /100*60=/5*3
+  } else {
+    // + 5: round instead of trunc
+    snprintf(speed, size, "%ld.%ld", (speed100 + 5) / 100, ((speed100 + 5) % 100) / 10);
+  }
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "cs:%ld => %s", speed100, speed);
 }
