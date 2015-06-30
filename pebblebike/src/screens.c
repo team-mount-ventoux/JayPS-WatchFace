@@ -104,7 +104,7 @@ void topbar_layer_init(Window* window) {
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !bluetooth_connection_service_peek());
 
   // accuracy (1/3, right)
-  s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(w*2/3,0,w/3,TOPBAR_HEIGHT));
+  s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(w-18,0,18,TOPBAR_HEIGHT));
   set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16)), GTextAlignmentRight, GColorWhite, GColorBlack, window_get_root_layer(window));
 
 }
