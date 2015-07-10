@@ -104,6 +104,11 @@
       },
       {
         "type": "png",
+        "name": "IMAGE_NUM_MINUS",
+        "file": "images/num_minus.png"
+      },
+      {
+        "type": "png",
         "name": "IMAGE_START_BUTTON",
         "file": "images/start_button.png"
       },
