@@ -19,6 +19,11 @@ GBitmap *next_button;
 GBitmap *menu_up_button;
 GBitmap *menu_down_button;
 
+void action_bar_set_menu_up_down_buttons() {
+  action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, menu_up_button);
+  action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_down_button);
+}
+
 void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
   vibes_short_pulse();
   send_cmd(REFRESH_PRESS);
@@ -26,7 +31,7 @@ void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
 void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
     screen_live_menu(true);
-  } else if (config_field != CONFIG_FIELD_DISABLED) {
+  } else if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_type(CONFIG_CHANGE_TYPE_PREVIOUS);
   } else {
     if (s_data.state == STATE_STOP) {
@@ -37,7 +42,7 @@ void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   }
 }
 void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
-  if (config_field != CONFIG_FIELD_DISABLED) {
+  if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_field();
   } else {
     int prev_page_number = s_data.page_number;
@@ -63,8 +68,7 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
       buttons_update();
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
     } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
-      action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, menu_up_button);
-      action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_down_button);
+      action_bar_set_menu_up_down_buttons();
     }
     if (prev_page_number == PAGE_MAP) {
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
@@ -83,7 +87,7 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
     screen_map_zoom_out(2);
   } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
     screen_live_menu(false);
-  } else if (config_field != CONFIG_FIELD_DISABLED) {
+  } else if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_type(CONFIG_CHANGE_TYPE_NEXT);
   } else {
     menu_show();
@@ -95,11 +99,9 @@ void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context)
 void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context) {
   if (s_data.page_number == PAGE_MAP) {
     screen_map_zoom_in(2);
-  } else if (s_data.page_number == PAGE_SPEED) {
-    if (config_field == CONFIG_FIELD_DISABLED) {
+  } else if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_ALTITUDE) {
+    if (config_screen == CONFIG_SCREEN_DISABLED) {
       config_start();
-      action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, menu_up_button);
-      action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_down_button);
     } else {
       config_stop();
       buttons_update();
@@ -108,7 +110,7 @@ void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context)
   }
 }
 void handle_backbutton_click(ClickRecognizerRef recognizer, void *context) {
-  if (config_field != CONFIG_FIELD_DISABLED) {
+  if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_stop();
     buttons_update();
     action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);

@@ -2,6 +2,7 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "screens.h"
+#include "screen_config.h"
 #include "screen_altitude.h"
 
 
@@ -24,21 +25,25 @@ void screen_altitude_layer_init(Window* window) {
   int16_t w = (SCREEN_W - MENU_WIDTH) / 2; //61
   int16_t h = (SCREEN_H - TOPBAR_HEIGHT) / 2 - 1; // 75
 
-  field_layer_init(s_data.page_altitude, &s_data.altitude_layer,       0,     TOPBAR_HEIGHT + 0,     w, h, "Altitude", s_data.altitude, s_data.altitude_layer.units);
-  field_layer_init(s_data.page_altitude, &s_data.altitude_ascent,      w + 1, TOPBAR_HEIGHT + 0,     w, h, "Ascent", s_data.ascent, s_data.altitude_ascent.units);
-  field_layer_init(s_data.page_altitude, &s_data.altitude_ascent_rate, 0,     TOPBAR_HEIGHT + h + 1, w, h, "Ascent rate", s_data.ascentrate, s_data.altitude_ascent_rate.units);
-  field_layer_init(s_data.page_altitude, &s_data.altitude_slope,       w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Slope", s_data.slope, "%");
+  field_layer_init(s_data.page_altitude, &s_data.screenB_layer.field_top_left,     0,     TOPBAR_HEIGHT + 0,     w, h, "Altitude", s_data.altitude, s_data.screenB_layer.field_top_left.units);
+  field_layer_init(s_data.page_altitude, &s_data.screenB_layer.field_top_right,    w + 1, TOPBAR_HEIGHT + 0,     w, h, "Ascent", s_data.ascent, s_data.screenB_layer.field_top_right.units);
+  field_layer_init(s_data.page_altitude, &s_data.screenB_layer.field_bottom_left,  0,     TOPBAR_HEIGHT + h + 1, w, h, "Ascent rate", s_data.ascentrate, s_data.screenB_layer.field_bottom_left.units);
+  field_layer_init(s_data.page_altitude, &s_data.screenB_layer.field_bottom_right, w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Slope", s_data.slope, "%");
   //field_layer_init(s_data.page_altitude, &s_data.altitude_accuracy,    w + 1, TOPBAR_HEIGHT + h + 1, w, h, "Accuracy", s_data.accuracy, "m");
 
+  s_data.screenB_layer.field_top_left.type = config.screenB_top_left_type;
+  s_data.screenB_layer.field_top_right.type = config.screenB_top_right_type;
+  s_data.screenB_layer.field_bottom_left.type = config.screenB_bottom_left_type;
+  s_data.screenB_layer.field_bottom_right.type = config.screenB_bottom_right_type;
 
   layer_set_hidden(s_data.page_altitude, true);
 }
 
 void screen_altitude_layer_deinit() {
   layer_destroy(s_data.page_altitude);
-  field_layer_deinit(&s_data.altitude_layer);
-  field_layer_deinit(&s_data.altitude_ascent);
-  field_layer_deinit(&s_data.altitude_ascent_rate);
-  field_layer_deinit(&s_data.altitude_slope);
+  field_layer_deinit(&s_data.screenB_layer.field_top_left);
+  field_layer_deinit(&s_data.screenB_layer.field_top_right);
+  field_layer_deinit(&s_data.screenB_layer.field_bottom_left);
+  field_layer_deinit(&s_data.screenB_layer.field_bottom_right);
 }
 

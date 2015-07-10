@@ -3,22 +3,23 @@
 #include "menu.h"
 #include "pebblebike.h"
 #include "communication.h"
+#include "screen_config.h"
 
 #define MENU_HELP_BUTTONS true
 
 static Window *window;
 static SimpleMenuLayer *menu_layer;
 static SimpleMenuSection menu_sections[4]; // Sections
-static SimpleMenuItem menu_section0_items[2]; // Section Actions
+static SimpleMenuItem menu_section0_items[3]; // Section Actions
 #if ORUXMAP
   static SimpleMenuItem menu_section_orux_items[3]; // Section OruxMap
 #endif
 #if MENU_HELP_BUTTONS
   static SimpleMenuItem menu_section1_items[4]; // Section Buttons
 #endif
-static SimpleMenuItem menu_section2_items[5]; // Section About
+static SimpleMenuItem menu_section2_items[4]; // Section About
 
-char phone_battery_level[6];
+//char phone_battery_level[6];
 char pebble_battery_level[6];
 
 /**
@@ -62,7 +63,11 @@ void menu_reset_data_callback(int index, void *context)
   send_cmd(REFRESH_PRESS);
   window_stack_pop(true);
 }
-
+void menu_configure_screen(int index, void *context)
+{
+  config_start();
+  window_stack_pop(true);
+}
 void init_settings_window()
 {
   window_set_background_color(window, GColorWhite);
@@ -79,11 +84,18 @@ void init_settings_window()
     .subtitle = "distance, time, ascent...",
     .callback = &menu_reset_data_callback,
   };
+  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_ALTITUDE) {
+    menu_section0_items[i++] = (SimpleMenuItem) {
+      .title = "Configure screen",
+      .subtitle = "Change fields",
+      .callback = &menu_configure_screen,
+    };
+  }
   // Header
   menu_sections[s++] = (SimpleMenuSection) {
     .title = "Actions",
     .items = menu_section0_items,
-    .num_items = ARRAY_LENGTH(menu_section0_items)
+    .num_items = i
   };
 
 #if ORUXMAP
@@ -160,15 +172,15 @@ void init_settings_window()
     .subtitle = pebble_battery_level,
   };
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "phone_battery_level:%ld", s_data.phone_battery_level);
-  if (s_data.phone_battery_level > 0) {
-    snprintf(phone_battery_level, sizeof(phone_battery_level), "%ld %%", s_data.phone_battery_level);
-  } else {
-    snprintf(phone_battery_level, sizeof(phone_battery_level), "-");
-  }
-  menu_section2_items[i++] = (SimpleMenuItem) {
-    .title = "Phone battery",
-    .subtitle = phone_battery_level,
-  };
+  // if (s_data.phone_battery_level > 0) {
+  //   snprintf(phone_battery_level, sizeof(phone_battery_level), "%ld %%", s_data.phone_battery_level);
+  // } else {
+  //   snprintf(phone_battery_level, sizeof(phone_battery_level), "-");
+  // }
+  // menu_section2_items[i++] = (SimpleMenuItem) {
+  //   .title = "Phone battery",
+  //   .subtitle = phone_battery_level,
+  // };
   // Header
   menu_sections[s++] = (SimpleMenuSection) {
     .title = "About",

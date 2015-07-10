@@ -10,6 +10,7 @@ extern GBitmap *next_button;
 extern GBitmap *menu_up_button;
 extern GBitmap *menu_down_button;
 
+void action_bar_set_menu_up_down_buttons();
 void buttons_update();
 void buttons_init();
 void buttons_deinit();

@@ -114,6 +114,7 @@ enum {
     //FIELD_NBASCENT,
     FIELD_SLOPE,
     FIELD_SPEED,
+    //FIELD_TIME,
     FIELD__MAX,
 };
 typedef struct TopBarLayer {
@@ -135,7 +136,7 @@ typedef struct FieldLayer {
     TextLayer *title_layer;
     TextLayer *data_layer;
     TextLayer *unit_layer;
-    char title[20];
+    char title[12];
     char units[8];
 } FieldLayer;
 
@@ -145,6 +146,12 @@ typedef struct ScreenALayer {
     FieldLayer field_bottom_right;
     SpeedLayer speed_layer;
 } ScreenALayer;
+typedef struct ScreenBLayer {
+    FieldLayer field_top_left;
+    FieldLayer field_top_right;
+    FieldLayer field_bottom_left;
+    FieldLayer field_bottom_right;
+} ScreenBLayer;
 
 typedef struct AppData {
     Window *window;
@@ -154,26 +161,23 @@ typedef struct AppData {
     MenuLayer *page_live_tracking;
     Layer *page_map;
 
-//#if DEBUG
+#if DEBUG
     Layer *page_debug1;
     Layer *page_debug2;
-//#endif
+#endif
 
     TopBarLayer topbar_layer;
 
     ScreenALayer screenA_layer;
+    ScreenBLayer screenB_layer;
 
-    FieldLayer altitude_layer;
-    FieldLayer altitude_ascent;
-    FieldLayer altitude_ascent_rate;
-    FieldLayer altitude_slope;
-    FieldLayer altitude_accuracy;
+    //FieldLayer altitude_accuracy;
 
     TextLayer *live_tracking_layer;
-//#if DEBUG
+#if DEBUG
     TextLayer *debug1_layer;
     TextLayer *debug2_layer;
-//#endif
+#endif
 
     char time[6]; // xx:xx, \0 terminated
     char speed[16];
@@ -193,13 +197,15 @@ typedef struct AppData {
     char heartrate[8];
     char cadence[8];
 
-//#if DEBUG
+#if DEBUG
     char debug1[200];
     char debug2[200];
-//#endif
+#endif
     char unitsSpeedOrHeartRate[8];
     char unitsSpeed[8];
     char unitsDistance[8];
+    char unitsAltitude[8];
+    char unitsAscentRate[8];
     uint8_t state;
     uint8_t live;
     uint8_t debug;
@@ -258,7 +264,9 @@ extern AppData s_data;
 extern GPSData s_gpsdata;
 extern LiveData s_live;
 
-extern char tmp[255];
+#if DEBUG
+  extern char tmp[255];
+#endif
 
 void change_units(uint8_t units, bool first_time);
 void change_state(uint8_t state);

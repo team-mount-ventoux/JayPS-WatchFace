@@ -342,12 +342,13 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             if ((xpos == 0 && ypos == 0) || (time0 > s_gpsdata.time)) {
                 // ignore old values (can happen if gps is stopped/restarted)
-                if (s_data.debug) {
-                    #if DEBUG
+                #if DEBUG
+                  if (s_data.debug) {
+                    
                         APP_LOG(APP_LOG_LEVEL_DEBUG, "==> time0=%d t=%d xpos=%d ypos=%d", time0, s_gpsdata.time, xpos, ypos);      
                         //vibes_short_pulse();
-                    #endif
-                }
+                  }
+                #endif
                 xpos = s_gpsdata.xpos;
                 ypos = s_gpsdata.ypos;
             }

@@ -8,12 +8,8 @@
 Layer *path_layer;
 Layer *bearing_layer;
 
-#if !DEBUG
-  #define NUM_POINTS 50
-#endif
-#if DEBUG
-  #define NUM_POINTS 60
-#endif
+// 4 Bytes/point
+#define NUM_POINTS 340
 
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
@@ -60,7 +56,7 @@ void screen_map_zoom_in(int factor) {
 
 void screen_map_update_location() {
 
-    if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < 4*4) {
+    if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < 5*5) {
         // distance with previous position < 4*10 (m)
         /*snprintf(s_data.debug2, sizeof(s_data.debug2),
           "#11 nbpoints:%u\npos : %ld|%ld\nposprev : %ld|%ld\n",

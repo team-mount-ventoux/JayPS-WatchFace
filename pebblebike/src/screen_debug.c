@@ -4,7 +4,7 @@
 #include "screen_debug.h"
 #include "screens.h"
 
-//#if DEBUG
+#if DEBUG
 void screen_debug1_layer_init(Window* window) {
   s_data.page_debug1 = layer_create(GRect(0,TOPBAR_HEIGHT,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
   layer_add_child(window_get_root_layer(window), s_data.page_debug1);
@@ -35,4 +35,4 @@ void screen_debug2_layer_deinit() {
   text_layer_destroy(s_data.debug2_layer);
 }
 
-//#endif
+#endif

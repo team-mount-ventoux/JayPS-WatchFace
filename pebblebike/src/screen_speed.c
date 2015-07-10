@@ -90,6 +90,7 @@ void speed_layer_update_proc(Layer *layer, GContext* ctx) {
       } else {
         digit_value = speed_layer->text[c] - '0';
       }
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d=%c digit_value=%d", c, speed_layer->text[c], digit_value);
 
       if (digit_value >= 0 && digit_value < 12) {
         images[c] = gbitmap_create_with_resource(IMAGE_RESOURCE_IDS[digit_value]);
@@ -212,19 +213,19 @@ void screen_speed_show_speed(bool force_units) {
     return;
   }*/
   if (s_data.page_number == PAGE_HEARTRATE || rotation == ROTATION_HEARTRATE) {
-    snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.heartrate);
+    speed_layer_set_text(&s_data.screenA_layer.speed_layer, s_data.heartrate);
     if (force_units) {
-      strncpy(s_data.unitsSpeedOrHeartRate, HEART_RATE_UNIT, 8);
+      text_layer_set_text(s_data.screenA_layer.field_top.unit_layer, HEART_RATE_UNIT);
     }
   } else if (rotation == ROTATION_ALTITUDE) {
     snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.altitude);
     if (force_units) {
-      strncpy(s_data.unitsSpeedOrHeartRate, s_data.altitude_layer.units, 8);
+      strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsAltitude, 8);
     }
   } else {
     copy_speed(s_data.speed, sizeof(s_data.speed), s_gpsdata.speed100);
     if (force_units) {
-      strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
+      screen_speed_update_config();
     }
   }
   copy_speed(s_data.maxspeed, sizeof(s_data.maxspeed), s_gpsdata.maxspeed100);
