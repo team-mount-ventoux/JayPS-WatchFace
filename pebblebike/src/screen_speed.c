@@ -30,6 +30,7 @@ int image_slots[TOTAL_IMAGE_SLOTS] = {NOT_USED,NOT_USED,NOT_USED,NOT_USED};
 Layer *line_layer;
 Layer *bottom_layer;
 
+#if ROTATION
 enum {
   ROTATION_DISABLED,
   ROTATION_MIN,
@@ -40,6 +41,7 @@ enum {
 };
 int rotation = ROTATION_DISABLED;
 static AppTimer *rotation_timer;
+#endif
 
 void speed_layer_update_proc(Layer *layer, GContext* ctx) {
   SpeedLayer *speed_layer = &s_data.screenA_layer.speed_layer;
@@ -188,8 +190,6 @@ void screen_speed_layer_init(Window* window) {
 
   layer_set_hidden(s_data.page_speed, false);
   //vibes_double_pulse();
-
-  //screen_speed_start_rotation();
 }
 
 void screen_speed_deinit() {
@@ -219,16 +219,22 @@ void screen_speed_show_speed(bool force_units) {
     // nothing to do here
     return;
   }*/
-  if (s_data.page_number == PAGE_HEARTRATE || rotation == ROTATION_HEARTRATE) {
+  if (s_data.page_number == PAGE_HEARTRATE
+#if ROTATION
+   || rotation == ROTATION_HEARTRATE
+#endif
+   ) {
     speed_layer_set_text(&s_data.screenA_layer.speed_layer, s_data.heartrate);
     if (force_units) {
       text_layer_set_text(s_data.screenA_layer.field_top.unit_layer, HEART_RATE_UNIT);
     }
+#if ROTATION  
   } else if (rotation == ROTATION_ALTITUDE) {
     snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.altitude);
     if (force_units) {
       strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsAltitude, 8);
     }
+#endif
   } else {
     copy_speed(s_data.speed, sizeof(s_data.speed), s_gpsdata.speed100);
     if (force_units) {
@@ -237,7 +243,7 @@ void screen_speed_show_speed(bool force_units) {
   }
   copy_speed(s_data.maxspeed, sizeof(s_data.maxspeed), s_gpsdata.maxspeed100);
 }
-
+#if ROTATION
 static void rotation_timer_callback(void *data) {
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "rotation_timer");
   rotation_timer = app_timer_register(2000, rotation_timer_callback, NULL);
@@ -270,3 +276,4 @@ void screen_speed_start_rotation() {
     rotation = ROTATION_DISABLED;
   }
 }
+#endif

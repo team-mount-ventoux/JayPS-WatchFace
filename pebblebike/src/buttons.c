@@ -94,7 +94,9 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   }
 }
 void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context) {
+#if ROTATION
   screen_speed_start_rotation();
+#endif
 }
 void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context) {
   if (s_data.page_number == PAGE_MAP) {

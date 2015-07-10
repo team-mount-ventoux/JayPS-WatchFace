@@ -10,10 +10,10 @@
 
 #if PRODUCTION
   #define DEBUG false
-#endif
-
-#if !PRODUCTION
+  #define ROTATION false
+#else
   #define DEBUG true
+  #define ROTATION false
 #endif
 
 #define ORUXMAP true
