@@ -108,6 +108,8 @@ void config_change_visibility(FieldLayer* field_layer, bool hidden) {
   }
   if (field_layer->data_layer != NULL) {
     layer_set_hidden(text_layer_get_layer(field_layer->data_layer), hidden);
+  } else {
+    layer_set_hidden(s_data.screenA_layer.speed_layer.layer, hidden);
   }
   if (field_layer->unit_layer != NULL) {
     layer_set_hidden(text_layer_get_layer(field_layer->unit_layer), hidden);  
