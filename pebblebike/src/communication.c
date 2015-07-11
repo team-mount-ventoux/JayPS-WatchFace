@@ -189,7 +189,9 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 #define SIZE_OF_A_FRIEND 9
     //char friend[100];
     //int8_t live_max_name = -1;
-    uint16_t time0;
+    uint16_t time16_0;
+    uint32_t time0;
+    int32_t distance0;
     int16_t xpos = 0, ypos = 0;
 
     while (tuple) {
@@ -289,9 +291,19 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             }
 
             s_gpsdata.accuracy = tuple->value->data[1];
+            distance0 = s_gpsdata.distance100;
             s_gpsdata.distance100 = (tuple->value->data[2] + 256 * tuple->value->data[3]); // in 0.01km or 0.01miles
             time0 = s_gpsdata.time;
-            s_gpsdata.time = tuple->value->data[BYTE_TIME1] + 256 * tuple->value->data[BYTE_TIME2];
+            time16_0 = s_gpsdata._time16;
+            s_gpsdata._time16 = tuple->value->data[BYTE_TIME1] + 256 * tuple->value->data[BYTE_TIME2];
+            //APP_LOG(APP_LOG_LEVEL_DEBUG, "delta32 %ld", (uint32_t) s_gpsdata._time16-time16_0);
+            s_gpsdata.time += s_gpsdata._time16-time16_0;
+            if (s_gpsdata.distance100 >= distance0 && s_gpsdata._time16 < time16_0) {
+              //APP_LOG(APP_LOG_LEVEL_DEBUG, "overflow on 16bits received time");
+              s_gpsdata.time += 2<<15;
+            }
+            //APP_LOG(APP_LOG_LEVEL_DEBUG, "time:%ld", s_gpsdata.time);
+
             if (s_gpsdata.time != 0) {
               if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
                 // pace: min per mile_or_km
@@ -378,9 +390,9 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
               strcpy(s_data.cadence, "-");
             }            
             if (s_gpsdata.time / 3600 > 0) {
-              snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%d:%.2d:%.2d", s_gpsdata.time / 3600, (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
+              snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%ld:%.2ld:%.2ld", s_gpsdata.time / 3600, (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
             } else {
-              snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%d:%.2d", (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
+              snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%ld:%.2ld", (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
             }
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "t:%d => %s", s_gpsdata.time, s_data.elapsedtime);
 

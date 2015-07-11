@@ -12,7 +12,7 @@ Layer *bearing_layer;
 #if ROTATION
   #define NUM_POINTS 270
 #endif
-#define NUM_POINTS 330
+#define NUM_POINTS 310
 
 GPoint pts[NUM_POINTS];
 int cur_point = 0;

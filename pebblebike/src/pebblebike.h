@@ -219,7 +219,8 @@ typedef struct AppData {
 typedef struct GPSData {
     int nb_received;
     uint8_t units;
-    uint16_t time;
+    uint16_t _time16;
+    uint32_t time;
     int32_t speed100;
     int32_t maxspeed100;
     int32_t distance100;
