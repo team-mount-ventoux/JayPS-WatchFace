@@ -9,10 +9,14 @@ Layer *path_layer;
 Layer *bearing_layer;
 
 // 4 Bytes/point
-#if ROTATION
-  #define NUM_POINTS 270
+#if PBL_PLATFORM_BASALT
+  #define NUM_POINTS 1500
+#else
+  #if ROTATION
+    #define NUM_POINTS 240
+  #endif
+  #define NUM_POINTS 300
 #endif
-#define NUM_POINTS 330
 
 GPoint pts[NUM_POINTS];
 int cur_point = 0;
