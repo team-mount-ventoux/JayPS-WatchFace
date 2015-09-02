@@ -31,6 +31,7 @@ enum {
   BYTE_HEARTRATE = 20,
   BYTE_MAXSPEED1 = 21,
   BYTE_MAXSPEED2 = 22,
+  BYTE_CADENCE = 23,
 };
 
 int nb_sync_error_callback = 0;
@@ -270,6 +271,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
         case MSG_LOCATION_DATA:
         case MSG_LOCATION_DATA_V2:
+        case MSG_LOCATION_DATA_V3:
             nb_tuple_altitude++;
             if (tuple->key == MSG_LOCATION_DATA) {
                 //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA");
@@ -279,7 +281,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 s_data.live = (tuple->value->data[0] & 0b00001000) >> 3;
                 s_data.refresh_code = (tuple->value->data[0] & 0b00110000) >> 4;
             }
-            if (tuple->key == MSG_LOCATION_DATA_V2) {
+            if (tuple->key >= MSG_LOCATION_DATA_V2) {
                 //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA_v2");
                 change_units((tuple->value->data[0] & 0b00000111) >> 0, false);
                 change_state((tuple->value->data[0] & 0b00001000) >> 3);
@@ -357,7 +359,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             s_gpsdata.bearing = 360 * tuple->value->data[BYTE_BEARING] / 256;
             s_gpsdata.heartrate = tuple->value->data[BYTE_HEARTRATE];
-            s_gpsdata.cadence = tuple->value->data[BYTE_HEARTRATE]; // TODO no specific field for the moment
+            if (tuple->key >= MSG_LOCATION_DATA_V3) {
+              s_gpsdata.cadence = tuple->value->data[BYTE_CADENCE];
+            } else {
+              s_gpsdata.cadence = tuple->value->data[BYTE_HEARTRATE]; // no specific field until MSG_LOCATION_DATA_V3
+            }
+
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
             snprintf(s_data.distance,   sizeof(s_data.distance),   "%ld.%ld", s_gpsdata.distance100 / 100, s_gpsdata.distance100 % 100 / 10);
@@ -434,6 +441,10 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 layer_mark_dirty(s_data.page_debug2);
             }
 #endif
+            break;
+        case MSG_SENSOR_TEMPERATURE:
+            //int16_t temperature = 0;
+            APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_SENSOR_TEMPERATURE:%d", tuple->value->int16);
             break;
 
         case STATE_CHANGED:
