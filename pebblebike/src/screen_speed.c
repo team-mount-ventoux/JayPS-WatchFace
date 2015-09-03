@@ -224,12 +224,11 @@ void screen_speed_show_speed(bool force_units) {
    || rotation == ROTATION_HEARTRATE
 #endif
    ) {
-    speed_layer_set_text(&s_data.screenA_layer.speed_layer, s_data.heartrate);
-    copy_speed(s_data.speed, sizeof(s_data.speed), s_gpsdata.speed100);
     if (force_units) {
-      text_layer_set_text(s_data.screenA_layer.field_top.unit_layer, HEART_RATE_UNIT);
       screen_speed_update_config();
+      text_layer_set_text(s_data.screenA_layer.field_top.unit_layer, HEART_RATE_UNIT);
     }
+    speed_layer_set_text(&s_data.screenA_layer.speed_layer, s_data.heartrate);
 #if ROTATION  
   } else if (rotation == ROTATION_ALTITUDE) {
     snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.altitude);
