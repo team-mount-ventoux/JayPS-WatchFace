@@ -48,36 +48,42 @@ void change_units(uint8_t units, bool first_time) {
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
       strncpy(s_data.unitsAltitude, ALTITUDE_UNIT_IMPERIAL, 8);
       strncpy(s_data.unitsAscentRate, ASCENT_RATE_UNIT_IMPERIAL, 8);
+      strncpy(s_data.unitsTemperature, TEMPERATURE_UNIT_IMPERIAL, 8);
       break;
     case UNITS_METRIC:
       strncpy(s_data.unitsSpeed, SPEED_UNIT_METRIC, 8);
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_METRIC, 8);
       strncpy(s_data.unitsAltitude, ALTITUDE_UNIT_METRIC, 8);
       strncpy(s_data.unitsAscentRate, ASCENT_RATE_UNIT_METRIC, 8);
+      strncpy(s_data.unitsTemperature, TEMPERATURE_UNIT_METRIC, 8);
       break;
     case UNITS_NAUTICAL_IMPERIAL:
       strncpy(s_data.unitsSpeed, SPEED_UNIT_NAUTICAL, 8);
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_NAUTICAL, 8);
       strncpy(s_data.unitsAltitude, ALTITUDE_UNIT_IMPERIAL, 8);
       strncpy(s_data.unitsAscentRate, ASCENT_RATE_UNIT_IMPERIAL, 8);
+      strncpy(s_data.unitsTemperature, TEMPERATURE_UNIT_IMPERIAL, 8);
       break;
     case UNITS_NAUTICAL_METRIC:
       strncpy(s_data.unitsSpeed, SPEED_UNIT_NAUTICAL, 8);
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_NAUTICAL, 8);
       strncpy(s_data.unitsAltitude, ALTITUDE_UNIT_METRIC, 8);
       strncpy(s_data.unitsAscentRate, ASCENT_RATE_UNIT_METRIC, 8);
+      strncpy(s_data.unitsTemperature, TEMPERATURE_UNIT_METRIC, 8);
       break;
     case UNITS_RUNNING_IMPERIAL:
       strncpy(s_data.unitsSpeed, SPEED_UNIT_RUNNING_IMPERIAL, 8);
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_IMPERIAL, 8);
       strncpy(s_data.unitsAltitude, ALTITUDE_UNIT_IMPERIAL, 8);
       strncpy(s_data.unitsAscentRate, ASCENT_RATE_UNIT_IMPERIAL, 8);
+      strncpy(s_data.unitsTemperature, TEMPERATURE_UNIT_IMPERIAL, 8);
       break;
     case UNITS_RUNNING_METRIC:
       strncpy(s_data.unitsSpeed, SPEED_UNIT_RUNNING_METRIC, 8);
       strncpy(s_data.unitsDistance, DISTANCE_UNIT_METRIC, 8);
       strncpy(s_data.unitsAltitude, ALTITUDE_UNIT_METRIC, 8);
       strncpy(s_data.unitsAscentRate, ASCENT_RATE_UNIT_METRIC, 8);
+      strncpy(s_data.unitsTemperature, TEMPERATURE_UNIT_METRIC, 8);
       break;
   }
 

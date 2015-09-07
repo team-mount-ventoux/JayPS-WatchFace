@@ -97,6 +97,8 @@ enum {
 #define ASCENT_RATE_UNIT_METRIC "m/h"
 #define ASCENT_RATE_UNIT_IMPERIAL "ft/h"
 #define HEART_RATE_UNIT "bpm"
+#define TEMPERATURE_UNIT_METRIC "°C"
+#define TEMPERATURE_UNIT_IMPERIAL "°F"
 //TODO: don't use field values to sort (only to save - persistent)
 enum {
     FIELD__MIN,
@@ -116,6 +118,7 @@ enum {
     //FIELD_NBASCENT,
     FIELD_SLOPE,
     FIELD_SPEED,
+    FIELD_TEMPERATURE,
     //FIELD_TIME,
     FIELD__MAX,
 };
@@ -198,6 +201,7 @@ typedef struct AppData {
     //char nbascent[8];
     char heartrate[8];
     char cadence[8];
+    char temperature[7];
 
 #if DEBUG
     char debug1[200];
@@ -208,6 +212,7 @@ typedef struct AppData {
     char unitsDistance[8];
     char unitsAltitude[8];
     char unitsAscentRate[8];
+    char unitsTemperature[8];
     uint8_t state;
     uint8_t live;
     uint8_t debug;
@@ -237,6 +242,7 @@ typedef struct GPSData {
     uint16_t bearing;
     uint8_t heartrate;
     uint8_t cadence;
+    int16_t temperature10;
 } GPSData;
 
 

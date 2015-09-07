@@ -289,6 +289,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 s_data.live = (tuple->value->data[0] & 0b00100000) >> 5;
                 s_data.refresh_code = (tuple->value->data[0] & 0b11000000) >> 6;
             }
+            // if (tuple->key == MSG_LOCATION_DATA_V2) {
+            //   APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA_v2");
+            // }
+            // if (tuple->key == MSG_LOCATION_DATA_V3) {
+            //   APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA_v3");
+            // }
 
             s_gpsdata.accuracy = tuple->value->data[1];
             s_gpsdata.distance100 = (tuple->value->data[2] + 256 * tuple->value->data[3]); // in 0.01km or 0.01miles
@@ -443,8 +449,8 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 #endif
             break;
         case MSG_SENSOR_TEMPERATURE:
-            //int16_t temperature = 0;
-            APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_SENSOR_TEMPERATURE:%d", tuple->value->int16);
+            s_gpsdata.temperature10 = tuple->value->int16;
+            snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d.%d", s_gpsdata.temperature10 / 10, s_gpsdata.temperature10 % 10);
             break;
 
         case STATE_CHANGED:

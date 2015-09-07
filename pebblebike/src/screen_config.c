@@ -33,6 +33,7 @@ const char *field_get_title(uint8_t field) {
     case FIELD_ACCURACY: return "Accuracy"; break;
     case FIELD_HEARTRATE: return "Heartrate"; break;
     case FIELD_CADENCE: return "Cadence"; break;
+    case FIELD_TEMPERATURE: return "Temperature"; break;
     default: return "Unknown";
   }
 }
@@ -54,6 +55,7 @@ const char *field_get_text(uint8_t field) {
     case FIELD_ACCURACY: return s_data.accuracy; break;
     case FIELD_HEARTRATE: return s_data.heartrate; break;
     case FIELD_CADENCE: return s_data.cadence; break;
+    case FIELD_TEMPERATURE: return s_data.temperature; break;
     default: return "-";
   }
 }
@@ -75,6 +77,7 @@ const char *field_get_units(uint8_t field) {
     case FIELD_ACCURACY: return "m"; break;
     case FIELD_HEARTRATE: return HEART_RATE_UNIT; break;
     case FIELD_CADENCE: return "rpm"; break;
+    case FIELD_TEMPERATURE: return s_data.unitsTemperature; break;
     default: return "Unk";
   }
 }
