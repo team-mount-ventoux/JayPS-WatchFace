@@ -17,9 +17,9 @@ static SimpleMenuItem menu_section0_items[3]; // Section Actions
 #if MENU_HELP_BUTTONS
   static SimpleMenuItem menu_section1_items[4]; // Section Buttons
 #endif
-static SimpleMenuItem menu_section2_items[4]; // Section About
+static SimpleMenuItem menu_section2_items[5]; // Section About
 
-//char phone_battery_level[6];
+char phone_battery_level[6];
 char pebble_battery_level[6];
 
 /**
@@ -172,15 +172,15 @@ void init_settings_window()
     .subtitle = pebble_battery_level,
   };
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "phone_battery_level:%ld", s_data.phone_battery_level);
-  // if (s_data.phone_battery_level > 0) {
-  //   snprintf(phone_battery_level, sizeof(phone_battery_level), "%ld %%", s_data.phone_battery_level);
-  // } else {
-  //   snprintf(phone_battery_level, sizeof(phone_battery_level), "-");
-  // }
-  // menu_section2_items[i++] = (SimpleMenuItem) {
-  //   .title = "Phone battery",
-  //   .subtitle = phone_battery_level,
-  // };
+  if (s_data.phone_battery_level > 0) {
+    snprintf(phone_battery_level, sizeof(phone_battery_level), "%ld %%", s_data.phone_battery_level);
+  } else {
+    snprintf(phone_battery_level, sizeof(phone_battery_level), "-");
+  }
+  menu_section2_items[i++] = (SimpleMenuItem) {
+    .title = "Phone battery",
+    .subtitle = phone_battery_level,
+  };
   // Header
   menu_sections[s++] = (SimpleMenuSection) {
     .title = "About",
