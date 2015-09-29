@@ -1,9 +1,9 @@
 {
   "uuid": "5DD35873-3BB6-44D6-8255-0E61BC3B97F5",
   "shortName": "Ventoo",
-  "longName": "Ventoo 2.2.0-beta2",
+  "longName": "Ventoo 2.2.0-beta4",
   "companyName": "N Jackson & JayPS",
-  "versionCode": 262,
+  "versionCode": 264,
   "versionLabel": "2.20",
   "watchapp": {
     "watchface": false
