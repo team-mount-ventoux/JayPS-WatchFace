@@ -4,8 +4,8 @@
 #define PRODUCTION true
 
 
-#define VERSION_PEBBLE 264
-#define VERSION_TEXT "Version 2.2.0-beta4"
+#define VERSION_PEBBLE 265
+#define VERSION_TEXT "Version 2.2.0"
 #define APP_COMPANY "N Jackson & JayPS"
 
 #if PRODUCTION
