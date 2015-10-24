@@ -41,21 +41,19 @@ const GPathInfo BEARING_PATH_POINTS = {
 GPath *bearing_gpath;
 
 
-void update_map(bool force_recenter);
-
 void screen_map_zoom_out(int factor) {
     map_scale = map_scale * factor;
     if (map_scale > MAP_SCALE_MAX) {
         map_scale = MAP_SCALE_MIN;
     }
-    update_map(true);
+    screen_map_update_map(true);
 }
 void screen_map_zoom_in(int factor) {
     map_scale = map_scale / factor;
     if (map_scale < MAP_SCALE_MIN) {
         map_scale = MAP_SCALE_MAX;
     }
-    update_map(true);
+    screen_map_update_map(true);
 }
 
 
@@ -85,12 +83,12 @@ void screen_map_update_location() {
 
     if (s_data.page_number == PAGE_MAP) {
         // refresh displayed map only if current page is PAGE_MAP
-        update_map(false);
+      screen_map_update_map(false);
     }
 
 }
 
-void update_map(bool force_recenter) {
+void screen_map_update_map(bool force_recenter) {
     int x, y;
     int debug = 0, debug2 = 0;
 
@@ -151,8 +149,13 @@ void update_map(bool force_recenter) {
 
 void path_layer_update_callback(Layer *me, GContext *ctx) {
     (void)me;
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "path_layer_update_callback");
+#ifdef PBL_COLOR
+    graphics_context_set_fill_color(ctx, BG_COLOR_MAP);
+    graphics_fill_rect(ctx, GRect(0, 0, MAP_VSIZE_X, MAP_VSIZE_Y), 0, GCornerNone);
+#endif
 
-    graphics_context_set_stroke_color(ctx, GColorBlack);
+    graphics_context_set_stroke_color(ctx, COLOR_MAP);
 
     GPoint p0, p1;
 
@@ -201,7 +204,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
 }
 void bearing_layer_update_callback(Layer *me, GContext *ctx) {
-    int x, y;
+  int x, y;
 
     x = (XINI + (s_gpsdata.xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
     y = (YINI - (s_gpsdata.ypos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
@@ -215,7 +218,7 @@ void bearing_layer_update_callback(Layer *me, GContext *ctx) {
     //gpath_draw_filled(ctx, &bearing_gpath);
 
     // Stroke the path:
-    graphics_context_set_stroke_color(ctx, GColorBlack);
+    graphics_context_set_stroke_color(ctx, COLOR_MAP);
     gpath_draw_outline(ctx, bearing_gpath);
 }
 void screen_map_layer_init(Window* window) {
@@ -230,7 +233,7 @@ void screen_map_layer_init(Window* window) {
     for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
         s_live.friends[i].name_frame = GRect(0, 15, 100, 15);
         s_live.friends[i].name_layer = text_layer_create(s_live.friends[i].name_frame);
-        set_layer_attr_full(s_live.friends[i].name_layer, s_live.friends[i].name, font_12, GTextAlignmentLeft, GColorBlack, GColorWhite, s_data.page_map);
+        set_layer_attr_full(s_live.friends[i].name_layer, s_live.friends[i].name, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentLeft, COLOR_MAP, GColorClear, s_data.page_map);
     }
 
     pathFrame = GRect(0, 0, MAP_VSIZE_X, MAP_VSIZE_Y);
@@ -256,12 +259,12 @@ void screen_map_layer_init(Window* window) {
     s_gpsdata.nb_received=0;
 }
 void screen_map_layer_deinit() {
-  layer_destroy(s_data.page_map);
   for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
     text_layer_destroy(s_live.friends[i].name_layer);
   }
   layer_destroy(path_layer);
   layer_destroy(bearing_layer);
   gpath_destroy(bearing_gpath);
+  layer_destroy(s_data.page_map);
 }
 

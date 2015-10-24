@@ -1,6 +1,15 @@
 #ifndef PEBBLEBIKE_H
 #define PEBBLEBIKE_H
 
+#include "pebble.h"
+#include "config.h"
+#include "colors.h"
+#include "sizes.h"
+
+#ifndef PBL_IF_ROUND_ELSE
+  #define PBL_IF_ROUND_ELSE(if_true, if_false) (if_false)
+#endif
+
 enum {
     MSG_LOCATION_DATA = 0x13, // TUPLE_BYTE_ARRAY
     STATE_CHANGED = 0x14,
@@ -17,6 +26,7 @@ enum {
     MSG_LOCATION_DATA_V2 = 0x25,
     MSG_LOCATION_DATA_V3 = 0x26,
     MSG_SENSOR_TEMPERATURE = 0x27,
+    MSG_CONFIG = 0x28,
 };
 
 enum {
@@ -67,22 +77,12 @@ enum {
 #define NUMBER_OF_PAGES 5
 #endif
 
-#define CHAR_WIDTH 35
-#define DOT_WIDTH 15
-#define CHAR_HEIGHT 51
-
-#define CANVAS_WIDTH 144
 #ifdef PBL_PLATFORM_APLITE
-// 20+2
-#  define MENU_WIDTH (ACTION_BAR_WIDTH+2)
+  // don't deinit objects in deinit -- save at least 700 bytes
+  #define APP_DEINIT false
 #else
-// 30
-#  define MENU_WIDTH (ACTION_BAR_WIDTH)
+  #define APP_DEINIT true
 #endif
-#define TOPBAR_HEIGHT 18
-
-#define SCREEN_W 144
-#define SCREEN_H 168
 
 #define SPEED_UNIT_IMPERIAL "mph"
 #define SPEED_UNIT_METRIC "km/h"
@@ -121,6 +121,7 @@ enum {
     FIELD_TEMPERATURE,
     //FIELD_TIME,
     FIELD__MAX,
+    FIELD__UNUSED,
 };
 typedef struct TopBarLayer {
     Layer *layer;
@@ -147,9 +148,9 @@ typedef struct FieldLayer {
 
 typedef struct ScreenALayer {
     FieldLayer field_top;
+    FieldLayer field_top2;
     FieldLayer field_bottom_left;
     FieldLayer field_bottom_right;
-    SpeedLayer speed_layer;
 } ScreenALayer;
 typedef struct ScreenBLayer {
     FieldLayer field_top_left;
@@ -267,10 +268,11 @@ typedef struct LiveData {
     LiveFriendData *sorted_friends[NUM_LIVE_FRIENDS];
 } LiveData;
 
-extern GFont font_12, font_18, font_22_24;
+extern GFont font_roboto_bold_16, font_roboto_bold_62;
 extern AppData s_data;
 extern GPSData s_gpsdata;
 extern LiveData s_live;
+extern bool title_instead_of_units;
 
 #if DEBUG
   extern char tmp[255];

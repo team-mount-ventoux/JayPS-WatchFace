@@ -2,6 +2,7 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "screens.h"
+#include "screen_map.h"
 #include "buttons.h"
 
 ActionBarLayer *action_bar;
@@ -19,9 +20,6 @@ void update_screens() {
   #endif
   if (s_data.page_number == PAGE_SPEED) {
     layer_set_hidden(s_data.page_speed, false);
-//    layer_mark_dirty(&s_data.speed_layer.layer);
-//    layer_mark_dirty(&s_data.distance_layer.layer);
-//    layer_mark_dirty(&s_data.avgspeed_layer.layer);
   }
   if (s_data.page_number == PAGE_HEARTRATE) {
     layer_set_hidden(s_data.page_speed, false);
@@ -35,6 +33,7 @@ void update_screens() {
   if (s_data.page_number == PAGE_MAP) {
     layer_set_hidden(s_data.page_map, false);
     layer_mark_dirty(s_data.page_map); // TODO: really needed?
+    screen_map_update_map(true); // TODO: really needed?
     //vibes_short_pulse();
   }
   #if DEBUG
@@ -56,6 +55,7 @@ void set_layer_attr_full(TextLayer *textlayer, const char *text, GFont font, GTe
   text_layer_set_text_color(textlayer, color);
   text_layer_set_background_color(textlayer, bg_color);
   text_layer_set_font(textlayer, font);
+  text_layer_set_overflow_mode(textlayer, GTextOverflowModeWordWrap);
   if (ParentLayer != NULL) {
       layer_add_child(ParentLayer, text_layer_get_layer(textlayer));
   }
@@ -65,36 +65,43 @@ void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t
   field_layer->main_layer = layer_create(GRect(x, y, w, h));
   layer_add_child(parent, field_layer->main_layer);
 
-
-  // title
-  field_layer->title_layer = text_layer_create(GRect(1, 2, w - 2, 14));
-  set_layer_attr_full(field_layer->title_layer, title_text, font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, field_layer->main_layer);
+  // unit
+  field_layer->unit_layer = text_layer_create(GRect(1, h - 22, w - 2, 24));
+  set_layer_attr_full(field_layer->unit_layer, unit_text, fonts_get_system_font(FONT_KEY_GOTHIC_18), GTextAlignmentCenter, COLOR_UNITS, BG_COLOR_DATA, field_layer->main_layer);
 
   // data
-  field_layer->data_layer = text_layer_create(GRect(1, 21, w - 2, 32));
-  set_layer_attr_full(field_layer->data_layer, data_text, font_22_24, GTextAlignmentCenter, GColorBlack, GColorWhite, field_layer->main_layer);
+  field_layer->data_layer = text_layer_create(GRect(1, h / 2 - 18, w - 2, 32));
 
-  // unit
-  field_layer->unit_layer = text_layer_create(GRect(1, h - 14, w - 2, 14));
-  set_layer_attr_full(field_layer->unit_layer, unit_text, font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, field_layer->main_layer);
+  // title
+  field_layer->title_layer = text_layer_create(GRect(1, -1, w - 2, 24));
+  set_layer_attr_full(field_layer->title_layer, title_text, fonts_get_system_font(FONT_KEY_GOTHIC_18), GTextAlignmentCenter, COLOR_TITLE, BG_COLOR_TITLE, field_layer->main_layer);
 
+  set_layer_attr_full(field_layer->data_layer, data_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), GTextAlignmentCenter, COLOR_DATA, BG_COLOR_DATA, field_layer->main_layer);
 }
 void field_layer_deinit(FieldLayer* field_layer) {
-  layer_destroy(field_layer->main_layer);
-  text_layer_destroy(field_layer->title_layer);
+  if (field_layer->title_layer != NULL) {
+    text_layer_destroy(field_layer->title_layer);
+  }
   text_layer_destroy(field_layer->data_layer);
   text_layer_destroy(field_layer->unit_layer);
+  layer_destroy(field_layer->main_layer);
 }
-
+void topbar_layer_update_callback(Layer *me, GContext* ctx) {
+  (void)me;
+  graphics_context_set_stroke_color(ctx, BG_COLOR_TOP_BAR);
+  graphics_fill_rect(ctx, GRect(0, 0, SCREEN_W, TOPBAR_HEIGHT), 0, GCornerNone);
+}
 void topbar_layer_init(Window* window) {
-  int16_t w = SCREEN_W - MENU_WIDTH;
+//  int16_t w = SCREEN_W - MENU_WIDTH;
 
-  s_data.topbar_layer.layer = layer_create(GRect(0,0,w,SCREEN_H));
+  s_data.topbar_layer.layer = layer_create(GRect(0, 0, SCREEN_W, TOPBAR_HEIGHT));
+  layer_set_update_proc(s_data.topbar_layer.layer , topbar_layer_update_callback);
   layer_add_child(window_get_root_layer(window), s_data.topbar_layer.layer);
 
   // time (centered in top bar)
-  s_data.topbar_layer.time_layer = text_layer_create(GRect(0,0,w,TOPBAR_HEIGHT));
-  set_layer_attr_full(s_data.topbar_layer.time_layer, s_data.time, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16)), GTextAlignmentCenter, GColorWhite, GColorBlack, window_get_root_layer(window));
+  s_data.topbar_layer.time_layer = text_layer_create(GRect(PAGE_OFFSET_X, PBL_IF_ROUND_ELSE(7,0), PAGE_W, 18 - 2));
+  text_layer_set_background_color(s_data.topbar_layer.time_layer, COLOR_TOP_BAR);
+  set_layer_attr_full(s_data.topbar_layer.time_layer, s_data.time, font_roboto_bold_16, GTextAlignmentCenter, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
 
   // bluetooth icon
   s_data.topbar_layer.bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
@@ -104,8 +111,8 @@ void topbar_layer_init(Window* window) {
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !bluetooth_connection_service_peek());
 
   // accuracy (1/3, right)
-  s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(w-18,0,18,TOPBAR_HEIGHT));
-  set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16)), GTextAlignmentRight, GColorWhite, GColorBlack, window_get_root_layer(window));
+  s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(PAGE_W - 18 - PBL_IF_ROUND_ELSE(15, 0), PBL_IF_ROUND_ELSE(7,0), 18, 18 - 2));
+  set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, font_roboto_bold_16, GTextAlignmentRight, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
 
 }
 
@@ -113,7 +120,6 @@ static void disconnect_timer_callback(void *data) {
   disconnect_timer = NULL;
   vibes_short_pulse();
 }
-
 void topbar_toggle_bluetooth_icon(bool connected) {
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !connected);
   if (connected) {
@@ -132,7 +138,6 @@ void topbar_toggle_bluetooth_icon(bool connected) {
 }
 
 void topbar_layer_deinit() {
-  layer_destroy(s_data.topbar_layer.layer);
   text_layer_destroy(s_data.topbar_layer.time_layer);
   text_layer_destroy(s_data.topbar_layer.accuracy_layer);
   if (disconnect_timer) {
@@ -141,6 +146,7 @@ void topbar_layer_deinit() {
   layer_remove_from_parent(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer));
   bitmap_layer_destroy(s_data.topbar_layer.bluetooth_layer);
   gbitmap_destroy(s_data.topbar_layer.bluetooth_image);
+  layer_destroy(s_data.topbar_layer.layer);
 }  
 void action_bar_init(Window* window) {
   // Initialize the action bar:
@@ -152,6 +158,7 @@ void action_bar_init(Window* window) {
   action_bar_layer_set_icon(action_bar, BUTTON_ID_SELECT, next_button);
   //action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, reset_buttonp);
   action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
+  action_bar_layer_set_background_color(action_bar, COLOR_ACTION_BAR);
 }
 void action_bar_deinit() {
  action_bar_layer_destroy(action_bar);
@@ -163,13 +170,14 @@ void screen_reset_instant_data() {
   if (s_gpsdata.heartrate != 255) {
     s_gpsdata.heartrate = 0;
   }
-  s_gpsdata.ascentrate = 0;
-  if (s_data.page_number == PAGE_SPEED && (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC)) {
-    strcpy(s_data.speed, "0:00");
-  } else {
-    strcpy(s_data.speed, "0");
+  if (s_gpsdata.cadence != 255) {
+    s_gpsdata.cadence = 0;
   }
+  s_gpsdata.ascentrate = 0;
+  s_gpsdata.speed100 = 0;
+  copy_speed(s_data.speed, sizeof(s_data.speed), s_gpsdata.speed100);
   strcpy(s_data.ascentrate, "0");
+  strcpy(s_data.accuracy, "-");
 
   if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
     layer_mark_dirty(s_data.page_speed);

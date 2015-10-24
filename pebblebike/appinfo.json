@@ -1,10 +1,10 @@
 {
   "uuid": "5DD35873-3BB6-44D6-8255-0E61BC3B97F5",
   "shortName": "Ventoo",
-  "longName": "Ventoo 2.2.0",
+  "longName": "Ventoo 2.3.0-alpha1",
   "companyName": "N Jackson & JayPS",
-  "versionCode": 265,
-  "versionLabel": "2.20",
+  "versionCode": 266,
+  "versionLabel": "2.30",
   "watchapp": {
     "watchface": false
   },
@@ -13,27 +13,12 @@
     "media": [
       {
         "type": "font",
-        "name": "FONT_ROBOTO_CONDENSED_12",
-        "file": "fonts/Roboto-Condensed.ttf"
-      },
-      {
-        "type": "font",
-        "name": "FONT_ROBOTO_CONDENSED_18",
-        "file": "fonts/Roboto-Condensed.ttf"
-      },
-      {
-        "type": "font",
         "name": "FONT_ROBOTO_BOLD_16",
         "file": "fonts/Roboto-Bold.ttf"
       },
       {
         "type": "font",
-        "name": "FONT_ROBOTO_BOLD_22",
-        "file": "fonts/Roboto-Bold.ttf"
-      },
-      {
-        "type": "font",
-        "name": "FONT_ROBOTO_BOLD_24",
+        "name": "FONT_ROBOTO_BOLD_62",
         "file": "fonts/Roboto-Bold.ttf"
       },
       {
@@ -41,71 +26,6 @@
         "type": "png",
         "name": "IMAGE_MENU_ICON",
         "file": "images/menu_icon_pebble_cycling.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_0",
-        "file": "images/num_0.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_1",
-        "file": "images/num_1.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_2",
-        "file": "images/num_2.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_3",
-        "file": "images/num_3.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_4",
-        "file": "images/num_4.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_5",
-        "file": "images/num_5.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_6",
-        "file": "images/num_6.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_7",
-        "file": "images/num_7.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_8",
-        "file": "images/num_8.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_9",
-        "file": "images/num_9.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_DOT",
-        "file": "images/num_dot.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_COLON",
-        "file": "images/num_colon.png"
-      },
-      {
-        "type": "png",
-        "name": "IMAGE_NUM_MINUS",
-        "file": "images/num_minus.png"
       },
       {
         "type": "png",
@@ -156,7 +76,8 @@
   },
   "targetPlatforms": [
     "aplite",
-    "basalt"
+    "basalt",
+    "chalk"
   ],
   "sdkVersion": "3"
 }

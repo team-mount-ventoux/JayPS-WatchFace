@@ -17,11 +17,12 @@
   #include "screen_debug.h"
 #endif
 
-GFont font_12, font_18, font_22_24;
+GFont font_roboto_bold_16, font_roboto_bold_62;
 
 AppData s_data;
 GPSData s_gpsdata;
 LiveData s_live;
+bool title_instead_of_units = true;
 int nbchange_state=0;
 
 void change_units(uint8_t units, bool first_time) {
@@ -90,6 +91,7 @@ void change_units(uint8_t units, bool first_time) {
   if (!first_time) {
     //todo(custom) screen_speed_dirty
     layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_top.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_top2.unit_layer));
     layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_bottom_left.unit_layer));
     layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_bottom_right.unit_layer));
   }
@@ -140,13 +142,8 @@ static void init(void) {
 
   s_data.phone_battery_level = -1;
 
-  font_12 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_12));
-  font_18 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_18));
-# ifdef PBL_PLATFORM_APLITE
-  font_22_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_24));
-# else
-  font_22_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_22));
-# endif
+  font_roboto_bold_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16));
+  font_roboto_bold_62 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_62));
   s_gpsdata.heartrate = 255; // no data at startup
 
   // set default unit of measure
@@ -155,12 +152,27 @@ static void init(void) {
   buttons_init();
 
   s_data.window = window_create();
-  window_set_background_color(s_data.window, GColorWhite);
+  window_set_background_color(s_data.window, BG_COLOR_WINDOW);
 # ifdef PBL_PLATFORM_APLITE
   window_set_fullscreen(s_data.window, true);
 # endif
   topbar_layer_init(s_data.window);
 
+#ifdef DEBUG_FIELDS_SIZE
+  strcpy(s_data.speed, "188.8");
+  strcpy(s_data.distance, "88.8");
+  strcpy(s_data.avgspeed, "888.8");
+  strcpy(s_data.altitude, "888.8");
+  strcpy(s_data.ascent, "1342");
+  strcpy(s_data.ascentrate, "548");
+  strcpy(s_data.slope, "5");
+  strcpy(s_data.accuracy, "9");
+  strcpy(s_data.bearing, "270");
+  strcpy(s_data.elapsedtime, "1:05:28");
+  strcpy(s_data.maxspeed, "25.3");
+  strcpy(s_data.heartrate, "128");
+  strcpy(s_data.cadence, "90");
+#else
   strcpy(s_data.speed, "0.0");
   strcpy(s_data.distance, "-");
   strcpy(s_data.avgspeed, "-");
@@ -172,11 +184,12 @@ static void init(void) {
   strcpy(s_data.bearing, "-");
   strcpy(s_data.elapsedtime, "00:00:00");
   strcpy(s_data.maxspeed, "-");
+  strcpy(s_data.heartrate, "-");
+  strcpy(s_data.cadence, "-");
+#endif
   //strcpy(s_data.lat, "-");
   //strcpy(s_data.lon, "-");
   //strcpy(s_data.nbascent, "-");
-  strcpy(s_data.heartrate, "-");
-  strcpy(s_data.cadence, "-");
 
   screen_speed_layer_init(s_data.window);
   screen_altitude_layer_init(s_data.window);
@@ -213,9 +226,10 @@ static void init(void) {
 }
 static void deinit(void) {
   communication_deinit();
-  
-  window_destroy(s_data.window);
+  tick_timer_service_unsubscribe();
+  bluetooth_connection_service_unsubscribe();
 
+#if APP_DEINIT
   topbar_layer_deinit();
 
   screen_speed_deinit();
@@ -233,8 +247,10 @@ static void deinit(void) {
 
   buttons_deinit();
 
-  tick_timer_service_unsubscribe();
-  bluetooth_connection_service_unsubscribe();
+  fonts_unload_custom_font(font_roboto_bold_16);
+  fonts_unload_custom_font(font_roboto_bold_62);
+  window_destroy(s_data.window);
+#endif
 }
 
 int main(void) {

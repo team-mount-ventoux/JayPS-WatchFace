@@ -18,6 +18,24 @@ GBitmap *zoom_button;
 GBitmap *next_button;
 GBitmap *menu_up_button;
 GBitmap *menu_down_button;
+static AppTimer *button_timer;
+
+static void button_timer_callback(void *data) {
+  button_timer = NULL;
+  layer_set_hidden(action_bar_layer_get_layer(action_bar), true);
+  title_instead_of_units = false;
+  //todo
+  screen_speed_update_config();
+  screen_altitude_update_config();
+}
+void button_click() {
+  layer_set_hidden(action_bar_layer_get_layer(action_bar), false);
+  if (button_timer) {
+    app_timer_cancel(button_timer);
+  }
+  // schedule a timer to hide action bar in X milliseconds
+  button_timer = app_timer_register(2000, button_timer_callback, NULL);
+}
 
 void action_bar_set_menu_up_down_buttons() {
   action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, menu_up_button);
@@ -25,10 +43,12 @@ void action_bar_set_menu_up_down_buttons() {
 }
 
 void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
+  button_click();
   vibes_short_pulse();
   send_cmd(REFRESH_PRESS);
 }
 void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
+  button_click();
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
     screen_live_menu(true);
   } else if (config_screen != CONFIG_SCREEN_DISABLED) {
@@ -42,6 +62,7 @@ void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   }
 }
 void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
+  button_click();
   if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_field();
   } else {
@@ -76,6 +97,7 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
     }
     if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
+      title_instead_of_units = true;
       screen_speed_show_speed(true);
     }
     update_screens();
@@ -83,6 +105,7 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
 }
 
 void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
+  button_click();
   if (s_data.page_number == PAGE_MAP) {
     screen_map_zoom_out(2);
   } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
@@ -94,11 +117,13 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   }
 }
 void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context) {
+  button_click();
 #if ROTATION
   screen_speed_start_rotation();
 #endif
 }
 void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context) {
+  button_click();
   if (s_data.page_number == PAGE_MAP) {
     screen_map_zoom_in(2);
   } else if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_ALTITUDE) {
@@ -112,6 +137,7 @@ void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context)
   }
 }
 void handle_backbutton_click(ClickRecognizerRef recognizer, void *context) {
+  button_click();
   if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_stop();
     buttons_update();
@@ -120,8 +146,12 @@ void handle_backbutton_click(ClickRecognizerRef recognizer, void *context) {
     // do nothing
     // just prevent to leave the app
     // TODO: show notif
+
+    title_instead_of_units = true;
+    screen_speed_show_speed(true);
   }
 }
+
 void handle_backbutton_exit(ClickRecognizerRef recognizer, void *context) {
   window_stack_pop(true);
 }
@@ -155,7 +185,7 @@ void buttons_update() {
 }
 
 void buttons_init() {
-  
+  button_timer = app_timer_register(2000, button_timer_callback, NULL);
   start_button = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_START_BUTTON);
   stop_button = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_STOP_BUTTON);
   //reset_button = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RESET_BUTTON);
@@ -168,7 +198,9 @@ void buttons_init() {
   s_data.page_number = PAGE_FIRST;
 }
 void buttons_deinit() {
-
+  if (button_timer) {
+    app_timer_cancel(button_timer);
+  }
   gbitmap_destroy(start_button);
   gbitmap_destroy(stop_button);
   //gbitmap_destroy(reset_button);

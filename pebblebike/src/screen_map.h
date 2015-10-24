@@ -21,5 +21,6 @@ void screen_map_zoom_out(int factor);
 void screen_map_update_location();
 void screen_map_layer_init(Window* window);
 void screen_map_layer_deinit();
+void screen_map_update_map(bool force_recenter);
 
 #endif // SCREEN_MAP_H

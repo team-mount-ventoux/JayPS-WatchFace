@@ -4,8 +4,8 @@
 #define PRODUCTION true
 
 
-#define VERSION_PEBBLE 265
-#define VERSION_TEXT "Version 2.2.0"
+#define VERSION_PEBBLE 266
+#define VERSION_TEXT "Version 2.3.0-beta1"
 #define APP_COMPANY "N Jackson & JayPS"
 
 #if PRODUCTION
@@ -15,6 +15,9 @@
   #define DEBUG true
   #define ROTATION false
 #endif
+
+//#define DEBUG_COLOR true
+//#define DEBUG_FIELDS_SIZE true
 
 #define ORUXMAP true
 

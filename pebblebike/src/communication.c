@@ -6,6 +6,7 @@
 #include "screen_map.h"
 #include "screen_live.h"
 #include "screen_speed.h"
+#include "screen_config.h"
 
 enum {
   BYTE_SETTINGS = 0,
@@ -69,7 +70,8 @@ void send_cmd(uint8_t cmd) {
     app_message_outbox_send();
 }
 void send_version() {
-    Tuplet value = TupletInteger(MSG_VERSION_PEBBLE, VERSION_PEBBLE);
+    Tuplet tuplet_version_pebble = TupletInteger(MSG_VERSION_PEBBLE, VERSION_PEBBLE);
+    Tuplet tuplet_config = TupletBytes(MSG_CONFIG, (uint8_t*) &config, sizeof(config));
 
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
@@ -77,7 +79,8 @@ void send_version() {
     if (iter == NULL)
         return;
 
-    dict_write_tuplet(iter, &value);
+    dict_write_tuplet(iter, &tuplet_version_pebble);
+    dict_write_tuplet(iter, &tuplet_config);
     dict_write_end(iter);
 
     app_message_outbox_send();

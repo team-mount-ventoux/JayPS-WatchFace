@@ -6,6 +6,7 @@ enum {
   CONFIG_FIELD_SCREEN_A_TOP = CONFIG_FIELD_SCREEN_A__MIN,
   CONFIG_FIELD_SCREEN_A_BOTTOM_LEFT,
   CONFIG_FIELD_SCREEN_A_BOTTOM_RIGHT,
+  CONFIG_FIELD_SCREEN_A_TOP2,
   CONFIG_FIELD_SCREEN_A__MAX,
   CONFIG_FIELD_SCREEN_B__MIN,
   CONFIG_FIELD_SCREEN_B_TOP_LEFT = CONFIG_FIELD_SCREEN_B__MIN,
@@ -26,6 +27,7 @@ enum {
 extern uint8_t config_screen;
 
 typedef struct ConfigData {
+    /// ! DO NOT CHANGE ORDER
     uint8_t screenA_top_type;
     uint8_t screenA_bottom_left_type;
     uint8_t screenA_bottom_right_type;
@@ -33,6 +35,8 @@ typedef struct ConfigData {
     uint8_t screenB_top_right_type;
     uint8_t screenB_bottom_left_type;
     uint8_t screenB_bottom_right_type;
+    uint8_t screenA_top2_type;
+    // ALWAYS INSERT NEW FIELD AT THE END FOR COMPATIBILITY REASON (SAVED CONFIGS ON PREVIOUS VERSIONS)
 } ConfigData;
 extern ConfigData config;
 

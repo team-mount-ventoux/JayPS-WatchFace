@@ -1,0 +1,34 @@
+#ifndef SIZES_H
+#define SIZES_H
+
+#define CHAR_WIDTH 35
+#define DOT_WIDTH 15
+#define CHAR_HEIGHT 51
+
+#ifdef PBL_PLATFORM_CHALK
+  #define TOPBAR_HEIGHT 25
+  #define SCREEN_W 180
+  #define SCREEN_H 180
+  // 18
+  #define PAGE_OFFSET_X ((180-144)/2)
+  // 6
+  //#define PAGE_OFFSET_Y ((180-168)/2 - TOPBAR_HEIGHT)
+  #define PAGE_OFFSET_Y TOPBAR_HEIGHT
+#else
+  #define TOPBAR_HEIGHT 18
+  #define SCREEN_W 144
+  #define SCREEN_H 168
+  #define PAGE_OFFSET_X 0
+  #define PAGE_OFFSET_Y TOPBAR_HEIGHT
+#endif
+
+#define MENU_WIDTH 0
+
+#define PAGE_W  (144-MENU_WIDTH)
+#define PAGE_H (SCREEN_H-TOPBAR_HEIGHT)
+#define PAGE_SCREEN_CENTER_H (SCREEN_H/2 - PAGE_SPEED_TOP_OFFSET_Y)
+//#define PAGE_GRECT GRect(PAGE_OFFSET_X, PAGE_OFFSET_Y, PAGE_W, PAGE_H)
+#define PAGE_GRECT GRect(0, PAGE_OFFSET_Y, SCREEN_W, PAGE_H)
+#define SCREEN_GRECT GRect(0, 0, SCREEN_W, SCREEN_H)
+
+#endif // SIZES_H

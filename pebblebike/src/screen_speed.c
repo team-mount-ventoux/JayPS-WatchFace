@@ -5,30 +5,7 @@
 #include "screens.h"
 #include "screen_config.h"
 
-#define NUMBER_OF_IMAGES 13
-#define TOTAL_IMAGE_SLOTS 4
-#define NOT_USED -1
-
-const int IMAGE_RESOURCE_IDS[NUMBER_OF_IMAGES] = {
-  RESOURCE_ID_IMAGE_NUM_0, RESOURCE_ID_IMAGE_NUM_1, RESOURCE_ID_IMAGE_NUM_2,
-  RESOURCE_ID_IMAGE_NUM_3, RESOURCE_ID_IMAGE_NUM_4, RESOURCE_ID_IMAGE_NUM_5,
-  RESOURCE_ID_IMAGE_NUM_6, RESOURCE_ID_IMAGE_NUM_7, RESOURCE_ID_IMAGE_NUM_8,
-  RESOURCE_ID_IMAGE_NUM_9,RESOURCE_ID_IMAGE_NUM_DOT,RESOURCE_ID_IMAGE_NUM_COLON,RESOURCE_ID_IMAGE_NUM_MINUS
-};
-enum {
-  IMAGE_NUM_DOT = 10,
-  IMAGE_NUM_COLON,
-  IMAGE_NUM_MINUS
-};
-
-GBitmap *images[TOTAL_IMAGE_SLOTS];
-BitmapLayer *image_layers[TOTAL_IMAGE_SLOTS];
-int image_slots[TOTAL_IMAGE_SLOTS] = {NOT_USED,NOT_USED,NOT_USED,NOT_USED};
-
-//TextLayer *distance_layer;
-//TextLayer *avg_layer;
 Layer *line_layer;
-Layer *bottom_layer;
 
 #if ROTATION
 enum {
@@ -43,173 +20,100 @@ int rotation = ROTATION_DISABLED;
 static AppTimer *rotation_timer;
 #endif
 
-void speed_layer_update_proc(Layer *layer, GContext* ctx) {
-  SpeedLayer *speed_layer = &s_data.screenA_layer.speed_layer;
+#ifdef PBL_ROUND
+  #define PAGE_SPEED_TOP_H SCREEN_H / 2 - TOPBAR_HEIGHT + 10
+  #define PAGE_SPEED_TOP_OFFSET_Y TOPBAR_HEIGHT
+  #define PAGE_SPEED_MAIN_H 76
+#else
+  #define PAGE_SPEED_TOP_H SCREEN_H / 2 - TOPBAR_HEIGHT + 20
+  #define PAGE_SPEED_TOP_OFFSET_Y TOPBAR_HEIGHT
+  #define PAGE_SPEED_MAIN_H 76
+#endif
 
-  graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_fill_rect(ctx, layer_get_frame(speed_layer->layer), 0, GCornerNone);
+#define PAGE_SPEED_MIDDLE_DATA_H PAGE_SCREEN_CENTER_H + PBL_IF_ROUND_ELSE(0, 8)
+#define PAGE_SPEED_TOP_DATA_H PAGE_SPEED_MIDDLE_DATA_H - PAGE_SPEED_MAIN_H / 2
+#define PAGE_SPEED_BOTTOM_DATA_H PAGE_SPEED_MIDDLE_DATA_H + PAGE_SPEED_MAIN_H / 2
 
-  if (speed_layer->text && strlen(speed_layer->text) > 0) {
-    
-    // TODO: check if it's the same text?
-    
-    int len = strlen(speed_layer->text);
-
-    if (len > 4) {
-      len = 4;
-    }
-
-    // number of dots
-    int dots = 0;
-    for (int c=0; c < len; c++) {
-      if (speed_layer->text[c] == ',') {
-        // convert commas to dots (older app sent localized numbers...)
-        speed_layer->text[c] = '.';
-      }
-      if (speed_layer->text[c] == '.' || speed_layer->text[c] == ':' || speed_layer->text[c] == '-') {
-        // dot, colon or minus, same width
-        dots++;
-      }
-    }
-
-    // get the size
-    int size = (len - dots) * CHAR_WIDTH + dots * DOT_WIDTH;
-
-    int leftpos = (CANVAS_WIDTH - MENU_WIDTH - size) / 2;
-
-    // clean up old layers
-    for(int n=0; n < TOTAL_IMAGE_SLOTS; n++) {
-      if(image_slots[n] != NOT_USED) {
-        layer_remove_from_parent(bitmap_layer_get_layer(image_layers[n]));
-        bitmap_layer_destroy(image_layers[n]);
-        gbitmap_destroy(images[n]);
-        image_slots[n] = NOT_USED;
-      }
-    }
-
-    for(int c=0; c < len; c++) {
-
-      int digit_value = -1;
-      if (speed_layer->text[c] == '.') {
-        digit_value = IMAGE_NUM_DOT;
-      } else if (speed_layer->text[c] == ':') {
-        digit_value = IMAGE_NUM_COLON;
-      } else if (speed_layer->text[c] == '-') {
-        digit_value = IMAGE_NUM_MINUS;
-      } else {
-        digit_value = speed_layer->text[c] - '0';
-      }
-      //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d=%c digit_value=%d", c, speed_layer->text[c], digit_value);
-
-      if (digit_value >= 0 && digit_value < NUMBER_OF_IMAGES) {
-        images[c] = gbitmap_create_with_resource(IMAGE_RESOURCE_IDS[digit_value]);
-        image_layers[c] = bitmap_layer_create(gbitmap_get_bounds(images[c]));
-        bitmap_layer_set_bitmap(image_layers[c], images[c]);
-        
-        GRect frame = layer_get_frame(bitmap_layer_get_layer(image_layers[c]));
-        frame.origin.x = leftpos;
-        frame.origin.y = 10;
-        layer_set_frame(bitmap_layer_get_layer(image_layers[c]), frame);
-
-        layer_add_child(s_data.screenA_layer.speed_layer.layer, bitmap_layer_get_layer(image_layers[c]));
-        image_slots[c] = digit_value;
-      }
-
-      if (digit_value == IMAGE_NUM_DOT || digit_value == IMAGE_NUM_COLON || digit_value == IMAGE_NUM_MINUS) {
-        // dot or colon, same width
-        leftpos += DOT_WIDTH;
-      } else {
-        leftpos += CHAR_WIDTH;
-      }
-    }
-  }
-}
-void speed_layer_init(SpeedLayer *speed_layer, GRect frame) {
-  speed_layer->layer = layer_create(frame);
-  layer_set_update_proc(speed_layer->layer, speed_layer_update_proc);
-}
-void speed_layer_set_text(SpeedLayer *speed_layer, char *textdata) {
-  speed_layer->text = textdata;
-}
-void page_speed_update_proc(Layer *page_speed, GContext* ctx) {
-  //vibes_short_pulse();
-}
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
-  graphics_context_set_stroke_color(ctx, GColorBlack);
-  graphics_draw_line(ctx, GPoint(72 - MENU_WIDTH / 2, 90), GPoint(72 - MENU_WIDTH / 2, 160));
+  graphics_context_set_stroke_color(ctx, COLOR_LINES);
+  graphics_draw_line(ctx, GPoint(PAGE_OFFSET_X + PAGE_W / 2, PAGE_SPEED_TOP_H + 2), GPoint(PAGE_OFFSET_X + PAGE_W / 2, PAGE_H - 2));
+
+  graphics_context_set_fill_color(ctx, BG_COLOR_SPEED_MAIN);
+  graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_TOP_DATA_H, SCREEN_W, PAGE_SPEED_MAIN_H), 0, GCornerNone);
+
+#ifndef PBL_SDK_2
+  graphics_context_set_stroke_color(ctx, GColorWhite);
+  graphics_context_set_stroke_width(ctx, 2);
+  graphics_draw_line(ctx, GPoint(0, PAGE_SPEED_TOP_DATA_H + 1), GPoint(SCREEN_W, PAGE_SPEED_TOP_DATA_H + 1));
+  graphics_draw_line(ctx, GPoint(0, PAGE_SPEED_BOTTOM_DATA_H - 1), GPoint(SCREEN_W, PAGE_SPEED_BOTTOM_DATA_H - 1));
+#endif
 }
 void screen_speed_layer_init(Window* window) {
   s_data.screenA_layer.field_top.type = config.screenA_top_type;
+  s_data.screenA_layer.field_top2.type = FIELD_AVGSPEED;
   s_data.screenA_layer.field_bottom_left.type = config.screenA_bottom_left_type;
   s_data.screenA_layer.field_bottom_right.type = config.screenA_bottom_right_type;
 
-  s_data.page_speed = layer_create(GRect(0,TOPBAR_HEIGHT,CANVAS_WIDTH-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT));
-  layer_set_update_proc(s_data.page_speed, page_speed_update_proc);
+  s_data.page_speed = layer_create(PAGE_GRECT);
   layer_add_child(window_get_root_layer(window), s_data.page_speed);
-
-  speed_layer_init(&s_data.screenA_layer.speed_layer,GRect(0,0,CANVAS_WIDTH-MENU_WIDTH,84));
-  speed_layer_set_text(&s_data.screenA_layer.speed_layer, s_data.speed);
-  layer_add_child(s_data.page_speed, s_data.screenA_layer.speed_layer.layer);
-
   Layer *window_layer = window_get_root_layer(window);
+
+  // BEGIN bottom left "distance"
+
+  s_data.screenA_layer.field_bottom_left.unit_layer = text_layer_create(GRect(PAGE_OFFSET_X + 1, PAGE_SPEED_BOTTOM_DATA_H + 20, PAGE_W / 2 - 4, 18));
+  set_layer_attr_full(s_data.screenA_layer.field_bottom_left.unit_layer, s_data.unitsDistance, fonts_get_system_font(FONT_KEY_GOTHIC_14), PBL_IF_ROUND_ELSE(GTextAlignmentRight, GTextAlignmentCenter), COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
+
+  s_data.screenA_layer.field_bottom_left.data_layer = text_layer_create(GRect(PAGE_OFFSET_X + 1, PAGE_SPEED_BOTTOM_DATA_H - 5, PAGE_W / 2 - 4, 30));
+  set_layer_attr_full(s_data.screenA_layer.field_bottom_left.data_layer, s_data.distance, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), PBL_IF_ROUND_ELSE(GTextAlignmentRight, GTextAlignmentCenter), COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
+
+  // END bottom left
+
+  // BEGIN bottom right "avg"
+  s_data.screenA_layer.field_bottom_right.unit_layer = text_layer_create(GRect(PAGE_OFFSET_X + PAGE_W / 2 + PBL_IF_ROUND_ELSE(4, 0), PAGE_SPEED_BOTTOM_DATA_H + 20, PAGE_W / 2 - 2*PBL_IF_ROUND_ELSE(4, 0), 18));
+  set_layer_attr_full(s_data.screenA_layer.field_bottom_right.unit_layer, s_data.unitsSpeed, fonts_get_system_font(FONT_KEY_GOTHIC_14), PBL_IF_ROUND_ELSE(GTextAlignmentLeft, GTextAlignmentCenter), COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
+
+  s_data.screenA_layer.field_bottom_right.data_layer = text_layer_create(GRect(PAGE_OFFSET_X + PAGE_W / 2  + PBL_IF_ROUND_ELSE(4, 0), PAGE_SPEED_BOTTOM_DATA_H - 5, PAGE_W / 2 - 2*PBL_IF_ROUND_ELSE(4, 0), 30));
+  set_layer_attr_full(s_data.screenA_layer.field_bottom_right.data_layer, s_data.avgspeed, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), PBL_IF_ROUND_ELSE(GTextAlignmentLeft, GTextAlignmentCenter), COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
+
+
+  // END bottom right
   line_layer = layer_create(layer_get_frame(window_layer));
   layer_set_update_proc(line_layer, line_layer_update_callback);
   layer_add_child(s_data.page_speed, line_layer);
 
+  // BEGIN top2 "speed"
+
+  s_data.screenA_layer.field_top2.unit_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(19, 3), PAGE_SPEED_TOP_DATA_H - 17, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 3), 18));
+  set_layer_attr_full(s_data.screenA_layer.field_top2.unit_layer, s_data.unitsSpeed, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentRight, COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
+
+  s_data.screenA_layer.field_top2.data_layer = text_layer_create(GRect(0, PAGE_SPEED_TOP_DATA_H - PBL_IF_ROUND_ELSE(34, 42), SCREEN_W, 30));
+  set_layer_attr_full(s_data.screenA_layer.field_top2.data_layer, s_data.avgspeed, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), GTextAlignmentCenter, COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
+
+  // END top2
+
+
   // BEGIN top "speed"
-  // s_data.screenA_layer.field_top.title_layer NOT used
 
-  s_data.screenA_layer.field_top.unit_layer = text_layer_create(GRect(0, 58, CANVAS_WIDTH - MENU_WIDTH, 22));
-  set_layer_attr_full(s_data.screenA_layer.field_top.unit_layer, s_data.unitsSpeedOrHeartRate, font_18, GTextAlignmentCenter, GColorWhite, GColorBlack, s_data.page_speed);
+  s_data.screenA_layer.field_top.unit_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(10, 3), PAGE_SPEED_MIDDLE_DATA_H + 19, SCREEN_W - 2*PBL_IF_ROUND_ELSE(10, 3), 22));
+  set_layer_attr_full(s_data.screenA_layer.field_top.unit_layer, s_data.unitsSpeedOrHeartRate, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentRight, COLOR_SPEED_UNITS, BG_COLOR_SPEED_UNITS, s_data.page_speed);
 
-  // s_data.screenA_layer.field_top.data_layer NOT used
+  s_data.screenA_layer.field_top.data_layer = text_layer_create(GRect(0, PAGE_SPEED_MIDDLE_DATA_H - 42 - PBL_IF_ROUND_ELSE(0,0), SCREEN_W, 80));
+  set_layer_attr_full(s_data.screenA_layer.field_top.data_layer, s_data.speed, font_roboto_bold_62, GTextAlignmentCenter, COLOR_SPEED_DATA, BG_COLOR_SPEED_DATA, s_data.page_speed);
+
   // END top
 
-  // BEGIN bottom left "distance"
-  s_data.screenA_layer.field_bottom_left.title_layer = text_layer_create(GRect(2, 90, 66 - MENU_WIDTH / 2, 16));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_left.title_layer, "distance", font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
-
-  s_data.screenA_layer.field_bottom_left.unit_layer = text_layer_create(GRect(2, 136, 66 - MENU_WIDTH / 2, 14));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_left.unit_layer, s_data.unitsDistance, font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
-
-  s_data.screenA_layer.field_bottom_left.data_layer = text_layer_create(GRect(1, 110, (SCREEN_W - MENU_WIDTH) / 2 - 2, 26));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_left.data_layer, s_data.distance, font_22_24, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
-  // END bottom left
-
-  // BEGIN bottom right "avg"
-  s_data.screenA_layer.field_bottom_right.title_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 90, 66 - MENU_WIDTH / 2, 16));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_right.title_layer, "avg speed", font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
-
-  s_data.screenA_layer.field_bottom_right.unit_layer = text_layer_create(GRect(75 - MENU_WIDTH / 2, 136, 66 - MENU_WIDTH / 2, 15));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_right.unit_layer, s_data.unitsSpeed, font_12, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
-
-  s_data.screenA_layer.field_bottom_right.data_layer = text_layer_create(GRect((SCREEN_W - MENU_WIDTH) / 2 + 1, 110, (SCREEN_W - MENU_WIDTH) / 2 - 2, 26));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_right.data_layer, s_data.avgspeed, font_22_24, GTextAlignmentCenter, GColorBlack, GColorWhite, s_data.page_speed);
-  // END bottom right
 
   layer_set_hidden(s_data.page_speed, false);
-  //vibes_double_pulse();
 }
 
 void screen_speed_deinit() {
-  for(int n=0; n < TOTAL_IMAGE_SLOTS; n++) {
-    if(image_slots[n] != NOT_USED) {
-      gbitmap_destroy(images[n]);
-      bitmap_layer_destroy(image_layers[n]);
-    }
-  }
-  
-  layer_destroy(s_data.screenA_layer.speed_layer.layer);
-  layer_destroy(s_data.page_speed);
-  text_layer_destroy(s_data.screenA_layer.field_top.unit_layer);
-  text_layer_destroy(s_data.screenA_layer.field_bottom_left.title_layer);
-  text_layer_destroy(s_data.screenA_layer.field_bottom_left.data_layer);
-  text_layer_destroy(s_data.screenA_layer.field_bottom_left.unit_layer);
-  text_layer_destroy(s_data.screenA_layer.field_bottom_right.title_layer);
-  text_layer_destroy(s_data.screenA_layer.field_bottom_right.data_layer);
-  text_layer_destroy(s_data.screenA_layer.field_bottom_right.unit_layer);
+  field_layer_deinit(&s_data.screenA_layer.field_top);
+  field_layer_deinit(&s_data.screenA_layer.field_top2);
+  field_layer_deinit(&s_data.screenA_layer.field_bottom_left);
+  field_layer_deinit(&s_data.screenA_layer.field_bottom_right);
   layer_destroy(line_layer);
+  layer_destroy(s_data.page_speed);
 }
 
 void screen_speed_show_speed(bool force_units) {
@@ -219,16 +123,15 @@ void screen_speed_show_speed(bool force_units) {
     // nothing to do here
     return;
   }*/
-  if (s_data.page_number == PAGE_HEARTRATE
+
+
+  if (0) {
 #if ROTATION
-   || rotation == ROTATION_HEARTRATE
-#endif
-   ) {
+  } else if (rotation == ROTATION_HEARTRATE) {
     if (force_units) {
       screen_speed_update_config();
-      text_layer_set_text(s_data.screenA_layer.field_top.unit_layer, HEART_RATE_UNIT);
     }
-    speed_layer_set_text(&s_data.screenA_layer.speed_layer, s_data.heartrate);
+#endif
 #if ROTATION  
   } else if (rotation == ROTATION_ALTITUDE) {
     snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.altitude);
@@ -242,7 +145,6 @@ void screen_speed_show_speed(bool force_units) {
       screen_speed_update_config();
     }
   }
-  copy_speed(s_data.maxspeed, sizeof(s_data.maxspeed), s_gpsdata.maxspeed100);
 }
 #if ROTATION
 static void rotation_timer_callback(void *data) {
@@ -278,3 +180,4 @@ void screen_speed_start_rotation() {
   }
 }
 #endif
+
