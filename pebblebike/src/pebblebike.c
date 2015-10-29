@@ -173,12 +173,13 @@ static void init(void) {
   strcpy(s_data.heartrate, "128");
   strcpy(s_data.cadence, "90");
 #endif
-#ifdef DEMO
+#if DEMO
   strcpy(s_data.speed, "26.1");
   strcpy(s_data.distance, "2.0");
   strcpy(s_data.avgspeed, "14.0");
   strcpy(s_data.altitude, "1139");
   strcpy(s_data.accuracy, "4");
+  s_data.live = 1;
 #else
   strcpy(s_data.speed, "0.0");
   strcpy(s_data.distance, "-");

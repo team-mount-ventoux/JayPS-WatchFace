@@ -11,6 +11,7 @@
 #if PRODUCTION
   #define DEBUG false
   #define ROTATION false
+  #define DEMO false
 #else
   #define DEBUG false
   #define ROTATION false

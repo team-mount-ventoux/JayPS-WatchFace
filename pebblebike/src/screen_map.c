@@ -253,6 +253,16 @@ void screen_map_layer_init(Window* window) {
     s_gpsdata.xpos=0;
     s_gpsdata.ypos=0;
     s_gpsdata.nb_received=0;
+
+#if DEMO
+    srand(0);
+    #define MIN(a, b) (a < b ? a : b)
+    for(int j = MIN(50, NUM_POINTS); j>0; j--) {
+      pts[MIN(50, NUM_POINTS)-j] = GPoint(2*j, j*j/50 + 5 + rand()%2);
+      cur_point++;
+    }
+    nb_points = cur_point;
+#endif
 }
 void screen_map_layer_deinit() {
   for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
