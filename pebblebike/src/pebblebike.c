@@ -172,6 +172,13 @@ static void init(void) {
   strcpy(s_data.maxspeed, "25.3");
   strcpy(s_data.heartrate, "128");
   strcpy(s_data.cadence, "90");
+#endif
+#ifdef DEMO
+  strcpy(s_data.speed, "26.1");
+  strcpy(s_data.distance, "2.0");
+  strcpy(s_data.avgspeed, "14.0");
+  strcpy(s_data.altitude, "1139");
+  strcpy(s_data.accuracy, "4");
 #else
   strcpy(s_data.speed, "0.0");
   strcpy(s_data.distance, "-");
@@ -201,7 +208,9 @@ static void init(void) {
     screen_debug2_layer_init(s_data.window);
   #endif
 
-  screen_reset_instant_data();
+  #if PRODUCTION
+    screen_reset_instant_data();
+  #endif
 
   action_bar_init(s_data.window);
   menu_init();

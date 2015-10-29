@@ -12,12 +12,13 @@
   #define DEBUG false
   #define ROTATION false
 #else
-  #define DEBUG true
+  #define DEBUG false
   #define ROTATION false
+  //#define DEBUG_COLOR true
+  //#define DEBUG_FIELDS_SIZE true
+  #define DEMO true
 #endif
 
-//#define DEBUG_COLOR true
-//#define DEBUG_FIELDS_SIZE true
 
 #define ORUXMAP true
 

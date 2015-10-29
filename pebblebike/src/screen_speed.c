@@ -51,7 +51,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 }
 void screen_speed_layer_init(Window* window) {
   s_data.screenA_layer.field_top.type = config.screenA_top_type;
-  s_data.screenA_layer.field_top2.type = FIELD_AVGSPEED;
+  s_data.screenA_layer.field_top2.type = config.screenA_top2_type;
   s_data.screenA_layer.field_bottom_left.type = config.screenA_bottom_left_type;
   s_data.screenA_layer.field_bottom_right.type = config.screenA_bottom_right_type;
 
