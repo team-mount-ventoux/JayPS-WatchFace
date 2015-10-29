@@ -13,7 +13,7 @@ void update_screens() {
   layer_set_hidden(s_data.page_altitude, true);
   layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), true);
   layer_set_hidden(s_data.page_map, true);
-
+  window_set_background_color(s_data.window, BG_COLOR_WINDOW);
   #if DEBUG
     layer_set_hidden(s_data.page_debug1, true);
     layer_set_hidden(s_data.page_debug2, true);
@@ -28,9 +28,11 @@ void update_screens() {
     layer_set_hidden(s_data.page_altitude, false);
   }
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
+    window_set_background_color(s_data.window, GColorWhite);
     layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), false);
   }
   if (s_data.page_number == PAGE_MAP) {
+    window_set_background_color(s_data.window, BG_COLOR_MAP);
     layer_set_hidden(s_data.page_map, false);
     layer_mark_dirty(s_data.page_map); // TODO: really needed?
     screen_map_update_map(true); // TODO: really needed?

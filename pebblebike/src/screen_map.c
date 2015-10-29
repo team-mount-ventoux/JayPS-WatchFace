@@ -150,10 +150,6 @@ void screen_map_update_map(bool force_recenter) {
 void path_layer_update_callback(Layer *me, GContext *ctx) {
     (void)me;
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "path_layer_update_callback");
-#ifdef PBL_COLOR
-    graphics_context_set_fill_color(ctx, BG_COLOR_MAP);
-    graphics_fill_rect(ctx, GRect(0, 0, MAP_VSIZE_X, MAP_VSIZE_Y), 0, GCornerNone);
-#endif
 
     graphics_context_set_stroke_color(ctx, COLOR_MAP);
 

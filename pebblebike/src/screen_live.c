@@ -126,10 +126,8 @@ void screen_live_menu_update() {
     menu_layer_reload_data(s_data.page_live_tracking);
 }
 void screen_live_layer_init(Window* window) {
-    GRect bounds = GRect(0,TOPBAR_HEIGHT,SCREEN_W-MENU_WIDTH,SCREEN_H-TOPBAR_HEIGHT);
-
     // Initialize the menu layer
-    s_data.page_live_tracking = menu_layer_create(bounds);
+    s_data.page_live_tracking = menu_layer_create(PAGE_GRECT);
 
     // Set all the callbacks for the menu layer
     menu_layer_set_callbacks(s_data.page_live_tracking, NULL, (MenuLayerCallbacks) {
