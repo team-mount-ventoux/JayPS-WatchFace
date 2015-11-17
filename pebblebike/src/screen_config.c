@@ -128,18 +128,19 @@ void config_start() {
     config_field = CONFIG_FIELD_SCREEN_A_TOP;
     cur_field = &s_data.screenA_layer.field_top;
     screen_speed_update_config();
-    text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(cur_field->type));
-    layer_mark_dirty(s_data.topbar_layer.layer);
   } else if (s_data.page_number == PAGE_ALTITUDE) {
     config_screen = CONFIG_SCREEN_B;
     config_field = CONFIG_FIELD_SCREEN_B_TOP_LEFT;
     cur_field = &s_data.screenB_layer.field_top_left;
     screen_altitude_update_config();
-    text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(cur_field->type));
-    layer_mark_dirty(s_data.topbar_layer.layer);
   } else {
     return;
   }
+  layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), true);
+  layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), true);
+  text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(cur_field->type));
+  layer_mark_dirty(s_data.topbar_layer.layer);
+
   vibes_short_pulse();
   if (config_timer != NULL) {
     app_timer_cancel(config_timer);
@@ -154,6 +155,8 @@ void config_stop() {
   app_timer_cancel(config_timer);
   config_timer = NULL;
   text_layer_set_text(s_data.topbar_layer.time_layer, s_data.time);
+  layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), false);
+  layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), false);
   layer_mark_dirty(s_data.topbar_layer.layer);
   config_save();
 }
