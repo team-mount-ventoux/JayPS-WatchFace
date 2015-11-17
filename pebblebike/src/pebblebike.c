@@ -108,6 +108,7 @@ void change_state(uint8_t state) {
   if (s_data.state == STATE_STOP) {
     screen_reset_instant_data();
   }
+  layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), s_data.state == STATE_STOP);
   buttons_update();
   
   nbchange_state++;

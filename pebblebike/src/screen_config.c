@@ -155,7 +155,7 @@ void config_stop() {
   app_timer_cancel(config_timer);
   config_timer = NULL;
   text_layer_set_text(s_data.topbar_layer.time_layer, s_data.time);
-  layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), false);
+  layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), s_data.state == STATE_STOP);
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), false);
   layer_mark_dirty(s_data.topbar_layer.layer);
   config_save();

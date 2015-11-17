@@ -120,7 +120,7 @@ void topbar_layer_init(Window* window) {
   // accuracy (1/3, right)
   s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(PAGE_W - 18 - PBL_IF_ROUND_ELSE(15, 0), PBL_IF_ROUND_ELSE(6,-1), 18, 19));
   set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, font_roboto_bold_16, GTextAlignmentRight, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
-
+  layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), s_data.state == STATE_STOP);
 }
 
 static void disconnect_timer_callback(void *data) {
