@@ -212,6 +212,13 @@ void config_change_type(uint8_t direction) {
 void config_load() {
   if (persist_exists(PERSIST_CONFIG_KEY)) {
     persist_read_data(PERSIST_CONFIG_KEY, &config, sizeof(config));
+    int version = 0;
+    if (persist_exists(PERSIST_VERSION)) {
+      version = persist_read_int(PERSIST_VERSION);
+    }
+    if (version < MIN_VERSION_PEBBLE_SCREEN_A_TOP2) {
+      config.screenA_top2_type          = FIELD_ALTITUDE;
+    }
   } else {
     config.screenA_top_type           = FIELD_SPEED;
     config.screenA_top2_type          = FIELD_ALTITUDE;
@@ -233,4 +240,5 @@ void config_save() {
   config.screenB_bottom_left_type   = s_data.screenB_layer.field_bottom_left.type;
   config.screenB_bottom_right_type  = s_data.screenB_layer.field_bottom_right.type;
   persist_write_data(PERSIST_CONFIG_KEY, &config, sizeof(config));
+  persist_write_int(PERSIST_VERSION, VERSION_PEBBLE);
 }

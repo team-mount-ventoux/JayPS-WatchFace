@@ -67,6 +67,7 @@ enum {
 enum {
     PERSIST_UNITS_KEY = 0x0,
     PERSIST_CONFIG_KEY = 0x1,
+    PERSIST_VERSION = 0x2,
 };
 
 #if DEBUG
