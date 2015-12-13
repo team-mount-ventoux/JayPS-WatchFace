@@ -220,7 +220,11 @@ void config_load() {
       config.screenA_top2_type          = FIELD_ALTITUDE;
     }
   } else {
+#if DEMO
+    config.screenA_top_type           = FIELD_MAXSPEED;
+#else
     config.screenA_top_type           = FIELD_SPEED;
+#endif
     config.screenA_top2_type          = FIELD_ALTITUDE;
     config.screenA_bottom_left_type   = FIELD_DISTANCE;
     config.screenA_bottom_right_type  = FIELD_AVGSPEED;

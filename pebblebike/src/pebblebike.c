@@ -175,7 +175,7 @@ static void init(void) {
   strcpy(s_data.cadence, "90");
 #endif
 #if DEMO
-  strcpy(s_data.speed, "26.1");
+  strcpy(s_data.maxspeed, "26.1");
   strcpy(s_data.distance, "2.0");
   strcpy(s_data.avgspeed, "14.0");
   strcpy(s_data.altitude, "1139");
