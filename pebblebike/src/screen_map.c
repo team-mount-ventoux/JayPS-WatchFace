@@ -9,13 +9,11 @@ Layer *path_layer;
 Layer *bearing_layer;
 
 // 4 Bytes/point
-#if PBL_PLATFORM_BASALT
-  #define NUM_POINTS 1500
+// to compute correct values, use DEMO mode, cycle through all screens including menu
+#if PBL_PLATFORM_APLITE
+  #define NUM_POINTS 220
 #else
-  #if ROTATION
-    #define NUM_POINTS 240
-  #endif
-  #define NUM_POINTS 300
+  #define NUM_POINTS 1500
 #endif
 
 GPoint pts[NUM_POINTS];
@@ -257,8 +255,8 @@ void screen_map_layer_init(Window* window) {
 #if DEMO
     srand(0);
     #define MIN(a, b) (a < b ? a : b)
-    for(int j = MIN(50, NUM_POINTS); j>0; j--) {
-      pts[MIN(50, NUM_POINTS)-j] = GPoint(2*j, j*j/50 + 5 + rand()%2);
+    for(int j = NUM_POINTS; j>0; j--) {
+      pts[NUM_POINTS-j] = GPoint(2*j, j*j/50 + 5 + rand()%2);
       cur_point++;
     }
     nb_points = cur_point;
