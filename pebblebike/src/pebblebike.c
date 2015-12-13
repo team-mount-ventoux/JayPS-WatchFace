@@ -154,9 +154,9 @@ static void init(void) {
 
   s_data.window = window_create();
   window_set_background_color(s_data.window, BG_COLOR_WINDOW);
-# ifdef PBL_PLATFORM_APLITE
+#ifdef PBL_SDK_2
   window_set_fullscreen(s_data.window, true);
-# endif
+#endif
   topbar_layer_init(s_data.window);
 
 #ifdef DEBUG_FIELDS_SIZE

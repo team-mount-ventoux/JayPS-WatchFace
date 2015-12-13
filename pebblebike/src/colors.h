@@ -6,11 +6,13 @@
   #define BG_COLOR2 GColorBlue
   #define COLOR1 GColorWhite
   #define COLOR2 GColorWhite
+  #define COLOR3 GColorWhite
 #else
   #define BG_COLOR1 GColorBlack
   #define BG_COLOR2 GColorWhite
   #define COLOR1 GColorWhite
   #define COLOR2 GColorBlack
+  #define COLOR3 GColorLightGray
 #endif
 #define BG_COLOR_WINDOW BG_COLOR2
 
@@ -33,6 +35,7 @@
 #define COLOR_DATA COLOR2
 #define COLOR_UNITS COLOR2
 #define COLOR_LINES COLOR2
+#define COLOR_LINES_SPEED_MAIN COLOR3
 
 #define BG_COLOR_MAP GColorWhite
 #define COLOR_MAP GColorBlack

@@ -43,10 +43,9 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_TOP_DATA_H, SCREEN_W, PAGE_SPEED_MAIN_H), 0, GCornerNone);
 
 #ifndef PBL_SDK_2
-  graphics_context_set_stroke_color(ctx, GColorWhite);
-  graphics_context_set_stroke_width(ctx, 2);
-  graphics_draw_line(ctx, GPoint(0, PAGE_SPEED_TOP_DATA_H + 1), GPoint(SCREEN_W, PAGE_SPEED_TOP_DATA_H + 1));
-  graphics_draw_line(ctx, GPoint(0, PAGE_SPEED_BOTTOM_DATA_H - 1), GPoint(SCREEN_W, PAGE_SPEED_BOTTOM_DATA_H - 1));
+  graphics_context_set_fill_color(ctx, COLOR_LINES_SPEED_MAIN);
+  graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_TOP_DATA_H, SCREEN_W, 2), 0, GCornerNone);
+  graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_BOTTOM_DATA_H, SCREEN_W, 2), 0, GCornerNone);
 #endif
 }
 void screen_speed_layer_init(Window* window) {

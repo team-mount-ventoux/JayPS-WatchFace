@@ -216,9 +216,9 @@ void window_disappear(Window *window) {
 
 void menu_init() {
   window = window_create();
-# ifdef PBL_PLATFORM_APLITE
+#ifdef PBL_SDK_2
   window_set_fullscreen(window, true);
-# endif
+#endif
 
   window_set_window_handlers(window, (WindowHandlers) {
     .appear = (WindowHandler)handle_appear,
