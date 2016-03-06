@@ -245,6 +245,10 @@ typedef struct GPSData {
     uint8_t heartrate;
     uint8_t cadence;
     int16_t temperature10;
+    int16_t altitudes[20];
+    int16_t speeds[20];
+    int16_t heartrates[20];
+    int16_t ascentrates[20];
 } GPSData;
 
 

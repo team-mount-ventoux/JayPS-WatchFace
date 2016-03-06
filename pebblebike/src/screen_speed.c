@@ -34,6 +34,43 @@ static AppTimer *rotation_timer;
 #define PAGE_SPEED_TOP_DATA_H PAGE_SPEED_MIDDLE_DATA_H - PAGE_SPEED_MAIN_H / 2
 #define PAGE_SPEED_BOTTOM_DATA_H PAGE_SPEED_MIDDLE_DATA_H + PAGE_SPEED_MAIN_H / 2
 
+typedef struct GraphRange {
+  int min;
+  GColor color;
+} GraphRange;
+
+void graph(GContext* ctx, GRect bounds, int16_t *data, int data_size, GraphRange* colors) {
+  //graphics_context_set_fill_color(ctx, GColorRed);
+  //graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+  int min = 10000;
+  int max = -10000;
+  for (int i = 0; i < data_size; i++) {
+    max = data[i] > max ? data[i] : max;
+    min = data[i] < min ? data[i] : min;
+  }
+  int coeff100 = max != min ? 100 * bounds.size.h / (max-min) : 0;
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "min=%d max=%d coeff100=%d", min, max, coeff100);
+  int size = 6;
+
+  for (int i = 0; i < data_size; i++) {
+    int height = (data[i] - min) * coeff100 / 100;
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: data=%d height=%d", i, data[i], height);
+    for (int j = 0; j <= (int) (height / size); j++) {
+      GColor color = GColorWhite;
+      for (int k = 0; k < 3; k++) {
+        //if (data[i] >= options.colors[k].min) {
+        if ((j * size * 100 / coeff100) + min >= colors[k].min) {
+          color = colors[k].color;
+        }
+      }
+      graphics_context_set_fill_color(ctx, color);
+
+      int height2 = j < (int) (height / size) ? size : height % size;
+      graphics_fill_rect(ctx, GRect(bounds.origin.x + i * size, bounds.origin.y + bounds.size.h - j * size, size - 1, -(height2-1)), 0, GCornerNone);
+    }
+  }
+}
+
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
   graphics_context_set_stroke_color(ctx, COLOR_LINES);
@@ -47,6 +84,52 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_TOP_DATA_H, SCREEN_W, 2), 0, GCornerNone);
   graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_BOTTOM_DATA_H, SCREEN_W, 2), 0, GCornerNone);
 #endif
+
+#if DEMO
+  int16_t heartrates[26] = {135,145,150,148,150,155,162,170,180,185,182,175,170,160,155,163,165,155,162,164,168,172,175,160,145,135};
+  GraphRange colors_heartrates[3] = {
+      {.min = 140, .color = GColorGreen},
+      {.min = 150, .color = GColorOrange},
+      {.min = 170, .color = GColorRed}
+  };
+  graph(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), heartrates, 26, colors_heartrates);
+#else
+  if (s_data.screenA_layer.field_top2.type == FIELD_HEARTRATE) {
+    GraphRange colors_heartrates[3] = {
+        {.min = 0,   .color = GColorGreen},
+        {.min = 80, .color = GColorOrange},
+        {.min = 120, .color = GColorRed}
+    };
+    graph(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), s_gpsdata.heartrates, 20, colors_heartrates);
+    layer_set_hidden(text_layer_get_layer(s_data.screenA_layer.field_top.unit_layer), true);
+  } else if (s_data.screenA_layer.field_top2.type == FIELD_ALTITUDE) {
+    GraphRange colors_altitudes[3] = {
+        {.min = 100, .color = GColorGreen},
+        {.min = 200, .color = GColorOrange},
+        {.min = 300, .color = GColorRed}
+    };
+    graph(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), s_gpsdata.altitudes, 20, colors_altitudes);
+    layer_set_hidden(text_layer_get_layer(s_data.screenA_layer.field_top.unit_layer), true);
+  } else if (s_data.screenA_layer.field_top2.type == FIELD_ASCENTRATE) {
+    GraphRange colors_ascentrates[3] = {
+        {.min = 300, .color = GColorGreen},
+        {.min = 600, .color = GColorOrange},
+        {.min = 900, .color = GColorRed}
+    };
+    graph(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), s_gpsdata.ascentrates, 20, colors_ascentrates);
+    layer_set_hidden(text_layer_get_layer(s_data.screenA_layer.field_top.unit_layer), true);
+  } else if (s_data.screenA_layer.field_top2.type == FIELD_SPEED) {
+    GraphRange colors_speeds[3] = {
+        {.min = 0, .color = GColorYellow},
+        {.min = 0.9 * s_gpsdata.avgspeed100/10, .color = GColorOrange},
+        {.min = 1.1 * s_gpsdata.avgspeed100/10, .color = GColorRed}
+    };
+    graph(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), s_gpsdata.speeds, 20, colors_speeds);
+    layer_set_hidden(text_layer_get_layer(s_data.screenA_layer.field_top.unit_layer), true);
+  }
+#endif
+  layer_set_hidden(text_layer_get_layer(s_data.screenA_layer.field_top.unit_layer), true);
+  //layer_set_hidden(text_layer_get_layer(s_data.screenA_layer.field_top.data_layer), true);
 }
 void screen_speed_layer_init(Window* window) {
   s_data.screenA_layer.field_top.type = config.screenA_top_type;

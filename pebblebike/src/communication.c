@@ -1,4 +1,5 @@
 #include "pebble.h"
+#include "time.h"
 #include "config.h"
 #include "pebblebike.h"
 #include "communication.h"
@@ -49,6 +50,23 @@ void communication_deinit() {
   if (reset_data_timer) {
     app_timer_cancel(reset_data_timer);
   }
+}
+uint16_t time0 = 0;
+int last_index = 0;
+void add_data(int16_t* data, uint16_t p_time, uint16_t value) {
+  p_time = time(NULL);
+  if (time0 == 0) {
+    time0 = p_time;
+  }
+  int index = (p_time - time0) / 60;
+  if (index >= 20 && index > last_index) {
+    //shift data
+    for(int i = 1; i < 20; i++) {
+      data[i-1] = data[i];
+    }
+  }
+  last_index = index;
+  data[index < 20 ? index : 20 -1] = value;
 }
 
 void send_cmd(uint8_t cmd) {
@@ -319,8 +337,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             }
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "dist=%ld, time=%d, avg=%ld", s_gpsdata.distance100, s_gpsdata.time, s_gpsdata.avgspeed100);
             s_gpsdata.speed100 = ((tuple->value->data[BYTE_SPEED1] + 256 * tuple->value->data[BYTE_SPEED2])) * 10;
+            add_data(s_gpsdata.speeds, s_gpsdata.time, s_gpsdata.speed100/10);
             s_gpsdata.maxspeed100 = ((tuple->value->data[BYTE_MAXSPEED1] + 256 * tuple->value->data[BYTE_MAXSPEED2])) * 10;
             s_gpsdata.altitude = tuple->value->data[6] + 256 * tuple->value->data[7];
+            if (s_gpsdata.altitude != 0) {
+              add_data(s_gpsdata.altitudes, s_gpsdata.time, s_gpsdata.altitude);
+            }
             if (tuple->value->data[9] >= 128) {
                 s_gpsdata.ascent = -1 * (tuple->value->data[8] + 256 * (tuple->value->data[9] - 128));
             } else {
@@ -332,6 +354,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             } else {
                 s_gpsdata.ascentrate = tuple->value->data[10] + 256 * tuple->value->data[11];
             }
+            add_data(s_gpsdata.ascentrates, s_gpsdata.time, s_gpsdata.ascentrate);
             if (tuple->value->data[BYTE_SLOPE] >= 128) {
                 s_gpsdata.slope = -1 * (tuple->value->data[BYTE_SLOPE] - 128);
             } else {
@@ -385,6 +408,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             snprintf(s_data.bearing,    sizeof(s_data.bearing),    "%d",   s_gpsdata.bearing);
             if (s_gpsdata.heartrate != 255) {
               snprintf(s_data.heartrate,  sizeof(s_data.heartrate),  "%d",   s_gpsdata.heartrate);
+              add_data(s_gpsdata.heartrates, s_gpsdata.time, s_gpsdata.heartrate);
             } else {
               strcpy(s_data.heartrate, "-");
             }
