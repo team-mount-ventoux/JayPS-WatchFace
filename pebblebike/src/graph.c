@@ -34,7 +34,7 @@ void graph_add_data(GraphData* graph, uint16_t value) {
     if (index >= GRAPH_NB_POINTS) {
       //shift data
       int shift = index - graph->last_index;
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "shift from %d to %d: %d", graph->last_index, index, shift);
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "shift from %d to %d: %d", graph->last_index, index, shift);
       if (shift > GRAPH_NB_POINTS) {
         shift = GRAPH_NB_POINTS -1;
       }
@@ -53,14 +53,14 @@ void graph_add_data(GraphData* graph, uint16_t value) {
   graph->points[index < GRAPH_NB_POINTS ? index : GRAPH_NB_POINTS -1] = graph->last_sum / graph->last_nb;
 
   #define p(i) graph->points[i] != GRAPH_UNDEF_POINT ? graph->points[i] : -1
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "%d pts[%d]=%d "
+  /*APP_LOG(APP_LOG_LEVEL_DEBUG, "%d pts[%d]=%d "
           //"(%d: %d/%d) "
           "%d|%d|%d|%d|%d|%d|%d|%d|%d|%d-%d|%d|%d|%d|%d|%d|%d|%d|%d|%d",
           (int) (time_cur - graph->time_ini), index, (int16_t) (graph->last_sum / graph->last_nb),
           //value, (int16_t) graph->last_sum, graph->last_nb,
           p(0), p(1), p(2), p(3), p(4), p(5), p(6), p(7), p(8), p(9),
           p(10), p(11), p(12), p(13), p(14), p(15), p(16), p(17), p(18), p(19)
-  );
+  );*/
   graph->last_index = index;
 }
 
