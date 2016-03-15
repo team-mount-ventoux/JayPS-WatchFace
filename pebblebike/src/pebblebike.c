@@ -16,6 +16,7 @@
 #if DEBUG
   #include "screen_debug.h"
 #endif
+#include "graph.h"
 
 GFont font_roboto_bold_16, font_roboto_bold_62;
 
@@ -227,6 +228,7 @@ static void init(void) {
 
   screen_speed_update_config();
   screen_altitude_update_config();
+  graph_init();
   
   window_stack_push(s_data.window, true /* Animated */);
   

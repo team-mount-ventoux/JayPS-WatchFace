@@ -5,7 +5,7 @@
 
 
 #define VERSION_PEBBLE 280
-#define VERSION_TEXT "Version 2.5.0-graph"
+#define VERSION_TEXT "Version 2.5.0-alpha1"
 #define APP_COMPANY "N Jackson & JayPS"
 
 #if PRODUCTION
