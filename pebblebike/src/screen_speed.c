@@ -93,10 +93,10 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 #endif
 }
 void screen_speed_layer_init(Window* window) {
-  s_data.screenA_layer.field_top.type = config.screenA_top_type;
-  s_data.screenA_layer.field_top2.type = config.screenA_top2_type;
-  s_data.screenA_layer.field_bottom_left.type = config.screenA_bottom_left_type;
-  s_data.screenA_layer.field_bottom_right.type = config.screenA_bottom_right_type;
+  config_affect_type(&s_data.screenA_layer.field_top, config.screenA_top_type);
+  config_affect_type(&s_data.screenA_layer.field_top2, config.screenA_top2_type);
+  config_affect_type(&s_data.screenA_layer.field_bottom_left, config.screenA_bottom_left_type);
+  config_affect_type(&s_data.screenA_layer.field_bottom_right, config.screenA_bottom_right_type);
 
   s_data.page_speed = layer_create(PAGE_GRECT);
   layer_add_child(window_get_root_layer(window), s_data.page_speed);

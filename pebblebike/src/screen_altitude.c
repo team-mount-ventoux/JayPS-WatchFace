@@ -35,11 +35,10 @@ void screen_altitude_layer_init(Window* window) {
   field_layer_init(s_data.page_altitude, &s_data.screenB_layer.field_bottom_left,  PAGE_OFFSET_X,     h + 1, w, h, "Ascent rate", s_data.ascentrate, s_data.screenB_layer.field_bottom_left.units);
   field_layer_init(s_data.page_altitude, &s_data.screenB_layer.field_bottom_right, PAGE_OFFSET_X + w + 1, h + 1, w, h, "Slope", s_data.slope, "%");
 
-  s_data.screenB_layer.field_top_left.type = config.screenB_top_left_type;
-  s_data.screenB_layer.field_top_right.type = config.screenB_top_right_type;
-  s_data.screenB_layer.field_bottom_left.type = config.screenB_bottom_left_type;
-  s_data.screenB_layer.field_bottom_right.type = config.screenB_bottom_right_type;
-
+  config_affect_type(&s_data.screenB_layer.field_top_left, config.screenB_top_left_type);
+  config_affect_type(&s_data.screenB_layer.field_top_right, config.screenB_top_right_type);
+  config_affect_type(&s_data.screenB_layer.field_bottom_left, config.screenB_bottom_left_type);
+  config_affect_type(&s_data.screenB_layer.field_bottom_right, config.screenB_bottom_right_type);
   layer_set_hidden(s_data.page_altitude, true);
 }
 

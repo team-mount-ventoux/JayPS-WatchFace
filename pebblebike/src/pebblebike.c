@@ -5,6 +5,9 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "communication.h"
+#ifdef PBL_HEALTH
+  #include "health.h"
+#endif
 #include "buttons.h"
 #include "menu.h"
 #include "screens.h"
@@ -238,6 +241,9 @@ static void init(void) {
   send_version();
 }
 static void deinit(void) {
+#ifdef PBL_HEALTH
+  health_deinit();
+#endif
   communication_deinit();
   tick_timer_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();

@@ -47,6 +47,7 @@ void config_change_field();
 void config_change_type(uint8_t direction);
 void config_load();
 void config_save();
+void config_affect_type(FieldLayer *field, uint8_t type);
 void screen_speed_update_config();
 void screen_altitude_update_config();
 

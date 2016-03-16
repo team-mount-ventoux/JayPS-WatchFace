@@ -100,10 +100,9 @@ enum {
 #define HEART_RATE_UNIT "bpm"
 #define TEMPERATURE_UNIT_METRIC "°C"
 #define TEMPERATURE_UNIT_IMPERIAL "°F"
-//TODO: don't use field values to sort (only to save - persistent)
+// Don't use field values to sort (only to save - persistent)
 enum {
-    FIELD__MIN,
-    FIELD_ACCURACY = FIELD__MIN,
+    FIELD_ACCURACY,
     FIELD_ALTITUDE,
     FIELD_ASCENT,
     FIELD_ASCENTRATE,
@@ -121,7 +120,7 @@ enum {
     FIELD_SPEED,
     FIELD_TEMPERATURE,
     //FIELD_TIME,
-    FIELD__MAX,
+    FIELD_STEPS,
     FIELD__UNUSED,
 };
 typedef struct TopBarLayer {
@@ -139,6 +138,7 @@ typedef struct SpeedLayer {
 
 typedef struct FieldLayer {
     uint8_t type;
+    uint8_t type_index;
     Layer *main_layer;
     TextLayer *title_layer;
     TextLayer *data_layer;
@@ -204,6 +204,7 @@ typedef struct AppData {
     char heartrate[8];
     char cadence[8];
     char temperature[7];
+    char steps[7];
 
 #if DEBUG
     char debug1[200];

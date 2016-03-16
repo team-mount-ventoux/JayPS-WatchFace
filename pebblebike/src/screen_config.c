@@ -5,6 +5,9 @@
 #include "screens.h"
 #include "buttons.h"
 #include "screen_config.h"
+#ifdef PBL_HEALTH
+  #include "health.h"
+#endif
 
 
 FieldLayer *cur_field;
@@ -12,6 +15,31 @@ bool config_hidden = false;
 static AppTimer *config_timer;
 uint8_t config_screen = CONFIG_SCREEN_DISABLED;
 uint8_t config_field = CONFIG_FIELD_SCREEN_A__MIN;
+
+#define CONFIG_NB_FIELD_ORDER 15
+uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
+    FIELD_ACCURACY,
+    FIELD_ALTITUDE,
+    FIELD_ASCENT,
+    FIELD_ASCENTRATE,
+    FIELD_AVGSPEED,
+    FIELD_BEARING,
+    FIELD_CADENCE,
+    FIELD_DISTANCE,
+    FIELD_DURATION,
+    FIELD_HEARTRATE,
+    //FIELD_LAT,
+    //FIELD_LON,
+    FIELD_MAXSPEED,
+    //FIELD_NBASCENT,
+    FIELD_SLOPE,
+    FIELD_SPEED,
+#ifdef PBL_HEALTH
+    FIELD_STEPS,
+#endif
+    FIELD_TEMPERATURE,
+    //FIELD_TIME,
+};
 
 ConfigData config;
 
@@ -34,6 +62,7 @@ const char *field_get_title(uint8_t field) {
     case FIELD_HEARTRATE: return "Heartrate"; break;
     case FIELD_CADENCE: return "Cadence"; break;
     case FIELD_TEMPERATURE: return "Temperature"; break;
+    case FIELD_STEPS: return "Steps"; break;
     default: return "Unknown";
   }
 }
@@ -56,6 +85,7 @@ const char *field_get_text(uint8_t field) {
     case FIELD_HEARTRATE: return s_data.heartrate; break;
     case FIELD_CADENCE: return s_data.cadence; break;
     case FIELD_TEMPERATURE: return s_data.temperature; break;
+    case FIELD_STEPS: return s_data.steps; break;
     default: return "-";
   }
 }
@@ -78,6 +108,7 @@ const char *field_get_units(uint8_t field) {
     case FIELD_HEARTRATE: return HEART_RATE_UNIT; break;
     case FIELD_CADENCE: return "rpm"; break;
     case FIELD_TEMPERATURE: return s_data.unitsTemperature; break;
+    case FIELD_STEPS: return "steps"; break;
     default: return "Unk";
   }
 }
@@ -123,6 +154,9 @@ static void config_timer_callback(void *data) {
   config_change_visibility(cur_field, config_hidden);
 }
 void config_start() {
+#ifdef PBL_HEALTH
+  health_init();
+#endif
   if (s_data.page_number == PAGE_SPEED) {
     config_screen = CONFIG_SCREEN_A;
     config_field = CONFIG_FIELD_SCREEN_A_TOP;
@@ -159,6 +193,9 @@ void config_stop() {
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), false);
   layer_mark_dirty(s_data.topbar_layer.layer);
   config_save();
+#ifdef PBL_HEALTH
+  health_init_if_needed();
+#endif
 }
 void config_change_field() {
   config_change_visibility(cur_field, false);
@@ -187,18 +224,20 @@ void config_change_field() {
 }
 void config_change_type(uint8_t direction) {
   if (direction == CONFIG_CHANGE_TYPE_NEXT) {
-    cur_field->type++;
-    if (cur_field->type == FIELD__MAX) {
-      cur_field->type = FIELD__MIN;
+    cur_field->type_index++;
+    if (cur_field->type_index >= CONFIG_NB_FIELD_ORDER) {
+      cur_field->type_index = 0;
     }
+    cur_field->type = config_order[cur_field->type_index];
   } else {
     // CONFIG_CHANGE_TYPE_PREVIOUS
-    if (cur_field->type == FIELD__MIN) {
-      cur_field->type = FIELD__MAX;
+    if (cur_field->type_index == 0) {
+      cur_field->type_index = CONFIG_NB_FIELD_ORDER;
     }
-    cur_field->type--;
+    cur_field->type_index--;
+    cur_field->type = config_order[cur_field->type_index];
   }
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "type %d", cur_field->type);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: type %d", cur_field->type_index, cur_field->type);
   
   if (config_screen == CONFIG_SCREEN_A) {
     screen_speed_update_config();
@@ -233,6 +272,9 @@ void config_load() {
     config.screenB_bottom_left_type   = FIELD_ASCENTRATE;
     config.screenB_bottom_right_type  = FIELD_SLOPE;
   }
+#ifdef PBL_HEALTH
+  health_init_if_needed();
+#endif
 }
 void config_save() {
   config.screenA_top_type           = s_data.screenA_layer.field_top.type;
@@ -245,4 +287,15 @@ void config_save() {
   config.screenB_bottom_right_type  = s_data.screenB_layer.field_bottom_right.type;
   persist_write_data(PERSIST_CONFIG_KEY, &config, sizeof(config));
   persist_write_int(PERSIST_VERSION, VERSION_PEBBLE);
+}
+void config_affect_type(FieldLayer *field, uint8_t type) {
+  field->type = type;
+  field->type_index = 0;
+  for(int i = 0; i < CONFIG_NB_FIELD_ORDER; i++) {
+    if (config_order[i] == type) {
+      field->type_index = i;
+      break;
+    }
+  }
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "type %d -> index: %d", field->type, field->type_index);
 }
