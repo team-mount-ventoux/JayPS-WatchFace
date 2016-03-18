@@ -84,5 +84,6 @@
     "basalt",
     "chalk"
   ],
-  "sdkVersion": "3"
+  "sdkVersion": "3",
+  "capabilities": [ "health" ]
 }
