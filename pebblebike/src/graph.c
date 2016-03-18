@@ -39,6 +39,11 @@ void graph_add_data(GraphData* graph, uint16_t value) {
   time_t time_cur = time(NULL);
   if (graph->time_ini == 0) {
     graph->time_ini = time_cur;
+    // clock align graph
+    int delta = (graph->time_ini - time_start_of_today()) % graph->point_duration;
+    graph->time_ini = graph->time_ini + delta - graph->point_duration;
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "delta:%d (duration:%d)", delta, graph->point_duration);
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "time_ini:%d -> %d", (int) time_cur, (int) graph->time_ini);
   }
   int index = (time_cur - graph->time_ini) / graph->point_duration;
   if (index > graph->last_index) {
