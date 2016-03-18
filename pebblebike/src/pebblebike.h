@@ -120,7 +120,10 @@ enum {
     FIELD_SPEED,
     FIELD_TEMPERATURE,
     //FIELD_TIME,
+#ifdef PBL_HEALTH
     FIELD_STEPS,
+    FIELD_STEPS_CADENCE,
+#endif
     FIELD__UNUSED,
 };
 typedef struct TopBarLayer {
@@ -205,6 +208,7 @@ typedef struct AppData {
     char cadence[8];
     char temperature[7];
     char steps[7];
+    char steps_cadence[7];
 
 #if DEBUG
     char debug1[200];

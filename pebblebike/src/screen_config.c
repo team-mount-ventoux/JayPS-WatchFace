@@ -16,7 +16,7 @@ static AppTimer *config_timer;
 uint8_t config_screen = CONFIG_SCREEN_DISABLED;
 uint8_t config_field = CONFIG_FIELD_SCREEN_A__MIN;
 
-#define CONFIG_NB_FIELD_ORDER 15
+#define CONFIG_NB_FIELD_ORDER 16
 uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     FIELD_ACCURACY,
     FIELD_ALTITUDE,
@@ -36,6 +36,7 @@ uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     FIELD_SPEED,
 #ifdef PBL_HEALTH
     FIELD_STEPS,
+    FIELD_STEPS_CADENCE,
 #endif
     FIELD_TEMPERATURE,
     //FIELD_TIME,
@@ -62,7 +63,10 @@ const char *field_get_title(uint8_t field) {
     case FIELD_HEARTRATE: return "Heartrate"; break;
     case FIELD_CADENCE: return "Cadence"; break;
     case FIELD_TEMPERATURE: return "Temperature"; break;
+#ifdef PBL_HEALTH
     case FIELD_STEPS: return "Steps"; break;
+    case FIELD_STEPS_CADENCE: return "Steps cadence"; break;
+#endif
     default: return "Unknown";
   }
 }
@@ -85,7 +89,10 @@ const char *field_get_text(uint8_t field) {
     case FIELD_HEARTRATE: return s_data.heartrate; break;
     case FIELD_CADENCE: return s_data.cadence; break;
     case FIELD_TEMPERATURE: return s_data.temperature; break;
+#ifdef PBL_HEALTH
     case FIELD_STEPS: return s_data.steps; break;
+    case FIELD_STEPS_CADENCE: return s_data.steps_cadence; break;
+#endif
     default: return "-";
   }
 }
@@ -108,7 +115,10 @@ const char *field_get_units(uint8_t field) {
     case FIELD_HEARTRATE: return HEART_RATE_UNIT; break;
     case FIELD_CADENCE: return "rpm"; break;
     case FIELD_TEMPERATURE: return s_data.unitsTemperature; break;
+#ifdef PBL_HEALTH
     case FIELD_STEPS: return "steps"; break;
+    case FIELD_STEPS_CADENCE: return "spm"; break;
+#endif
     default: return "Unk";
   }
 }
