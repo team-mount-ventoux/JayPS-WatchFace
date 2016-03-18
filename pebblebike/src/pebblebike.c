@@ -250,8 +250,8 @@ static void deinit(void) {
 
 #if APP_DEINIT
   topbar_layer_deinit();
-
   screen_speed_deinit();
+  graph_deinit();
   screen_altitude_layer_deinit();
   screen_live_layer_deinit();
   screen_map_layer_deinit();

@@ -1,10 +1,12 @@
 #include "pebble.h"
+#include "colors.h"
 #include "graph.h"
 
 GraphData graph_altitudes;
 GraphData graph_speeds;
 GraphData graph_heartrates;
 GraphData graph_ascentrates;
+GBitmap* mask = NULL;
 
 void graph_init_data(GraphData* graph, uint8_t point_duration) {
   for(int i = 0; i < GRAPH_NB_POINTS; i++) {
@@ -22,6 +24,15 @@ void graph_init() {
   graph_init_data(&graph_ascentrates, 120);
   graph_init_data(&graph_heartrates, 30);
   graph_init_data(&graph_speeds, 30);
+
+#ifndef PBL_PLATFORM_APLITE
+  mask = gbitmap_create_with_resource(RESOURCE_ID_MASK);
+#endif
+}
+void graph_deinit() {
+#ifndef PBL_PLATFORM_APLITE
+  gbitmap_destroy(mask);
+#endif
 }
 
 void graph_add_data(GraphData* graph, uint16_t value) {
@@ -64,9 +75,10 @@ void graph_add_data(GraphData* graph, uint16_t value) {
   graph->last_index = index;
 }
 
-void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors) {
+void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors, TextLayer* text_layer) {
   //graphics_context_set_fill_color(ctx, GColorRed);
   //graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+
   int min = 10000;
   int max = -10000;
   for (int i = 0; i < GRAPH_NB_POINTS; i++) {
@@ -84,7 +96,7 @@ void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* color
       int height = (graph->points[i] - min) * coeff100 / 100;
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: pts=%d height=%d", i, graph->points[i], height);
       for (int j = 0; j <= (int) (height / size); j++) {
-        GColor color = GColorWhite;
+        GColor color = PBL_IF_COLOR_ELSE(GColorWhite, GColorBlack);
         for (int k = 0; k < 3; k++) {
           //if (graph->points[i] >= options.colors[k].min) {
           if ((j * size * 100 / coeff100) + min >= colors[k].min) {
@@ -97,5 +109,28 @@ void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* color
         graphics_fill_rect(ctx, GRect(bounds.origin.x + i * size, bounds.origin.y + bounds.size.h - j * size, size - 1, -(height2-1)), 0, GCornerNone);
       }
     }
+  }
+  if (text_layer != NULL) {
+    GRect rect = layer_get_bounds(text_layer_get_layer(text_layer));
+    int w0 = rect.size.w;
+    int h0 = rect.size.h;
+
+    rect.size = text_layer_get_content_size(text_layer);
+    rect.size.h -= 8;
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "rect.size.w=%d", rect.size.w);
+
+    rect.origin.x += (w0-rect.size.w) / 2;// + 1;
+    rect.origin.y += (h0-rect.size.h) / 2 - 2;
+
+#ifndef PBL_PLATFORM_APLITE
+    // https://developer.pebble.com/docs/c/Graphics/Graphics_Context/#graphics_context_set_compositing_mode
+    // At the moment, this only affects the bitmaps drawing operations - graphics_draw_bitmap_in_rect(), graphics_draw_rotated_bitmap, and anything that uses those APIs -, but it currently does not affect the filling or stroking operations.
+    graphics_context_set_compositing_mode(ctx, GCompOpSet);
+
+    graphics_draw_bitmap_in_rect(ctx, mask, rect);
+#else
+    graphics_context_set_fill_color(ctx, BG_COLOR_WINDOW);
+    graphics_fill_rect(ctx, rect, 0, GCornerNone);
+#endif
   }
 }

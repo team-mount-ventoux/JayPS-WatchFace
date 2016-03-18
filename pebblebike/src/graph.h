@@ -26,7 +26,8 @@ extern GraphData graph_heartrates;
 extern GraphData graph_ascentrates;
 
 void graph_init();
+void graph_deinit();
 void graph_add_data(GraphData* data, uint16_t value);
-void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors);
+void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors, TextLayer* text_layer);
 
 #endif // GRAPH_H

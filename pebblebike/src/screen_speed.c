@@ -58,15 +58,17 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
       {.min = 150, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
       {.min = 170, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
   };
-  graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &heartrates, colors_heartrates);
-#else
+  graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &heartrates, colors_heartrates, s_data.screenA_layer.field_top2.data_layer);
+
+
+  #else
   if (s_data.screenA_layer.field_top2.type == FIELD_HEARTRATE) {
     GraphRange colors_heartrates[3] = {
         {.min = 0,   .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 80, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 120, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &graph_heartrates, colors_heartrates);
+    graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &graph_heartrates, colors_heartrates, s_data.screenA_layer.field_top2.data_layer);
     //layer_set_hidden(text_layer_get_layer(s_data.screenA_layer.field_top2.unit_layer), true);
   } else if (s_data.screenA_layer.field_top2.type == FIELD_ALTITUDE) {
     GraphRange colors_altitudes[3] = {
@@ -74,21 +76,21 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
         {.min = 200, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 300, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &graph_altitudes, colors_altitudes);
+    graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &graph_altitudes, colors_altitudes, s_data.screenA_layer.field_top2.data_layer);
   } else if (s_data.screenA_layer.field_top2.type == FIELD_ASCENTRATE) {
     GraphRange colors_ascentrates[3] = {
         {.min = 300, .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 600, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 900, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &graph_ascentrates, colors_ascentrates);
+    graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &graph_ascentrates, colors_ascentrates, s_data.screenA_layer.field_top2.data_layer);
   } else if (s_data.screenA_layer.field_top2.type == FIELD_SPEED) {
     GraphRange colors_speeds[3] = {
         {.min = 0, .color = PBL_IF_COLOR_ELSE(GColorYellow, GColorBlack)},
         {.min = 0.9 * s_gpsdata.avgspeed100/10, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 1.1 * s_gpsdata.avgspeed100/10, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &graph_speeds, colors_speeds);
+    graph_draw(ctx, GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34)), &graph_speeds, colors_speeds, s_data.screenA_layer.field_top2.data_layer);
   }
 #endif
 }

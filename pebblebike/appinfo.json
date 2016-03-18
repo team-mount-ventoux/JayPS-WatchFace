@@ -71,7 +71,12 @@
         "type": "png",
         "name": "IMAGE_BLUETOOTH",
         "file": "images/bluetooth.png"
-      }
+      },
+       {
+        "type": "png", 
+        "name": "MASK", 
+        "file": "images/mask_2x2blue.png"
+      } 
     ]
   },
   "targetPlatforms": [
