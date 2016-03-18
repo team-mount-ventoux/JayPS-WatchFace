@@ -75,7 +75,8 @@ void graph_add_data(GraphData* graph, uint16_t value) {
   graph->last_index = index;
 }
 
-void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors, TextLayer* text_layer) {
+#define GRAPH_BLOCK_SIZE 6
+void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors, TextLayer* text_layer, int min_block_value) {
   //graphics_context_set_fill_color(ctx, GColorRed);
   //graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
@@ -87,26 +88,36 @@ void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* color
       min = graph->points[i] < min ? graph->points[i] : min;
     }
   }
+  if (min_block_value > 0) {
+    int min_delta_min_max = min_block_value * bounds.size.h / GRAPH_BLOCK_SIZE;
+    if (max - min < min_delta_min_max) {
+      // min and max are to close, force bigger max
+      // "flatter" graph if values are too close
+      int available = min_delta_min_max - (max - min);
+      min = min - available / 3;
+      max = max + 2 * available / 3;
+    }
+  }
+
   int coeff100 = max != min ? 100 * bounds.size.h / (max-min) : 0;
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "min=%d max=%d coeff100=%d", min, max, coeff100);
-  int size = 6;
 
   for (int i = 0; i < GRAPH_NB_POINTS; i++) {
     if (graph->points[i] != GRAPH_UNDEF_POINT) {
       int height = (graph->points[i] - min) * coeff100 / 100;
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: pts=%d height=%d", i, graph->points[i], height);
-      for (int j = 0; j <= (int) (height / size); j++) {
+      for (int j = 0; j <= (int) (height / GRAPH_BLOCK_SIZE); j++) {
         GColor color = PBL_IF_COLOR_ELSE(GColorWhite, GColorBlack);
         for (int k = 0; k < 3; k++) {
           //if (graph->points[i] >= options.colors[k].min) {
-          if ((j * size * 100 / coeff100) + min >= colors[k].min) {
+          if ((j * GRAPH_BLOCK_SIZE * 100 / coeff100) + min >= colors[k].min) {
             color = colors[k].color;
           }
         }
         graphics_context_set_fill_color(ctx, color);
 
-        int height2 = j < (int) (height / size) ? size : height % size;
-        graphics_fill_rect(ctx, GRect(bounds.origin.x + i * size, bounds.origin.y + bounds.size.h - j * size, size - 1, -(height2-1)), 0, GCornerNone);
+        int height2 = j < (int) (height / GRAPH_BLOCK_SIZE) ? GRAPH_BLOCK_SIZE : height % GRAPH_BLOCK_SIZE;
+        graphics_fill_rect(ctx, GRect(bounds.origin.x + i * GRAPH_BLOCK_SIZE, bounds.origin.y + bounds.size.h - j * GRAPH_BLOCK_SIZE, GRAPH_BLOCK_SIZE - 1, -(height2-1)), 0, GCornerNone);
       }
     }
   }
