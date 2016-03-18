@@ -5,7 +5,9 @@
 #include "communication.h"
 #include "screens.h"
 #include "screen_map.h"
-#include "screen_live.h"
+#ifndef PBL_PLATFORM_APLITE
+  #include "screen_live.h"
+#endif
 #include "screen_speed.h"
 #include "menu.h"
 #include "screen_config.h"
@@ -50,7 +52,9 @@ void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
 void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   button_click();
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
+#ifndef PBL_PLATFORM_APLITE
     screen_live_menu(true);
+#endif
   } else if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_type(CONFIG_CHANGE_TYPE_PREVIOUS);
   } else {
@@ -72,8 +76,14 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
     if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
       s_data.page_number++;
     }
-    if (s_data.page_number == PAGE_LIVE_TRACKING && s_data.live == 0) {
+    if (s_data.page_number == PAGE_LIVE_TRACKING) {
+#ifdef PBL_PLATFORM_APLITE
       s_data.page_number++;
+#else
+      if (s_data.live == 0) {
+        s_data.page_number++;
+      }
+#endif
     }
     if (!s_data.debug) {
       if (s_data.page_number == PAGE_DEBUG1 || s_data.page_number == PAGE_DEBUG2) {
@@ -109,7 +119,9 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   if (s_data.page_number == PAGE_MAP) {
     screen_map_zoom_out(2);
   } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
+#ifndef PBL_PLATFORM_APLITE
     screen_live_menu(false);
+#endif
   } else if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_type(CONFIG_CHANGE_TYPE_NEXT);
   } else {

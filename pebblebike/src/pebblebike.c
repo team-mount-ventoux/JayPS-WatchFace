@@ -13,7 +13,9 @@
 #include "screens.h"
 #include "screen_speed.h"
 #include "screen_altitude.h"
-#include "screen_live.h"
+#ifndef PBL_PLATFORM_APLITE
+  #include "screen_live.h"
+#endif
 #include "screen_map.h"
 #include "screen_config.h"
 #if DEBUG
@@ -206,7 +208,9 @@ static void init(void) {
 
   screen_speed_layer_init(s_data.window);
   screen_altitude_layer_init(s_data.window);
+#ifndef PBL_PLATFORM_APLITE
   screen_live_layer_init(s_data.window);
+#endif
   screen_map_layer_init(s_data.window);
 
   #if DEBUG
@@ -253,7 +257,9 @@ static void deinit(void) {
   screen_speed_deinit();
   graph_deinit();
   screen_altitude_layer_deinit();
+#ifndef PBL_PLATFORM_APLITE
   screen_live_layer_deinit();
+#endif
   screen_map_layer_deinit();
 
   #if DEBUG
