@@ -35,7 +35,7 @@ void graph_deinit() {
 #endif
 }
 
-void graph_add_data(GraphData* graph, uint16_t value) {
+void graph_add_data(GraphData* graph, int16_t value) {
   time_t time_cur = time(NULL);
   if (graph->time_ini == 0) {
     graph->time_ini = time_cur;
