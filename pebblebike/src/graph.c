@@ -25,12 +25,12 @@ void graph_init() {
   graph_init_data(&graph_heartrates, 30);
   graph_init_data(&graph_speeds, 30);
 
-#ifndef PBL_PLATFORM_APLITE
+#ifdef PBL_COLOR
   mask = gbitmap_create_with_resource(RESOURCE_ID_MASK);
 #endif
 }
 void graph_deinit() {
-#ifndef PBL_PLATFORM_APLITE
+#ifdef PBL_COLOR
   gbitmap_destroy(mask);
 #endif
 }
