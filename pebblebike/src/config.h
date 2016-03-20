@@ -20,7 +20,12 @@
   #define DEMO true
 #endif
 
-
 #define ORUXMAP true
 
+#ifdef PBL_PLATFORM_APLITE
+  // save memory on APLITE (1050 bytes)
+  #define FUNCTION_LIVE false
+#else
+  #define FUNCTION_LIVE true
+#endif
 #endif // CONFIG_H

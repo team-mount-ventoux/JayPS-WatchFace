@@ -262,7 +262,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 */
 
             }
-#ifndef PBL_PLATFORM_APLITE
+#if FUNCTION_LIVE
             screen_live_menu_update();
 #endif
             if (s_data.page_number == PAGE_MAP) {

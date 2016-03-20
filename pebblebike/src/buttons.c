@@ -5,7 +5,7 @@
 #include "communication.h"
 #include "screens.h"
 #include "screen_map.h"
-#ifndef PBL_PLATFORM_APLITE
+#if FUNCTION_LIVE
   #include "screen_live.h"
 #endif
 #include "screen_speed.h"
@@ -52,7 +52,7 @@ void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
 void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   button_click();
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
-#ifndef PBL_PLATFORM_APLITE
+#if FUNCTION_LIVE
     screen_live_menu(true);
 #endif
   } else if (config_screen != CONFIG_SCREEN_DISABLED) {
@@ -119,7 +119,7 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   if (s_data.page_number == PAGE_MAP) {
     screen_map_zoom_out(2);
   } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
-#ifndef PBL_PLATFORM_APLITE
+#if FUNCTION_LIVE
     screen_live_menu(false);
 #endif
   } else if (config_screen != CONFIG_SCREEN_DISABLED) {
