@@ -40,8 +40,13 @@ void graph_add_data(GraphData* graph, uint16_t value) {
   if (graph->time_ini == 0) {
     graph->time_ini = time_cur;
     // clock align graph
+#ifdef PBL_HEALTH
+    ///@todo test SDK>=3.9
+    // time_start_of_today was introduced with 3.9 (at same time than Pebble Health)
+    // condition on PBL_HEALTH instead of SDK>=3.9 will be only different on APLITE => doesn't matter
     int delta = (graph->time_ini - time_start_of_today()) % graph->point_duration;
     graph->time_ini = graph->time_ini + delta - graph->point_duration;
+#endif
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "delta:%d (duration:%d)", delta, graph->point_duration);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "time_ini:%d -> %d", (int) time_cur, (int) graph->time_ini);
   }
