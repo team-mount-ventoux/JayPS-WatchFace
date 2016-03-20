@@ -168,7 +168,7 @@ const char *field_get_units(uint8_t field) {
     default: return "";
   }
 }
-void field_set_text(FieldLayer field_layer, uint8_t force_field) {
+void field_set_text(FieldLayer field_layer, uint8_t force_field, GTextAlignment force_alignement) {
   uint8_t type = force_field != FIELD__UNUSED ? force_field : field_layer.type;
   if (field_layer.title_layer != NULL) {
     text_layer_set_text(field_layer.title_layer, field_get_title(type));
@@ -178,19 +178,22 @@ void field_set_text(FieldLayer field_layer, uint8_t force_field) {
   }
   if (field_layer.unit_layer != NULL) {
     text_layer_set_text(field_layer.unit_layer, title_instead_of_units ? field_get_title(type) : field_get_units(type));
+#ifndef PBL_ROUND
+    text_layer_set_text_alignment(field_layer.unit_layer, title_instead_of_units ? GTextAlignmentCenter : force_alignement);
+#endif
   }
 }
 void screen_speed_update_config() {
-  field_set_text(s_data.screenA_layer.field_top, s_data.page_number == PAGE_HEARTRATE ? FIELD_HEARTRATE : FIELD__UNUSED);
-  field_set_text(s_data.screenA_layer.field_top2, FIELD__UNUSED);
-  field_set_text(s_data.screenA_layer.field_bottom_left, FIELD__UNUSED);
-  field_set_text(s_data.screenA_layer.field_bottom_right, FIELD__UNUSED);
+  field_set_text(s_data.screenA_layer.field_top, s_data.page_number == PAGE_HEARTRATE ? FIELD_HEARTRATE : FIELD__UNUSED, GTextAlignmentRight);
+  field_set_text(s_data.screenA_layer.field_top2, FIELD__UNUSED, GTextAlignmentRight);
+  field_set_text(s_data.screenA_layer.field_bottom_left, FIELD__UNUSED, GTextAlignmentCenter);
+  field_set_text(s_data.screenA_layer.field_bottom_right, FIELD__UNUSED, GTextAlignmentCenter);
 }
 void screen_altitude_update_config() {
-  field_set_text(s_data.screenB_layer.field_top_left, FIELD__UNUSED);
-  field_set_text(s_data.screenB_layer.field_top_right, FIELD__UNUSED);
-  field_set_text(s_data.screenB_layer.field_bottom_left, FIELD__UNUSED);
-  field_set_text(s_data.screenB_layer.field_bottom_right, FIELD__UNUSED);
+  field_set_text(s_data.screenB_layer.field_top_left, FIELD__UNUSED, GTextAlignmentCenter);
+  field_set_text(s_data.screenB_layer.field_top_right, FIELD__UNUSED, GTextAlignmentCenter);
+  field_set_text(s_data.screenB_layer.field_bottom_left, FIELD__UNUSED, GTextAlignmentCenter);
+  field_set_text(s_data.screenB_layer.field_bottom_right, FIELD__UNUSED, GTextAlignmentCenter);
 }
 
 void config_change_visibility(FieldLayer* field_layer, bool hidden) {
