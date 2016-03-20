@@ -2,7 +2,7 @@
 #include "pebblebike.h"
 #include "screen_config.h"
 #include "health.h"
-
+#ifdef PBL_HEALTH
 bool s_health_available = false;
 time_t prev_time = 0;
 int prev_steps = 0;
@@ -85,3 +85,4 @@ void health_init_if_needed() {
     health_deinit();
   }
 }
+#endif
