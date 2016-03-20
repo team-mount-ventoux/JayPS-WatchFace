@@ -16,7 +16,7 @@ static AppTimer *config_timer;
 uint8_t config_screen = CONFIG_SCREEN_DISABLED;
 uint8_t config_field = CONFIG_FIELD_SCREEN_A__MIN;
 
-#define CONFIG_NB_FIELD_ORDER 16
+#define CONFIG_NB_FIELD_ORDER 17
 uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     FIELD_ACCURACY,
     FIELD_ALTITUDE,
@@ -40,6 +40,7 @@ uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
 #endif
     FIELD_TEMPERATURE,
     //FIELD_TIME,
+    FIELD__UNUSED,
 };
 
 ConfigData config;
@@ -235,7 +236,7 @@ void config_change_field() {
 void config_change_type(uint8_t direction) {
   if (direction == CONFIG_CHANGE_TYPE_NEXT) {
     cur_field->type_index++;
-    if (cur_field->type_index >= CONFIG_NB_FIELD_ORDER) {
+    if ((cur_field->type_index >= CONFIG_NB_FIELD_ORDER) || (config_order[cur_field->type_index] == FIELD__UNUSED)) {
       cur_field->type_index = 0;
     }
     cur_field->type = config_order[cur_field->type_index];
