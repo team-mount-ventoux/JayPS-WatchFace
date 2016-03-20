@@ -11,7 +11,9 @@ static AppTimer *disconnect_timer;
 void update_screens() {
   layer_set_hidden(s_data.page_speed, true);
   layer_set_hidden(s_data.page_altitude, true);
+#ifndef PBL_PLATFORM_APLITE
   layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), true);
+#endif
   layer_set_hidden(s_data.page_map, true);
   window_set_background_color(s_data.window, BG_COLOR_WINDOW);
   #if DEBUG
@@ -27,10 +29,12 @@ void update_screens() {
   if (s_data.page_number == PAGE_ALTITUDE) {
     layer_set_hidden(s_data.page_altitude, false);
   }
+#ifndef PBL_PLATFORM_APLITE
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
     window_set_background_color(s_data.window, GColorWhite);
     layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), false);
   }
+#endif
   if (s_data.page_number == PAGE_MAP) {
     window_set_background_color(s_data.window, BG_COLOR_MAP);
     layer_set_hidden(s_data.page_map, false);
