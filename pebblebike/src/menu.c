@@ -5,7 +5,12 @@
 #include "communication.h"
 #include "screen_config.h"
 
-#define MENU_HELP_BUTTONS true
+#ifdef PBL_PLATFORM_APLITE
+  ///todo remove me
+  #define MENU_HELP_BUTTONS false
+#else
+  #define MENU_HELP_BUTTONS true
+#endif
 
 static Window *window;
 static SimpleMenuLayer *menu_layer;

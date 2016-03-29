@@ -131,7 +131,7 @@ void screen_map_update_map(bool force_recenter) {
       );
       #endif
     */
-
+#if FUNCTION_LIVE
     // update name_layers before marking page_map dirty to have them correctly positioned on the map
     GPoint p0;
     for (int i = 0; i < s_live.nb; i++) {
@@ -141,7 +141,7 @@ void screen_map_update_map(bool force_recenter) {
         s_live.friends[i].name_frame.origin.y = (pathFrame.origin.y)+p0.y - 7;
         layer_set_frame(text_layer_get_layer(s_live.friends[i].name_layer), s_live.friends[i].name_frame);
     }
-
+#endif
     // Update the layer
     layer_mark_dirty(s_data.page_map);
 }
@@ -173,7 +173,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
             p1
         );
     }
-
+#if FUNCTION_LIVE
     for (int i = 0; i < s_live.nb; i++) {
         p0.x = (XINI + (s_live.friends[i].xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
         p0.y = (YINI - (s_live.friends[i].ypos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
@@ -196,7 +196,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 #endif
         }
     }
-
+#endif
 }
 void bearing_layer_update_callback(Layer *me, GContext *ctx) {
   int x, y;
@@ -224,13 +224,13 @@ void screen_map_layer_init(Window* window) {
 
     s_data.page_map = layer_create(GRect(0,TOPBAR_HEIGHT,SCREEN_W,SCREEN_H-TOPBAR_HEIGHT));
     layer_add_child(window_get_root_layer(window), s_data.page_map);
-
+#if FUNCTION_LIVE
     for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
         s_live.friends[i].name_frame = GRect(0, 15, 100, 15);
         s_live.friends[i].name_layer = text_layer_create(s_live.friends[i].name_frame);
         set_layer_attr_full(s_live.friends[i].name_layer, s_live.friends[i].name, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentLeft, COLOR_MAP, GColorClear, s_data.page_map);
     }
-
+#endif
     pathFrame = GRect(0, 0, MAP_VSIZE_X, MAP_VSIZE_Y);
     path_layer = layer_create(pathFrame);
     pathFrame.origin.x = -XINI + SCREEN_W/2;
@@ -264,9 +264,11 @@ void screen_map_layer_init(Window* window) {
 #endif
 }
 void screen_map_layer_deinit() {
+#if FUNCTION_LIVE
   for(int i = 0; i < NUM_LIVE_FRIENDS; i++) {
     text_layer_destroy(s_live.friends[i].name_layer);
   }
+#endif
   layer_destroy(path_layer);
   layer_destroy(bearing_layer);
   gpath_destroy(bearing_gpath);

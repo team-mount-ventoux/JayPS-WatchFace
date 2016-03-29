@@ -199,6 +199,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
     while (tuple) {
         switch (tuple->key) {
+#if FUNCTION_LIVE
         case MSG_LIVE_NAME0:
             //vibes_short_pulse();
             strncpy(s_live.friends[0].name, tuple->value->cstring, 10);
@@ -262,9 +263,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 */
 
             }
-#if FUNCTION_LIVE
             screen_live_menu_update();
-#endif
             if (s_data.page_number == PAGE_MAP) {
                 layer_mark_dirty(s_data.page_map);
             }
@@ -274,7 +273,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             //}
 
             break;
-
+#endif
         case MSG_LOCATION_DATA:
         case MSG_LOCATION_DATA_V2:
         case MSG_LOCATION_DATA_V3:

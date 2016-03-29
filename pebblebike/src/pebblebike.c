@@ -27,7 +27,9 @@ GFont font_roboto_bold_16, font_roboto_bold_62;
 
 AppData s_data;
 GPSData s_gpsdata;
+#if FUNCTION_LIVE
 LiveData s_live;
+#endif
 bool title_instead_of_units = true;
 int nbchange_state=0;
 
