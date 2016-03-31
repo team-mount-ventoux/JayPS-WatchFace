@@ -70,7 +70,9 @@ const char *field_get_title(uint8_t field) {
     case FIELD_ALTITUDE_GRAPH_ONLY: return "Altitude graph"; break;
     case FIELD_ASCENT: return "Ascent"; break;
     case FIELD_SPEED: return "Speed data"; break;
+#ifdef PBL_COLOR
     case FIELD_SPEED_DATA_AND_GRAPH: return "Speed all"; break;
+#endif
     case FIELD_SPEED_GRAPH_ONLY: return "Speed graph"; break;
     case FIELD_BEARING: return "Bearing"; break;
     case FIELD_DURATION: return "Duration"; break;
@@ -78,13 +80,17 @@ const char *field_get_title(uint8_t field) {
     //case FIELD_LAT: return "Lat"; break;
     //case FIELD_LON: return "Lon"; break;
     case FIELD_ASCENTRATE: return "Ascent rate data"; break;
+#ifdef PBL_COLOR
     case FIELD_ASCENTRATE_DATA_AND_GRAPH: return "Ascent rate all"; break;
+#endif
     case FIELD_ASCENTRATE_GRAPH_ONLY: return "Ascent rate graph"; break;
     //case FIELD_NBASCENT: return "Nb ascent"; break;
     case FIELD_SLOPE: return "Slope"; break;
     case FIELD_ACCURACY: return "Accuracy"; break;
     case FIELD_HEARTRATE: return "Heartrate data"; break;
+#ifdef PBL_COLOR
     case FIELD_HEARTRATE_DATA_AND_GRAPH: return "Heartrate all"; break;
+#endif
     case FIELD_HEARTRATE_GRAPH_ONLY: return "Heartrate graph"; break;
     case FIELD_CADENCE: return "Cadence"; break;
     case FIELD_TEMPERATURE: return "Temperature"; break;
