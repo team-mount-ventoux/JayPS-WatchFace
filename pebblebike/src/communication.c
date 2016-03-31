@@ -443,11 +443,8 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             screen_map_update_location();
 
-            if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
+            if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
                 layer_mark_dirty(s_data.page_speed);
-            }
-            if (s_data.page_number == PAGE_ALTITUDE) {
-                layer_mark_dirty(s_data.page_altitude);
             }
             if (s_data.page_number == PAGE_LIVE_TRACKING) {
                 layer_mark_dirty((Layer *) s_data.page_live_tracking);

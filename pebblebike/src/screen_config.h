@@ -32,8 +32,8 @@ typedef struct ConfigData {
     uint8_t screenA_top_type;
     uint8_t screenA_bottom_left_type;
     uint8_t screenA_bottom_right_type;
-    uint8_t screenB_top_left_type;
-    uint8_t screenB_top_right_type;
+    uint8_t screenB_top_type;
+    uint8_t screenB_top2_type;
     uint8_t screenB_bottom_left_type;
     uint8_t screenB_bottom_right_type;
     uint8_t screenA_top2_type;
@@ -47,7 +47,7 @@ void config_change_field();
 void config_change_type(uint8_t direction);
 void config_load();
 void config_save();
-void config_affect_type(FieldLayer *field, uint8_t type);
+void config_affect_type(FieldConfig *field, uint8_t type);
 void screen_speed_update_config();
 void screen_altitude_update_config();
 

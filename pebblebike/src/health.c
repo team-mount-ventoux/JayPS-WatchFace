@@ -37,11 +37,8 @@ static void health_handler(HealthEventType event, void *context) {
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "cal:%d", health_get_metric_sum(HealthMetricActiveKCalories));
 
   //todo add function to mark current page dirty
-  if (s_data.page_number == PAGE_SPEED) {
+  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_ALTITUDE) {
     layer_mark_dirty(s_data.page_speed);
-  }
-  if (s_data.page_number == PAGE_ALTITUDE) {
-    layer_mark_dirty(s_data.page_altitude);
   }
 }
 
@@ -70,10 +67,10 @@ void health_init_if_needed() {
   health = health || config.screenA_bottom_left_type == FIELD_STEPS_CADENCE;
   health = health || config.screenA_bottom_right_type == FIELD_STEPS;
   health = health || config.screenA_bottom_right_type == FIELD_STEPS_CADENCE;
-  health = health || config.screenB_top_left_type == FIELD_STEPS;
-  health = health || config.screenB_top_left_type == FIELD_STEPS_CADENCE;
-  health = health || config.screenB_top_right_type == FIELD_STEPS;
-  health = health || config.screenB_top_right_type == FIELD_STEPS_CADENCE;
+  health = health || config.screenB_top_type == FIELD_STEPS;
+  health = health || config.screenB_top_type == FIELD_STEPS_CADENCE;
+  health = health || config.screenB_top2_type == FIELD_STEPS;
+  health = health || config.screenB_top2_type == FIELD_STEPS_CADENCE;
   health = health || config.screenB_bottom_left_type == FIELD_STEPS;
   health = health || config.screenB_bottom_left_type == FIELD_STEPS_CADENCE;
   health = health || config.screenB_bottom_right_type == FIELD_STEPS;

@@ -59,45 +59,45 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
       {.min = 150, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
       {.min = 170, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
   };
-  graph_draw(ctx, GRECT_GRAPH, &heartrates, colors_heartrates, s_data.screenA_layer.field_top2.data_layer, 1);
+  graph_draw(ctx, GRECT_GRAPH, &heartrates, colors_heartrates, s_data.screenSpeed_layer.field_top2.data_layer, 1);
 #else
-  if (s_data.screenA_layer.field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH || s_data.screenA_layer.field_top2.type == FIELD_HEARTRATE_GRAPH_ONLY) {
+  if (s_data.screenA_config.field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH || s_data.screenA_config.field_top2.type == FIELD_HEARTRATE_GRAPH_ONLY) {
     GraphRange colors_heartrates[3] = {
         {.min = 0,   .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 80, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 120, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_heartrates, colors_heartrates, FIELD_HEARTRATE_DATA_AND_GRAPH ? s_data.screenA_layer.field_top2.data_layer : NULL, 0);
-    //layer_set_hidden(text_layer_get_layer(s_data.screenA_layer.field_top2.unit_layer), true);
-  } else if (s_data.screenA_layer.field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH || s_data.screenA_layer.field_top2.type == FIELD_ALTITUDE_GRAPH_ONLY) {
+    graph_draw(ctx, GRECT_GRAPH, &graph_heartrates, colors_heartrates, FIELD_HEARTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 0);
+    //layer_set_hidden(text_layer_get_layer(s_data.screenSpeed_layer.field_top2.unit_layer), true);
+  } else if (s_data.screenA_config.field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH || s_data.screenA_config.field_top2.type == FIELD_ALTITUDE_GRAPH_ONLY) {
     GraphRange colors_altitudes[3] = {
         {.min = 100, .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 200, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 300, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_altitudes, colors_altitudes, s_data.screenA_layer.field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH ? s_data.screenA_layer.field_top2.data_layer : NULL, 10);
-  } else if (s_data.screenA_layer.field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH || s_data.screenA_layer.field_top2.type == FIELD_ASCENTRATE_GRAPH_ONLY) {
+    graph_draw(ctx, GRECT_GRAPH, &graph_altitudes, colors_altitudes, s_data.screenA_config.field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10);
+  } else if (s_data.screenA_config.field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH || s_data.screenA_config.field_top2.type == FIELD_ASCENTRATE_GRAPH_ONLY) {
     GraphRange colors_ascentrates[3] = {
         {.min = 300, .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 600, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 900, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_ascentrates, colors_ascentrates, s_data.screenA_layer.field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH ? s_data.screenA_layer.field_top2.data_layer : NULL, 10);
-  } else if (s_data.screenA_layer.field_top2.type == FIELD_SPEED_DATA_AND_GRAPH || s_data.screenA_layer.field_top2.type == FIELD_SPEED_GRAPH_ONLY) {
+    graph_draw(ctx, GRECT_GRAPH, &graph_ascentrates, colors_ascentrates, s_data.screenA_config.field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10);
+  } else if (s_data.screenA_config.field_top2.type == FIELD_SPEED_DATA_AND_GRAPH || s_data.screenA_config.field_top2.type == FIELD_SPEED_GRAPH_ONLY) {
     GraphRange colors_speeds[3] = {
         {.min = 0, .color = PBL_IF_COLOR_ELSE(GColorYellow, GColorBlack)},
         {.min = 0.9 * s_gpsdata.avgspeed100/10, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 1.1 * s_gpsdata.avgspeed100/10, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_speeds, colors_speeds, s_data.screenA_layer.field_top2.type == FIELD_SPEED_DATA_AND_GRAPH ? s_data.screenA_layer.field_top2.data_layer : NULL, 1);
+    graph_draw(ctx, GRECT_GRAPH, &graph_speeds, colors_speeds, s_data.screenA_config.field_top2.type == FIELD_SPEED_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 1);
   }
 #endif
 }
 void screen_speed_layer_init(Window* window) {
-  config_affect_type(&s_data.screenA_layer.field_top, config.screenA_top_type);
-  config_affect_type(&s_data.screenA_layer.field_top2, config.screenA_top2_type);
-  config_affect_type(&s_data.screenA_layer.field_bottom_left, config.screenA_bottom_left_type);
-  config_affect_type(&s_data.screenA_layer.field_bottom_right, config.screenA_bottom_right_type);
+  config_affect_type(&s_data.screenA_config.field_top, config.screenA_top_type);
+  config_affect_type(&s_data.screenA_config.field_top2, config.screenA_top2_type);
+  config_affect_type(&s_data.screenA_config.field_bottom_left, config.screenA_bottom_left_type);
+  config_affect_type(&s_data.screenA_config.field_bottom_right, config.screenA_bottom_right_type);
 
   s_data.page_speed = layer_create(PAGE_GRECT);
   layer_add_child(window_get_root_layer(window), s_data.page_speed);
@@ -105,20 +105,20 @@ void screen_speed_layer_init(Window* window) {
 
   // BEGIN bottom left "distance"
 
-  s_data.screenA_layer.field_bottom_left.unit_layer = text_layer_create(GRect(PAGE_OFFSET_X + 1, PAGE_SPEED_BOTTOM_DATA_H + 20, PAGE_W / 2 - 4, 18));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_left.unit_layer, s_data.unitsDistance, fonts_get_system_font(FONT_KEY_GOTHIC_14), PBL_IF_ROUND_ELSE(GTextAlignmentRight, GTextAlignmentCenter), COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
+  s_data.screenSpeed_layer.field_bottom_left.unit_layer = text_layer_create(GRect(PAGE_OFFSET_X + 1, PAGE_SPEED_BOTTOM_DATA_H + 20, PAGE_W / 2 - 4, 18));
+  set_layer_attr_full(s_data.screenSpeed_layer.field_bottom_left.unit_layer, s_data.unitsDistance, fonts_get_system_font(FONT_KEY_GOTHIC_14), PBL_IF_ROUND_ELSE(GTextAlignmentRight, GTextAlignmentCenter), COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
 
-  s_data.screenA_layer.field_bottom_left.data_layer = text_layer_create(GRect(PAGE_OFFSET_X + 1, PAGE_SPEED_BOTTOM_DATA_H - 5, PAGE_W / 2 - 4, 30));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_left.data_layer, s_data.distance, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), PBL_IF_ROUND_ELSE(GTextAlignmentRight, GTextAlignmentCenter), COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
+  s_data.screenSpeed_layer.field_bottom_left.data_layer = text_layer_create(GRect(PAGE_OFFSET_X + 1, PAGE_SPEED_BOTTOM_DATA_H - 5, PAGE_W / 2 - 4, 30));
+  set_layer_attr_full(s_data.screenSpeed_layer.field_bottom_left.data_layer, s_data.distance, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), PBL_IF_ROUND_ELSE(GTextAlignmentRight, GTextAlignmentCenter), COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
 
   // END bottom left
 
   // BEGIN bottom right "avg"
-  s_data.screenA_layer.field_bottom_right.unit_layer = text_layer_create(GRect(PAGE_OFFSET_X + PAGE_W / 2 + PBL_IF_ROUND_ELSE(4, 0), PAGE_SPEED_BOTTOM_DATA_H + 20, PAGE_W / 2 - 2*PBL_IF_ROUND_ELSE(4, 0), 18));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_right.unit_layer, s_data.unitsSpeed, fonts_get_system_font(FONT_KEY_GOTHIC_14), PBL_IF_ROUND_ELSE(GTextAlignmentLeft, GTextAlignmentCenter), COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
+  s_data.screenSpeed_layer.field_bottom_right.unit_layer = text_layer_create(GRect(PAGE_OFFSET_X + PAGE_W / 2 + PBL_IF_ROUND_ELSE(4, 0), PAGE_SPEED_BOTTOM_DATA_H + 20, PAGE_W / 2 - 2*PBL_IF_ROUND_ELSE(4, 0), 18));
+  set_layer_attr_full(s_data.screenSpeed_layer.field_bottom_right.unit_layer, s_data.unitsSpeed, fonts_get_system_font(FONT_KEY_GOTHIC_14), PBL_IF_ROUND_ELSE(GTextAlignmentLeft, GTextAlignmentCenter), COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
 
-  s_data.screenA_layer.field_bottom_right.data_layer = text_layer_create(GRect(PAGE_OFFSET_X + PAGE_W / 2  + PBL_IF_ROUND_ELSE(4, 0), PAGE_SPEED_BOTTOM_DATA_H - 5, PAGE_W / 2 - 2*PBL_IF_ROUND_ELSE(4, 0), 30));
-  set_layer_attr_full(s_data.screenA_layer.field_bottom_right.data_layer, s_data.avgspeed, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), PBL_IF_ROUND_ELSE(GTextAlignmentLeft, GTextAlignmentCenter), COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
+  s_data.screenSpeed_layer.field_bottom_right.data_layer = text_layer_create(GRect(PAGE_OFFSET_X + PAGE_W / 2  + PBL_IF_ROUND_ELSE(4, 0), PAGE_SPEED_BOTTOM_DATA_H - 5, PAGE_W / 2 - 2*PBL_IF_ROUND_ELSE(4, 0), 30));
+  set_layer_attr_full(s_data.screenSpeed_layer.field_bottom_right.data_layer, s_data.avgspeed, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), PBL_IF_ROUND_ELSE(GTextAlignmentLeft, GTextAlignmentCenter), COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
 
 
   // END bottom right
@@ -128,22 +128,22 @@ void screen_speed_layer_init(Window* window) {
 
   // BEGIN top2 "speed"
 
-  s_data.screenA_layer.field_top2.unit_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(19, 3), PAGE_SPEED_TOP_DATA_H - 17, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 3), 18));
-  set_layer_attr_full(s_data.screenA_layer.field_top2.unit_layer, s_data.unitsSpeed, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentRight, COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
+  s_data.screenSpeed_layer.field_top2.unit_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(19, 3), PAGE_SPEED_TOP_DATA_H - 17, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 3), 18));
+  set_layer_attr_full(s_data.screenSpeed_layer.field_top2.unit_layer, s_data.unitsSpeed, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentRight, COLOR_UNITS, BG_COLOR_UNITS, s_data.page_speed);
 
-  s_data.screenA_layer.field_top2.data_layer = text_layer_create(GRect(0, PAGE_SPEED_TOP_DATA_H - PBL_IF_ROUND_ELSE(34, 42), SCREEN_W, 30));
-  set_layer_attr_full(s_data.screenA_layer.field_top2.data_layer, s_data.avgspeed, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), GTextAlignmentCenter, COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
+  s_data.screenSpeed_layer.field_top2.data_layer = text_layer_create(GRect(0, PAGE_SPEED_TOP_DATA_H - PBL_IF_ROUND_ELSE(34, 42), SCREEN_W, 30));
+  set_layer_attr_full(s_data.screenSpeed_layer.field_top2.data_layer, s_data.avgspeed, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), GTextAlignmentCenter, COLOR_DATA, BG_COLOR_DATA, s_data.page_speed);
 
   // END top2
 
 
   // BEGIN top "speed"
 
-  s_data.screenA_layer.field_top.unit_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(10, 3), PAGE_SPEED_MIDDLE_DATA_H + 19, SCREEN_W - 2*PBL_IF_ROUND_ELSE(10, 3), 22));
-  set_layer_attr_full(s_data.screenA_layer.field_top.unit_layer, s_data.unitsSpeedOrHeartRate, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentRight, COLOR_SPEED_UNITS, BG_COLOR_SPEED_UNITS, s_data.page_speed);
+  s_data.screenSpeed_layer.field_top.unit_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(10, 3), PAGE_SPEED_MIDDLE_DATA_H + 19, SCREEN_W - 2*PBL_IF_ROUND_ELSE(10, 3), 22));
+  set_layer_attr_full(s_data.screenSpeed_layer.field_top.unit_layer, s_data.unitsSpeedOrHeartRate, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentRight, COLOR_SPEED_UNITS, BG_COLOR_SPEED_UNITS, s_data.page_speed);
 
-  s_data.screenA_layer.field_top.data_layer = text_layer_create(GRect(0, PAGE_SPEED_MIDDLE_DATA_H - 42 - PBL_IF_ROUND_ELSE(0,0), SCREEN_W, 80));
-  set_layer_attr_full(s_data.screenA_layer.field_top.data_layer, s_data.speed, font_roboto_bold_62, GTextAlignmentCenter, COLOR_SPEED_DATA, BG_COLOR_SPEED_DATA, s_data.page_speed);
+  s_data.screenSpeed_layer.field_top.data_layer = text_layer_create(GRect(0, PAGE_SPEED_MIDDLE_DATA_H - 42 - PBL_IF_ROUND_ELSE(0,0), SCREEN_W, 80));
+  set_layer_attr_full(s_data.screenSpeed_layer.field_top.data_layer, s_data.speed, font_roboto_bold_62, GTextAlignmentCenter, COLOR_SPEED_DATA, BG_COLOR_SPEED_DATA, s_data.page_speed);
 
   // END top
 
@@ -152,10 +152,10 @@ void screen_speed_layer_init(Window* window) {
 }
 
 void screen_speed_deinit() {
-  field_layer_deinit(&s_data.screenA_layer.field_top);
-  field_layer_deinit(&s_data.screenA_layer.field_top2);
-  field_layer_deinit(&s_data.screenA_layer.field_bottom_left);
-  field_layer_deinit(&s_data.screenA_layer.field_bottom_right);
+  field_layer_deinit(&s_data.screenSpeed_layer.field_top);
+  field_layer_deinit(&s_data.screenSpeed_layer.field_top2);
+  field_layer_deinit(&s_data.screenSpeed_layer.field_bottom_left);
+  field_layer_deinit(&s_data.screenSpeed_layer.field_bottom_right);
   layer_destroy(line_layer);
   layer_destroy(s_data.page_speed);
 }
@@ -202,13 +202,13 @@ static void rotation_timer_callback(void *data) {
     rotation = ROTATION_MIN;
   }
    if (rotation == ROTATION_MIN) {
-    s_data.screenA_layer.field_top.type = FIELD_SPEED;
-    s_data.screenA_layer.field_bottom_left.type = FIELD_DISTANCE;
-    s_data.screenA_layer.field_bottom_right.type = FIELD_AVGSPEED;
+     s_data.screenA_config.field_top.type = FIELD_SPEED;
+     s_data.screenA_config.field_bottom_left.type = FIELD_DISTANCE;
+     s_data.screenA_config.field_bottom_right.type = FIELD_AVGSPEED;
   } else {
-    s_data.screenA_layer.field_top.type = FIELD_ALTITUDE;
-    s_data.screenA_layer.field_bottom_left.type = FIELD_ASCENT;
-    s_data.screenA_layer.field_bottom_right.type = FIELD_DISTANCE;
+    s_data.screenA_config.field_top.type = FIELD_ALTITUDE;
+    s_data.screenA_config.field_bottom_left.type = FIELD_ASCENT;
+    s_data.screenA_config.field_bottom_right.type = FIELD_DISTANCE;
   }
   screen_speed_show_speed(true);
   screen_speed_update_config();

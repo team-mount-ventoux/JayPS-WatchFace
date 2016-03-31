@@ -12,7 +12,7 @@
 #include "menu.h"
 #include "screens.h"
 #include "screen_speed.h"
-#include "screen_altitude.h"
+//#include "screen_altitude.h"
 #if FUNCTION_LIVE
   #include "screen_live.h"
 #endif
@@ -98,10 +98,10 @@ void change_units(uint8_t units, bool first_time) {
 
   if (!first_time) {
     //todo(custom) screen_speed_dirty
-    layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_top.unit_layer));
-    layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_top2.unit_layer));
-    layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_bottom_left.unit_layer));
-    layer_mark_dirty(text_layer_get_layer(s_data.screenA_layer.field_bottom_right.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_top.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_top2.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_bottom_left.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_bottom_right.unit_layer));
   }
   if (s_data.page_number == PAGE_SPEED) {
     strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
@@ -209,7 +209,7 @@ static void init(void) {
   //strcpy(s_data.nbascent, "-");
 
   screen_speed_layer_init(s_data.window);
-  screen_altitude_layer_init(s_data.window);
+  //screen_altitude_layer_init(s_data.window);
 #if FUNCTION_LIVE
   screen_live_layer_init(s_data.window);
 #endif
@@ -236,7 +236,7 @@ static void init(void) {
   communication_init();
 
   screen_speed_update_config();
-  screen_altitude_update_config();
+  //screen_altitude_update_config();
   graph_init();
   
   window_stack_push(s_data.window, true /* Animated */);
@@ -258,7 +258,7 @@ static void deinit(void) {
   topbar_layer_deinit();
   screen_speed_deinit();
   graph_deinit();
-  screen_altitude_layer_deinit();
+  //screen_altitude_layer_deinit();
 #if FUNCTION_LIVE
   screen_live_layer_deinit();
 #endif

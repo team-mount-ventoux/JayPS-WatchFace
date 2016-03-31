@@ -28,7 +28,7 @@ static void button_timer_callback(void *data) {
   title_instead_of_units = false;
   //todo
   screen_speed_update_config();
-  screen_altitude_update_config();
+  //screen_altitude_update_config();
 }
 void button_click() {
   layer_set_hidden(action_bar_layer_get_layer(action_bar), false);
@@ -106,7 +106,7 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
     } else if (s_data.page_number == PAGE_MAP) {
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
     }
-    if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
+    if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
       title_instead_of_units = true;
       screen_speed_show_speed(true);
     }

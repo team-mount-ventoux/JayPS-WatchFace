@@ -10,7 +10,7 @@ static AppTimer *disconnect_timer;
 
 void update_screens() {
   layer_set_hidden(s_data.page_speed, true);
-  layer_set_hidden(s_data.page_altitude, true);
+  //layer_set_hidden(s_data.page_altitude, true);
 #if FUNCTION_LIVE
   layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), true);
 #endif
@@ -27,7 +27,7 @@ void update_screens() {
     layer_set_hidden(s_data.page_speed, false);
   }
   if (s_data.page_number == PAGE_ALTITUDE) {
-    layer_set_hidden(s_data.page_altitude, false);
+    layer_set_hidden(s_data.page_speed, false);
   }
 #if FUNCTION_LIVE
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
@@ -67,30 +67,30 @@ void set_layer_attr_full(TextLayer *textlayer, const char *text, GFont font, GTe
   }
 }
 
-void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t y, int16_t w, int16_t h, char* title_text, char* data_text, char* unit_text) {
-  field_layer->main_layer = layer_create(GRect(x, y, w, h));
-  layer_add_child(parent, field_layer->main_layer);
-
-  // unit
-  field_layer->unit_layer = text_layer_create(GRect(1, h - 22, w - 2, 24));
-  set_layer_attr_full(field_layer->unit_layer, unit_text, fonts_get_system_font(FONT_KEY_GOTHIC_18), GTextAlignmentCenter, COLOR_UNITS, BG_COLOR_DATA, field_layer->main_layer);
-
-  // data
-  field_layer->data_layer = text_layer_create(GRect(1, h / 2 - 18, w - 2, 32));
-
-  // title
-  field_layer->title_layer = text_layer_create(GRect(1, -1, w - 2, 24));
-  set_layer_attr_full(field_layer->title_layer, title_text, fonts_get_system_font(FONT_KEY_GOTHIC_18), GTextAlignmentCenter, COLOR_TITLE, BG_COLOR_TITLE, field_layer->main_layer);
-
-  set_layer_attr_full(field_layer->data_layer, data_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), GTextAlignmentCenter, COLOR_DATA, BG_COLOR_DATA, field_layer->main_layer);
-}
+//void field_layer_init(Layer* parent, FieldLayer* field_layer, int16_t x, int16_t y, int16_t w, int16_t h, char* title_text, char* data_text, char* unit_text) {
+//  field_layer->main_layer = layer_create(GRect(x, y, w, h));
+//  layer_add_child(parent, field_layer->main_layer);
+//
+//  // unit
+//  field_layer->unit_layer = text_layer_create(GRect(1, h - 22, w - 2, 24));
+//  set_layer_attr_full(field_layer->unit_layer, unit_text, fonts_get_system_font(FONT_KEY_GOTHIC_18), GTextAlignmentCenter, COLOR_UNITS, BG_COLOR_DATA, field_layer->main_layer);
+//
+//  // data
+//  field_layer->data_layer = text_layer_create(GRect(1, h / 2 - 18, w - 2, 32));
+//
+//  // title
+//  field_layer->title_layer = text_layer_create(GRect(1, -1, w - 2, 24));
+//  set_layer_attr_full(field_layer->title_layer, title_text, fonts_get_system_font(FONT_KEY_GOTHIC_18), GTextAlignmentCenter, COLOR_TITLE, BG_COLOR_TITLE, field_layer->main_layer);
+//
+//  set_layer_attr_full(field_layer->data_layer, data_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), GTextAlignmentCenter, COLOR_DATA, BG_COLOR_DATA, field_layer->main_layer);
+//}
 void field_layer_deinit(FieldLayer* field_layer) {
-  if (field_layer->title_layer != NULL) {
-    text_layer_destroy(field_layer->title_layer);
-  }
+//  if (field_layer->title_layer != NULL) {
+//    text_layer_destroy(field_layer->title_layer);
+//  }
   text_layer_destroy(field_layer->data_layer);
   text_layer_destroy(field_layer->unit_layer);
-  layer_destroy(field_layer->main_layer);
+  //layer_destroy(field_layer->main_layer);
 }
 void topbar_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
@@ -190,11 +190,8 @@ void screen_reset_instant_data() {
   strcpy(s_data.ascentrate, "0");
   strcpy(s_data.accuracy, "-");
 
-  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
+  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
     layer_mark_dirty(s_data.page_speed);
-  }
-  if (s_data.page_number == PAGE_ALTITUDE) {
-    layer_mark_dirty(s_data.page_altitude);
   }
 }
 
