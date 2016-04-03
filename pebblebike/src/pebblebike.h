@@ -149,6 +149,7 @@ typedef struct TopBarLayer {
 
 typedef struct FieldConfig {
   uint8_t type;
+  ///todo remove type_index?
   uint8_t type_index;
 } FieldConfig;
 typedef struct ScreenConfig {

@@ -173,7 +173,7 @@ void screen_speed_show_speed(bool force_units) {
 #if ROTATION
   } else if (rotation == ROTATION_HEARTRATE) {
     if (force_units) {
-      screen_speed_update_config();
+      screen_speed_update_config(true);
     }
 #endif
 #if ROTATION  
@@ -186,7 +186,7 @@ void screen_speed_show_speed(bool force_units) {
   } else {
     copy_speed(s_data.speed, sizeof(s_data.speed), s_gpsdata.speed100);
     if (force_units) {
-      screen_speed_update_config();
+      screen_speed_update_config(true);
     }
   }
 }
@@ -211,7 +211,7 @@ static void rotation_timer_callback(void *data) {
     s_data.screenA_config.field_bottom_right.type = FIELD_DISTANCE;
   }
   screen_speed_show_speed(true);
-  screen_speed_update_config();
+  screen_speed_update_config(true);
   update_screens();
 }
 void screen_speed_start_rotation() {

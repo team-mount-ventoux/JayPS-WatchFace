@@ -4,8 +4,8 @@
 #define PRODUCTION true
 
 
-#define VERSION_PEBBLE 283
-#define VERSION_TEXT "Version 2.5.0-alpha4"
+#define VERSION_PEBBLE 284
+#define VERSION_TEXT "Version 2.5.0-alpha5"
 #define APP_COMPANY "N Jackson & JayPS"
 
 #if PRODUCTION
@@ -27,5 +27,14 @@
   #define FUNCTION_LIVE false
 #else
   #define FUNCTION_LIVE true
+#endif
+
+
+#if PRODUCTION
+  #define LOG_ENTER()
+  #define LOG_EXIT()
+#else
+  #define LOG_ENTER() APP_LOG(APP_LOG_LEVEL_DEBUG, "Enter %s", __FUNCTION__)
+  #define LOG_EXIT() APP_LOG(APP_LOG_LEVEL_DEBUG, "Exit %s", __FUNCTION__)
 #endif
 #endif // CONFIG_H

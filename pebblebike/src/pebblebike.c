@@ -235,7 +235,7 @@ static void init(void) {
   
   communication_init();
 
-  screen_speed_update_config();
+  screen_speed_update_config(true);
   //screen_altitude_update_config();
   graph_init();
   

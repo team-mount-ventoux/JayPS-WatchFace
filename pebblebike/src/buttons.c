@@ -27,7 +27,7 @@ static void button_timer_callback(void *data) {
   layer_set_hidden(action_bar_layer_get_layer(action_bar), true);
   title_instead_of_units = false;
   //todo
-  screen_speed_update_config();
+  screen_speed_update_config(false);
   //screen_altitude_update_config();
 }
 void button_click() {

@@ -189,23 +189,27 @@ void field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment force_a
 #endif
   }
 }
-void screen_speed_update_config() {
+void screen_speed_update_config(bool change_page) {
   if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE) {
 
-    config_affect_type(&s_data.screenA_config.field_top, config.screenA_top_type);
-    config_affect_type(&s_data.screenA_config.field_top2, config.screenA_top2_type);
-    config_affect_type(&s_data.screenA_config.field_bottom_left, config.screenA_bottom_left_type);
-    config_affect_type(&s_data.screenA_config.field_bottom_right, config.screenA_bottom_right_type);
+    if (change_page) {
+      config_affect_type(&s_data.screenA_config.field_top, config.screenA_top_type);
+      config_affect_type(&s_data.screenA_config.field_top2, config.screenA_top2_type);
+      config_affect_type(&s_data.screenA_config.field_bottom_left, config.screenA_bottom_left_type);
+      config_affect_type(&s_data.screenA_config.field_bottom_right, config.screenA_bottom_right_type);
+    }
 
     field_set_text(s_data.screenSpeed_layer.field_top, s_data.page_number == PAGE_HEARTRATE ? FIELD_HEARTRATE : s_data.screenA_config.field_top.type, GTextAlignmentRight);
     field_set_text(s_data.screenSpeed_layer.field_top2, s_data.screenA_config.field_top2.type, GTextAlignmentRight);
     field_set_text(s_data.screenSpeed_layer.field_bottom_left, s_data.screenA_config.field_bottom_left.type, GTextAlignmentCenter);
     field_set_text(s_data.screenSpeed_layer.field_bottom_right, s_data.screenA_config.field_bottom_right.type, GTextAlignmentCenter);
   } else if (s_data.page_number == PAGE_ALTITUDE) {
-    config_affect_type(&s_data.screenB_config.field_top, config.screenB_top_type);
-    config_affect_type(&s_data.screenB_config.field_top2, config.screenB_top2_type);
-    config_affect_type(&s_data.screenB_config.field_bottom_left, config.screenB_bottom_left_type);
-    config_affect_type(&s_data.screenB_config.field_bottom_right, config.screenB_bottom_right_type);
+    if (change_page) {
+      config_affect_type(&s_data.screenB_config.field_top, config.screenB_top_type);
+      config_affect_type(&s_data.screenB_config.field_top2, config.screenB_top2_type);
+      config_affect_type(&s_data.screenB_config.field_bottom_left, config.screenB_bottom_left_type);
+      config_affect_type(&s_data.screenB_config.field_bottom_right, config.screenB_bottom_right_type);
+    }
 
 
     field_set_text(s_data.screenSpeed_layer.field_top, s_data.screenB_config.field_top.type, GTextAlignmentRight);
@@ -245,14 +249,14 @@ void config_start() {
     config_screen = CONFIG_SCREEN_A;
     config_field = CONFIG_FIELD_SCREEN_A_TOP;
     cur_fieldconfig = &s_data.screenA_config.field_top;
-    screen_speed_update_config();
+    screen_speed_update_config(false);
   } else if (s_data.page_number == PAGE_ALTITUDE) {
     config_screen = CONFIG_SCREEN_B;
     config_field = CONFIG_FIELD_SCREEN_B_TOP_LEFT;
     cur_fieldconfig = &s_data.screenB_config.field_top;
     //screen_altitude_update_config();
     ///todo
-    screen_speed_update_config();
+    screen_speed_update_config(false);
   } else {
     return;
   }
@@ -366,6 +370,7 @@ void config_previous_type_graph(bool can_display_graph) {
 
 
 void config_change_type(uint8_t direction) {
+  LOG_ENTER();
   if (direction == CONFIG_CHANGE_TYPE_NEXT) {
     config_next_type_graph(config_field == CONFIG_FIELD_SCREEN_A_TOP2);
     cur_fieldconfig->type = config_order[cur_fieldconfig->type_index];
@@ -376,13 +381,8 @@ void config_change_type(uint8_t direction) {
   }
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: type %d", cur_fieldconfig->type_index, cur_fieldconfig->type);
   
-//  if (config_screen == CONFIG_SCREEN_A) {
-//    screen_speed_update_config();
-//  } else {
-//    screen_altitude_update_config();
-//  }
   //todo
-  screen_speed_update_config();
+  screen_speed_update_config(false);
   text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(cur_fieldconfig->type));
   layer_mark_dirty(s_data.topbar_layer.layer);
 }
@@ -432,6 +432,7 @@ void config_save() {
   persist_write_int(PERSIST_VERSION, VERSION_PEBBLE);
 }
 void config_affect_type(FieldConfig *field, uint8_t type) {
+  LOG_ENTER();
   field->type = type;
   field->type_index = 0;
   for(int i = 0; i < CONFIG_NB_FIELD_ORDER; i++) {
