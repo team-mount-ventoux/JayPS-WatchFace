@@ -252,7 +252,7 @@ void config_start() {
     screen_speed_update_config(false);
   } else if (s_data.page_number == PAGE_ALTITUDE) {
     config_screen = CONFIG_SCREEN_B;
-    config_field = CONFIG_FIELD_SCREEN_B_TOP_LEFT;
+    config_field = CONFIG_FIELD_SCREEN_B_TOP;
     cur_fieldconfig = &s_data.screenB_config.field_top;
     //screen_altitude_update_config();
     ///todo
@@ -301,8 +301,8 @@ void config_change_field() {
     case CONFIG_FIELD_SCREEN_A_TOP2:          cur_fieldconfig = &s_data.screenA_config.field_top2; cur_fieldlayer = &s_data.screenSpeed_layer.field_top2; break;
     case CONFIG_FIELD_SCREEN_A_BOTTOM_LEFT:   cur_fieldconfig = &s_data.screenA_config.field_bottom_left; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_left; break;
     case CONFIG_FIELD_SCREEN_A_BOTTOM_RIGHT:  cur_fieldconfig = &s_data.screenA_config.field_bottom_right; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_right; break;
-    case CONFIG_FIELD_SCREEN_B_TOP_LEFT:      cur_fieldconfig = &s_data.screenB_config.field_top; cur_fieldlayer = &s_data.screenSpeed_layer.field_top; break;
-    case CONFIG_FIELD_SCREEN_B_TOP_RIGHT:     cur_fieldconfig = &s_data.screenB_config.field_top2; cur_fieldlayer = &s_data.screenSpeed_layer.field_top2; break;
+    case CONFIG_FIELD_SCREEN_B_TOP:      cur_fieldconfig = &s_data.screenB_config.field_top; cur_fieldlayer = &s_data.screenSpeed_layer.field_top; break;
+    case CONFIG_FIELD_SCREEN_B_TOP2:     cur_fieldconfig = &s_data.screenB_config.field_top2; cur_fieldlayer = &s_data.screenSpeed_layer.field_top2; break;
     case CONFIG_FIELD_SCREEN_B_BOTTOM_LEFT:   cur_fieldconfig = &s_data.screenB_config.field_bottom_left; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_left; break;
     case CONFIG_FIELD_SCREEN_B_BOTTOM_RIGHT:  cur_fieldconfig = &s_data.screenB_config.field_bottom_right; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_right; break;
   }
@@ -372,11 +372,11 @@ void config_previous_type_graph(bool can_display_graph) {
 void config_change_type(uint8_t direction) {
   LOG_ENTER();
   if (direction == CONFIG_CHANGE_TYPE_NEXT) {
-    config_next_type_graph(config_field == CONFIG_FIELD_SCREEN_A_TOP2);
+    config_next_type_graph(config_field == CONFIG_FIELD_SCREEN_A_TOP2 || config_field == CONFIG_FIELD_SCREEN_B_TOP2);
     cur_fieldconfig->type = config_order[cur_fieldconfig->type_index];
   } else {
     // CONFIG_CHANGE_TYPE_PREVIOUS
-    config_previous_type_graph(config_field == CONFIG_FIELD_SCREEN_A_TOP2);
+    config_previous_type_graph(config_field == CONFIG_FIELD_SCREEN_A_TOP2 || config_field == CONFIG_FIELD_SCREEN_B_TOP2);
     cur_fieldconfig->type = config_order[cur_fieldconfig->type_index];
   }
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: type %d", cur_fieldconfig->type_index, cur_fieldconfig->type);
