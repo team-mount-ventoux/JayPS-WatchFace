@@ -4,8 +4,8 @@
 #define PRODUCTION true
 
 
-#define VERSION_PEBBLE 284
-#define VERSION_TEXT "Version 2.5.0-alpha5"
+#define VERSION_PEBBLE 286
+#define VERSION_TEXT "Version 2.5.0-alpha7"
 #define APP_COMPANY "N Jackson & JayPS"
 
 #if PRODUCTION
@@ -21,6 +21,14 @@
 #endif
 
 #define ORUXMAP true
+#define LOCALIZE true
+#if LOCALIZE
+  //#define LOCALIZE_FORCE_FR true
+#endif
+#if !LOCALIZE
+  #define _(a) (a)
+#endif
+
 
 #ifdef PBL_PLATFORM_APLITE
   // save memory on APLITE (1050 bytes)

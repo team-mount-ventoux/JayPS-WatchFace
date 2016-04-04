@@ -4,6 +4,9 @@
 #include "pebblebike.h"
 #include "communication.h"
 #include "screen_config.h"
+#if LOCALIZE
+  #include "localize.h"
+#endif
 
 #ifdef PBL_PLATFORM_APLITE
   ///todo remove me
@@ -81,24 +84,24 @@ void init_settings_window()
   // Section "Actions"
   i = 0;
   menu_section0_items[i++] = (SimpleMenuItem) {
-    .title = (s_data.state == STATE_STOP) ? "Start GPS" : "Stop GPS",
+    .title = (s_data.state == STATE_STOP) ? _("Start GPS") : _("Stop GPS"),
     .callback = &menu_start_stop_data_callback,
   };
   menu_section0_items[i++] = (SimpleMenuItem) {
-    .title = "Reset data",
-    .subtitle = "distance, time, ascent...",
+    .title = _("Reset data"),
+    .subtitle = _("distance, time, ascent..."),
     .callback = &menu_reset_data_callback,
   };
   if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_ALTITUDE) {
     menu_section0_items[i++] = (SimpleMenuItem) {
-      .title = "Configure screen",
-      .subtitle = "Change fields",
+      .title = _("Configure screen"),
+      .subtitle = _("Change fields"),
       .callback = &menu_configure_screen,
     };
   }
   // Header
   menu_sections[s++] = (SimpleMenuSection) {
-    .title = "Actions",
+    .title = _("Actions"),
     .items = menu_section0_items,
     .num_items = i
   };
@@ -121,7 +124,7 @@ void init_settings_window()
     };
     // Header
     menu_sections[s++] = (SimpleMenuSection) {
-      .title = "OruxMap Integration",
+      .title = _("OruxMap Integration"),
       .items = menu_section_orux_items,
       .num_items = ARRAY_LENGTH(menu_section_orux_items)
     };
@@ -131,24 +134,24 @@ void init_settings_window()
     // Section "Buttons"
     i = 0;
     menu_section1_items[i++] = (SimpleMenuItem) {
-      .title = "Up",
-      .subtitle = "Start/stop GPS",
+      .title = _("Up"),
+      .subtitle = _("Start/stop GPS"),
     };
     menu_section1_items[i++] = (SimpleMenuItem) {
-      .title = "Middle",
-      .subtitle = "Change screen",
+      .title = _("Middle"),
+      .subtitle = _("Change screen"),
     };
     menu_section1_items[i++] = (SimpleMenuItem) {
-      .title = "Down",
-      .subtitle = "Menu / Zoom (map)",
+      .title = _("Down"),
+      .subtitle = _("Menu / Zoom (map)"),
     };
     menu_section1_items[i++] = (SimpleMenuItem) {
-      .title = "Back",
-      .subtitle = "Double click to exit",
+      .title = _("Back"),
+      .subtitle = _("Double click to exit"),
     };
     // Header
     menu_sections[s++] = (SimpleMenuSection) {
-      .title = "Buttons",
+      .title = _("Buttons"),
       .items = menu_section1_items,
       .num_items = ARRAY_LENGTH(menu_section1_items)
     };
@@ -162,18 +165,18 @@ void init_settings_window()
     .subtitle = VERSION_TEXT,
   };
   menu_section2_items[i++] = (SimpleMenuItem) {
-    .title = "Authors",
+    .title = _("Authors"),
     .subtitle = APP_COMPANY,
   };
   menu_section2_items[i++] = (SimpleMenuItem) {
-    .title = "More info",
+    .title = _("More info"),
     .subtitle = "http://pebblebike.com",
   };
 
   BatteryChargeState charge_state = battery_state_service_peek();
   snprintf(pebble_battery_level, sizeof(pebble_battery_level), "%d %%", charge_state.charge_percent);
   menu_section2_items[i++] = (SimpleMenuItem) {
-    .title = "Pebble battery",
+    .title = _("Pebble battery"),
     .subtitle = pebble_battery_level,
   };
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "phone_battery_level:%ld", s_data.phone_battery_level);
@@ -183,12 +186,12 @@ void init_settings_window()
     snprintf(phone_battery_level, sizeof(phone_battery_level), "-");
   }
   menu_section2_items[i++] = (SimpleMenuItem) {
-    .title = "Phone battery",
+    .title = _("Phone battery"),
     .subtitle = phone_battery_level,
   };
   // Header
   menu_sections[s++] = (SimpleMenuSection) {
-    .title = "About",
+    .title = _("About"),
     .items = menu_section2_items,
     .num_items = ARRAY_LENGTH(menu_section2_items)
   };

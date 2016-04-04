@@ -5,6 +5,9 @@
 #include "screens.h"
 #include "buttons.h"
 #include "screen_config.h"
+#if LOCALIZE
+  #include "localize.h"
+#endif
 #ifdef PBL_HEALTH
   #include "health.h"
 #endif
@@ -59,47 +62,90 @@ uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     //FIELD_TIME,
     FIELD__UNUSED,
 };
+uint8_t config_order_fr[CONFIG_NB_FIELD_ORDER] = {
+    FIELD_ALTITUDE,
+    FIELD_ALTITUDE_GRAPH_ONLY,
+#ifdef PBL_COLOR
+    FIELD_ALTITUDE_DATA_AND_GRAPH,
+#endif
+    FIELD_CADENCE,
+    FIELD_HEARTRATE,
+    FIELD_HEARTRATE_GRAPH_ONLY,
+#ifdef PBL_COLOR
+    FIELD_HEARTRATE_DATA_AND_GRAPH,
+#endif
+    FIELD_ASCENT,
+    FIELD_ASCENTRATE,
+    FIELD_ASCENTRATE_GRAPH_ONLY,
+#ifdef PBL_COLOR
+    FIELD_ASCENTRATE_DATA_AND_GRAPH,
+#endif
+    FIELD_BEARING,
+    FIELD_DISTANCE,
+    FIELD_DURATION,
+    //FIELD_LAT,
+    //FIELD_LON,
+    //FIELD_NBASCENT,
+#ifdef PBL_HEALTH
+    FIELD_STEPS,
+    FIELD_STEPS_CADENCE,
+#endif
+    FIELD_SLOPE,
+    FIELD_ACCURACY,
+    FIELD_SPEED,
+    FIELD_SPEED_GRAPH_ONLY,
+#ifdef PBL_COLOR
+    FIELD_SPEED_DATA_AND_GRAPH,
+#endif
+    FIELD_MAXSPEED,
+    FIELD_AVGSPEED,
+    FIELD_TEMPERATURE,
+    //FIELD_TIME,
+    FIELD__UNUSED,
+};
 
 ConfigData config;
 
 const char *field_get_title(uint8_t field) {
   switch(field) {
-    case FIELD_AVGSPEED: return "Avg speed"; break;
-    case FIELD_DISTANCE: return "Distance"; break;
-    case FIELD_ALTITUDE: return "Altitude data"; break;
-    case FIELD_ALTITUDE_DATA_AND_GRAPH: return "Altitude all"; break;
-    case FIELD_ALTITUDE_GRAPH_ONLY: return "Altitude graph"; break;
-    case FIELD_ASCENT: return "Ascent"; break;
-    case FIELD_SPEED: return "Speed data"; break;
+    case FIELD_AVGSPEED: return _("Avg speed"); break;
+    case FIELD_DISTANCE: return _("Distance"); break;
+    case FIELD_ALTITUDE: return _("Altitude"); break;
 #ifdef PBL_COLOR
-    case FIELD_SPEED_DATA_AND_GRAPH: return "Speed all"; break;
+    case FIELD_ALTITUDE_DATA_AND_GRAPH: return _("Altitude all"); break;
 #endif
-    case FIELD_SPEED_GRAPH_ONLY: return "Speed graph"; break;
-    case FIELD_BEARING: return "Bearing"; break;
-    case FIELD_DURATION: return "Duration"; break;
-    case FIELD_MAXSPEED: return "Max speed"; break;
+    case FIELD_ALTITUDE_GRAPH_ONLY: return _("Altitude graph"); break;
+    case FIELD_ASCENT: return _("Ascent"); break;
+    case FIELD_SPEED: return _("Speed"); break;
+#ifdef PBL_COLOR
+    case FIELD_SPEED_DATA_AND_GRAPH: return _("Speed all"); break;
+#endif
+    case FIELD_SPEED_GRAPH_ONLY: return _("Speed graph"); break;
+    case FIELD_BEARING: return _("Bearing"); break;
+    case FIELD_DURATION: return _("Duration"); break;
+    case FIELD_MAXSPEED: return _("Max speed"); break;
     //case FIELD_LAT: return "Lat"; break;
     //case FIELD_LON: return "Lon"; break;
-    case FIELD_ASCENTRATE: return "Ascent rate data"; break;
+    case FIELD_ASCENTRATE: return _("Ascent rate"); break;
 #ifdef PBL_COLOR
-    case FIELD_ASCENTRATE_DATA_AND_GRAPH: return "Ascent rate all"; break;
+    case FIELD_ASCENTRATE_DATA_AND_GRAPH: return _("Ascent rate all"); break;
 #endif
-    case FIELD_ASCENTRATE_GRAPH_ONLY: return "Ascent rate graph"; break;
+    case FIELD_ASCENTRATE_GRAPH_ONLY: return _("Ascent rate graph"); break;
     //case FIELD_NBASCENT: return "Nb ascent"; break;
-    case FIELD_SLOPE: return "Slope"; break;
-    case FIELD_ACCURACY: return "Accuracy"; break;
-    case FIELD_HEARTRATE: return "Heartrate data"; break;
+    case FIELD_SLOPE: return _("Slope"); break;
+    case FIELD_ACCURACY: return _("Accuracy"); break;
+    case FIELD_HEARTRATE: return _("Heartrate"); break;
 #ifdef PBL_COLOR
-    case FIELD_HEARTRATE_DATA_AND_GRAPH: return "Heartrate all"; break;
+    case FIELD_HEARTRATE_DATA_AND_GRAPH: return _("Heartrate all"); break;
 #endif
-    case FIELD_HEARTRATE_GRAPH_ONLY: return "Heartrate graph"; break;
-    case FIELD_CADENCE: return "Cadence"; break;
-    case FIELD_TEMPERATURE: return "Temperature"; break;
+    case FIELD_HEARTRATE_GRAPH_ONLY: return _("Heartrate graph"); break;
+    case FIELD_CADENCE: return _("Cadence"); break;
+    case FIELD_TEMPERATURE: return _("Temperature"); break;
 #ifdef PBL_HEALTH
-    case FIELD_STEPS: return "Steps"; break;
-    case FIELD_STEPS_CADENCE: return "Steps cadence"; break;
+    case FIELD_STEPS: return _("Steps"); break;
+    case FIELD_STEPS_CADENCE: return _("Steps cadence"); break;
 #endif
-    default: return "Unknown";
+    default: return _("Unknown");
   }
 }
 const char *field_get_text(uint8_t field) {
@@ -169,7 +215,7 @@ const char *field_get_units(uint8_t field) {
     case FIELD_CADENCE: return "rpm"; break;
     case FIELD_TEMPERATURE: return s_data.unitsTemperature; break;
 #ifdef PBL_HEALTH
-    case FIELD_STEPS: return "steps"; break;
+    case FIELD_STEPS: return _("steps"); break;
     case FIELD_STEPS_CADENCE: return "spm"; break;
 #endif
     default: return "";
@@ -235,7 +281,24 @@ static void config_timer_callback(void *data) {
   config_timer = app_timer_register(config_hidden ? 200 : 1000, config_timer_callback, NULL);
   config_change_visibility(cur_fieldlayer, config_hidden);
 }
+
 void config_start() {
+#ifdef LOCALIZE_FORCE_FR
+  //hard-coded for testing
+  const char* locale_str = "fr";
+#else
+  // Detect system locale
+  const char* locale_str = i18n_get_system_locale();
+#endif
+  if (strncmp(locale_str, "fr", 2) == 0) {
+    memcpy(config_order, config_order_fr, sizeof(uint8_t) * CONFIG_NB_FIELD_ORDER);
+    #ifdef LOCALIZE_FORCE_FR
+    for(int i=0; i< CONFIG_NB_FIELD_ORDER; i++) {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "%d:%s", i, field_get_title(config_order[i]));
+    }
+    #endif
+  }
+
 #ifdef PBL_HEALTH
   health_init();
 #endif

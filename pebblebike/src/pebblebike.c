@@ -1,8 +1,10 @@
 #include "pebble.h"
 #include <stdint.h>
 #include <string.h>
-
 #include "config.h"
+#if LOCALIZE
+  #include "localize.h"
+#endif
 #include "pebblebike.h"
 #include "communication.h"
 #ifdef PBL_HEALTH
@@ -148,6 +150,10 @@ void bt_callback(bool connected) {
 static void init(void) {
 
   config_load();
+
+#if LOCALIZE
+  locale_init();
+#endif
 
   s_data.phone_battery_level = -1;
 
