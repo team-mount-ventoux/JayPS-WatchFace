@@ -15,7 +15,7 @@ FieldLayer *cur_fieldlayer;
 bool config_hidden = false;
 static AppTimer *config_timer;
 uint8_t config_screen = CONFIG_SCREEN_DISABLED;
-uint8_t config_field = CONFIG_FIELD_SCREEN_A__MIN;
+uint8_t config_field = CONFIG_FIELD_SCREEN__MIN;
 
 #define CONFIG_NB_FIELD_ORDER 25
 uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
@@ -218,12 +218,6 @@ void screen_speed_update_config(bool change_page) {
     field_set_text(s_data.screenSpeed_layer.field_bottom_right, s_data.screenB_config.field_bottom_right.type, GTextAlignmentCenter);
   }
 }
-void screen_altitude_update_config() {
-//  field_set_text(s_data.screenSpeed_layer.field_top, s_data.screenA_config.field_top.type, GTextAlignmentRight);
-//  field_set_text(s_data.screenSpeed_layer.field_top2, s_data.screenA_config.field_top2.type, GTextAlignmentRight);
-//  field_set_text(s_data.screenSpeed_layer.field_bottom_left, s_data.screenA_config.field_bottom_left.type, GTextAlignmentCenter);
-//  field_set_text(s_data.screenSpeed_layer.field_bottom_right, s_data.screenA_config.field_bottom_right.type, GTextAlignmentCenter);
-}
 
 void config_change_visibility(FieldLayer* field_layer, bool hidden) {
 //  if (field_layer->title_layer != NULL) {
@@ -247,14 +241,13 @@ void config_start() {
 #endif
   if (s_data.page_number == PAGE_SPEED) {
     config_screen = CONFIG_SCREEN_A;
-    config_field = CONFIG_FIELD_SCREEN_A_TOP;
+    config_field = CONFIG_FIELD_SCREEN_TOP;
     cur_fieldconfig = &s_data.screenA_config.field_top;
     screen_speed_update_config(false);
   } else if (s_data.page_number == PAGE_ALTITUDE) {
     config_screen = CONFIG_SCREEN_B;
-    config_field = CONFIG_FIELD_SCREEN_B_TOP;
+    config_field = CONFIG_FIELD_SCREEN_TOP;
     cur_fieldconfig = &s_data.screenB_config.field_top;
-    //screen_altitude_update_config();
     ///todo
     screen_speed_update_config(false);
   } else {
@@ -291,20 +284,17 @@ void config_stop() {
 void config_change_field() {
   config_change_visibility(cur_fieldlayer, false);
   config_field++;
-  if (config_screen == CONFIG_SCREEN_A && config_field == CONFIG_FIELD_SCREEN_A__MAX) {
-    config_field = CONFIG_FIELD_SCREEN_A__MIN;
-  } else if (config_screen == CONFIG_SCREEN_B && config_field == CONFIG_FIELD_SCREEN_B__MAX) {
-    config_field = CONFIG_FIELD_SCREEN_B__MIN;
+  if (config_screen == CONFIG_SCREEN_A && config_field == CONFIG_FIELD_SCREEN__MAX) {
+    config_field = CONFIG_FIELD_SCREEN__MIN;
+  } else if (config_screen == CONFIG_SCREEN_B && config_field == CONFIG_FIELD_SCREEN__MAX) {
+    config_field = CONFIG_FIELD_SCREEN__MIN;
   }
+  ScreenConfig *screen_config = config_screen == CONFIG_SCREEN_A ? &s_data.screenA_config : &s_data.screenB_config;
   switch (config_field) {
-    case CONFIG_FIELD_SCREEN_A_TOP:           cur_fieldconfig = &s_data.screenA_config.field_top; cur_fieldlayer = &s_data.screenSpeed_layer.field_top; break;
-    case CONFIG_FIELD_SCREEN_A_TOP2:          cur_fieldconfig = &s_data.screenA_config.field_top2; cur_fieldlayer = &s_data.screenSpeed_layer.field_top2; break;
-    case CONFIG_FIELD_SCREEN_A_BOTTOM_LEFT:   cur_fieldconfig = &s_data.screenA_config.field_bottom_left; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_left; break;
-    case CONFIG_FIELD_SCREEN_A_BOTTOM_RIGHT:  cur_fieldconfig = &s_data.screenA_config.field_bottom_right; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_right; break;
-    case CONFIG_FIELD_SCREEN_B_TOP:      cur_fieldconfig = &s_data.screenB_config.field_top; cur_fieldlayer = &s_data.screenSpeed_layer.field_top; break;
-    case CONFIG_FIELD_SCREEN_B_TOP2:     cur_fieldconfig = &s_data.screenB_config.field_top2; cur_fieldlayer = &s_data.screenSpeed_layer.field_top2; break;
-    case CONFIG_FIELD_SCREEN_B_BOTTOM_LEFT:   cur_fieldconfig = &s_data.screenB_config.field_bottom_left; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_left; break;
-    case CONFIG_FIELD_SCREEN_B_BOTTOM_RIGHT:  cur_fieldconfig = &s_data.screenB_config.field_bottom_right; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_right; break;
+    case CONFIG_FIELD_SCREEN_TOP:           cur_fieldconfig = &screen_config->field_top;          cur_fieldlayer = &s_data.screenSpeed_layer.field_top; break;
+    case CONFIG_FIELD_SCREEN_TOP2:          cur_fieldconfig = &screen_config->field_top2;         cur_fieldlayer = &s_data.screenSpeed_layer.field_top2; break;
+    case CONFIG_FIELD_SCREEN_BOTTOM_LEFT:   cur_fieldconfig = &screen_config->field_bottom_left;  cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_left; break;
+    case CONFIG_FIELD_SCREEN_BOTTOM_RIGHT:  cur_fieldconfig = &screen_config->field_bottom_right; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_right; break;
   }
 
   config_change_visibility(cur_fieldlayer, true);
@@ -372,11 +362,11 @@ void config_previous_type_graph(bool can_display_graph) {
 void config_change_type(uint8_t direction) {
   LOG_ENTER();
   if (direction == CONFIG_CHANGE_TYPE_NEXT) {
-    config_next_type_graph(config_field == CONFIG_FIELD_SCREEN_A_TOP2 || config_field == CONFIG_FIELD_SCREEN_B_TOP2);
+    config_next_type_graph(config_field == CONFIG_FIELD_SCREEN_TOP2);
     cur_fieldconfig->type = config_order[cur_fieldconfig->type_index];
   } else {
     // CONFIG_CHANGE_TYPE_PREVIOUS
-    config_previous_type_graph(config_field == CONFIG_FIELD_SCREEN_A_TOP2 || config_field == CONFIG_FIELD_SCREEN_B_TOP2);
+    config_previous_type_graph(config_field == CONFIG_FIELD_SCREEN_TOP2);
     cur_fieldconfig->type = config_order[cur_fieldconfig->type_index];
   }
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: type %d", cur_fieldconfig->type_index, cur_fieldconfig->type);
@@ -424,8 +414,8 @@ void config_save() {
   config.screenA_top2_type          = s_data.screenA_config.field_top2.type;
   config.screenA_bottom_left_type   = s_data.screenA_config.field_bottom_left.type;
   config.screenA_bottom_right_type  = s_data.screenA_config.field_bottom_right.type;
-  config.screenB_top_type      = s_data.screenB_config.field_top.type;
-  config.screenB_top2_type     = s_data.screenB_config.field_top2.type;
+  config.screenB_top_type           = s_data.screenB_config.field_top.type;
+  config.screenB_top2_type          = s_data.screenB_config.field_top2.type;
   config.screenB_bottom_left_type   = s_data.screenB_config.field_bottom_left.type;
   config.screenB_bottom_right_type  = s_data.screenB_config.field_bottom_right.type;
   persist_write_data(PERSIST_CONFIG_KEY, &config, sizeof(config));
