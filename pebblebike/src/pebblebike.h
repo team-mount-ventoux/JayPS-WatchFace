@@ -211,7 +211,7 @@ typedef struct AppData {
   char slope[8];
   char accuracy[5];
   char bearing[4];
-  char elapsedtime[8];
+  char elapsedtime[9]; // xx:xx:xx, \0 terminated
   char maxspeed[8];
   //char lat[8];
   //char lon[8];
