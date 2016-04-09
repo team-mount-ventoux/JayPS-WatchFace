@@ -257,8 +257,10 @@ typedef struct LiveData {
   LiveFriendData friends[NUM_LIVE_FRIENDS];
   LiveFriendData *sorted_friends[NUM_LIVE_FRIENDS];
 } LiveData;
-
-extern GFont font_roboto_bold_16, font_roboto_bold_62;
+#ifdef PBL_PLATFORM_CHALK
+extern GFont font_roboto_bold_16;
+#endif
+extern GFont font_roboto_bold_62;
 extern AppData s_data;
 extern GPSData s_gpsdata;
 extern LiveData s_live;

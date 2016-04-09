@@ -91,9 +91,9 @@ void topbar_layer_init(Window* window) {
   layer_add_child(window_get_root_layer(window), s_data.topbar_layer.layer);
 
   // time (centered in top bar)
-  s_data.topbar_layer.time_layer = text_layer_create(GRect(PAGE_OFFSET_X, PBL_IF_ROUND_ELSE(6,-1), PAGE_W, 19));
+  s_data.topbar_layer.time_layer = text_layer_create(GRect(PAGE_OFFSET_X, PBL_IF_ROUND_ELSE(6,-8), PAGE_W, PBL_IF_ROUND_ELSE(19,25)));
   text_layer_set_background_color(s_data.topbar_layer.time_layer, COLOR_TOP_BAR);
-  set_layer_attr_full(s_data.topbar_layer.time_layer, s_data.time, font_roboto_bold_16, GTextAlignmentCenter, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
+  set_layer_attr_full(s_data.topbar_layer.time_layer, s_data.time, PBL_IF_ROUND_ELSE(font_roboto_bold_16, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD)), GTextAlignmentCenter, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
 
   // bluetooth icon
   s_data.topbar_layer.bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
@@ -108,8 +108,8 @@ void topbar_layer_init(Window* window) {
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !bluetooth_connection_service_peek());
 
   // accuracy (1/3, right)
-  s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(PAGE_W - 18 - PBL_IF_ROUND_ELSE(15, 0), PBL_IF_ROUND_ELSE(6,-1), 18, 19));
-  set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, font_roboto_bold_16, GTextAlignmentRight, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
+  s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(PAGE_W - 18 - PBL_IF_ROUND_ELSE(15, 0), PBL_IF_ROUND_ELSE(6,-8), 18, PBL_IF_ROUND_ELSE(19,25)));
+  set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, PBL_IF_ROUND_ELSE(font_roboto_bold_16, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD)), GTextAlignmentRight, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
   layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), s_data.state == STATE_STOP);
 }
 

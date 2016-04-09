@@ -22,7 +22,10 @@
 #include "screen_config.h"
 #include "graph.h"
 
-GFont font_roboto_bold_16, font_roboto_bold_62;
+#ifdef PBL_PLATFORM_CHALK
+GFont font_roboto_bold_16;
+#endif
+GFont font_roboto_bold_62;
 
 AppData s_data;
 GPSData s_gpsdata;
@@ -145,31 +148,6 @@ void bt_callback(bool connected) {
 }
 
 static void init(void) {
-
-  config_load();
-
-#if LOCALIZE
-  locale_init();
-#endif
-
-  s_data.phone_battery_level = -1;
-
-  font_roboto_bold_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16));
-  font_roboto_bold_62 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_62));
-  s_gpsdata.heartrate = 255; // no data at startup
-
-  // set default unit of measure
-  change_units(UNITS_IMPERIAL, true);
-  
-  buttons_init();
-
-  s_data.window = window_create();
-  window_set_background_color(s_data.window, BG_COLOR_WINDOW);
-#ifdef PBL_SDK_2
-  window_set_fullscreen(s_data.window, true);
-#endif
-  topbar_layer_init(s_data.window);
-
 #ifdef DEBUG_FIELDS_SIZE
   strcpy(s_data.speed, "188.8");
   strcpy(s_data.distance, "88.8");
@@ -192,6 +170,7 @@ static void init(void) {
   strcpy(s_data.altitude, "1139");
   strcpy(s_data.accuracy, "4");
   s_data.live = 1;
+  s_data.state = STATE_START;
 #else
   strcpy(s_data.speed, "0.0");
   strcpy(s_data.distance, "-");
@@ -211,6 +190,32 @@ static void init(void) {
   //strcpy(s_data.lon, "-");
   //strcpy(s_data.nbascent, "-");
 
+  config_load();
+
+#if LOCALIZE
+  locale_init();
+#endif
+
+  s_data.phone_battery_level = -1;
+
+#ifdef PBL_PLATFORM_CHALK
+  font_roboto_bold_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16));
+#endif
+  font_roboto_bold_62 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_62));
+  s_gpsdata.heartrate = 255; // no data at startup
+
+  // set default unit of measure
+  change_units(UNITS_IMPERIAL, true);
+
+  buttons_init();
+
+  s_data.window = window_create();
+  window_set_background_color(s_data.window, BG_COLOR_WINDOW);
+#ifdef PBL_SDK_2
+  window_set_fullscreen(s_data.window, true);
+#endif
+  topbar_layer_init(s_data.window);
+
   screen_speed_layer_init(s_data.window);
   //screen_altitude_layer_init(s_data.window);
 #if FUNCTION_LIVE
@@ -219,7 +224,9 @@ static void init(void) {
   screen_map_layer_init(s_data.window);
 
   #if PRODUCTION
-    screen_reset_instant_data();
+    #if !DEMO
+      screen_reset_instant_data();
+    #endif
   #endif
 
   action_bar_init(s_data.window);
@@ -267,7 +274,9 @@ static void deinit(void) {
 
   buttons_deinit();
 
+#ifdef PBL_PLATFORM_CHALK
   fonts_unload_custom_font(font_roboto_bold_16);
+#endif
   fonts_unload_custom_font(font_roboto_bold_62);
   window_destroy(s_data.window);
 #endif
