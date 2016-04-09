@@ -19,7 +19,7 @@ static Window *window;
 static SimpleMenuLayer *menu_layer;
 static SimpleMenuSection menu_sections[4]; // Sections
 static SimpleMenuItem menu_section0_items[3]; // Section Actions
-#if ORUXMAP
+#if ORUXMAPS
   static SimpleMenuItem menu_section_orux_items[3]; // Section OruxMap
 #endif
 #if MENU_HELP_BUTTONS
@@ -41,7 +41,7 @@ void handle_appear(Window *window)
   // todo sdk2
   //scroll_layer_set_frame(&menu_layer.menu.scroll_layer, window->layer.bounds);
 }
-#if ORUXMAP
+#if ORUXMAPS
 void menu_orux_callback(int index, void *context) {
   switch (index) {
   case 0:
@@ -106,25 +106,25 @@ void init_settings_window()
     .num_items = i
   };
 
-#if ORUXMAP
+#if ORUXMAPS
     // Section "Orux"
     i = 0;
     menu_section_orux_items[i++] = (SimpleMenuItem) {
-      .title = "Start OruxMap",
-      .subtitle = "Continue previous track",
+      .title = _("Start OruxMaps"),
+      .subtitle = _("Continue previous track"),
       .callback = &menu_orux_callback,
     };
     menu_section_orux_items[i++] = (SimpleMenuItem) {
-      .title = "Stop OruxMap",
+      .title = _("Stop OruxMaps"),
       .callback = &menu_orux_callback,
     };
     menu_section_orux_items[i++] = (SimpleMenuItem) {
-      .title = "Add waypoint",
+      .title = _("Add waypoint"),
       .callback = &menu_orux_callback,
     };
     // Header
     menu_sections[s++] = (SimpleMenuSection) {
-      .title = _("OruxMap Integration"),
+      .title = _("OruxMaps Integration"),
       .items = menu_section_orux_items,
       .num_items = ARRAY_LENGTH(menu_section_orux_items)
     };
@@ -143,7 +143,7 @@ void init_settings_window()
     };
     menu_section1_items[i++] = (SimpleMenuItem) {
       .title = _("Down"),
-      .subtitle = _("Menu / Zoom (map)"),
+      .subtitle = _("Menu / Zoom map"),
     };
     menu_section1_items[i++] = (SimpleMenuItem) {
       .title = _("Back"),

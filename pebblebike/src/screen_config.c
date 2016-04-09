@@ -62,47 +62,6 @@ uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     //FIELD_TIME,
     FIELD__UNUSED,
 };
-uint8_t config_order_fr[CONFIG_NB_FIELD_ORDER] = {
-    FIELD_ALTITUDE,
-    FIELD_ALTITUDE_GRAPH_ONLY,
-#ifdef PBL_COLOR
-    FIELD_ALTITUDE_DATA_AND_GRAPH,
-#endif
-    FIELD_CADENCE,
-    FIELD_HEARTRATE,
-    FIELD_HEARTRATE_GRAPH_ONLY,
-#ifdef PBL_COLOR
-    FIELD_HEARTRATE_DATA_AND_GRAPH,
-#endif
-    FIELD_ASCENT,
-    FIELD_ASCENTRATE,
-    FIELD_ASCENTRATE_GRAPH_ONLY,
-#ifdef PBL_COLOR
-    FIELD_ASCENTRATE_DATA_AND_GRAPH,
-#endif
-    FIELD_BEARING,
-    FIELD_DISTANCE,
-    FIELD_DURATION,
-    //FIELD_LAT,
-    //FIELD_LON,
-    //FIELD_NBASCENT,
-#ifdef PBL_HEALTH
-    FIELD_STEPS,
-    FIELD_STEPS_CADENCE,
-#endif
-    FIELD_SLOPE,
-    FIELD_ACCURACY,
-    FIELD_SPEED,
-    FIELD_SPEED_GRAPH_ONLY,
-#ifdef PBL_COLOR
-    FIELD_SPEED_DATA_AND_GRAPH,
-#endif
-    FIELD_MAXSPEED,
-    FIELD_AVGSPEED,
-    FIELD_TEMPERATURE,
-    //FIELD_TIME,
-    FIELD__UNUSED,
-};
 
 ConfigData config;
 
@@ -291,7 +250,18 @@ void config_start() {
   const char* locale_str = i18n_get_system_locale();
 #endif
   if (strncmp(locale_str, "fr", 2) == 0) {
-    memcpy(config_order, config_order_fr, sizeof(uint8_t) * CONFIG_NB_FIELD_ORDER);
+    // sort config_order by title
+    // the algo is not optimised (O(n²)) but it should be a problem because CONFIG_NB_FIELD_ORDER is low
+    uint8_t tmp;
+    for (int i = 0; i < CONFIG_NB_FIELD_ORDER - 1; i++) {
+      for (int j = i + 1; j < CONFIG_NB_FIELD_ORDER - 1; j++) {
+        if (strcmp(field_get_title(config_order[j]), field_get_title(config_order[i])) < 0) {
+          tmp = config_order[i];
+          config_order[i] = config_order[j];
+          config_order[j] = tmp;
+        }
+      }
+    }
     #ifdef LOCALIZE_FORCE_FR
     for(int i=0; i< CONFIG_NB_FIELD_ORDER; i++) {
       APP_LOG(APP_LOG_LEVEL_DEBUG, "%d:%s", i, field_get_title(config_order[i]));

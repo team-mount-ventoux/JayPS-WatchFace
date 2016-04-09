@@ -20,7 +20,7 @@
   #define DEMO true
 #endif
 
-#define ORUXMAP true
+#define ORUXMAPS true
 #define LOCALIZE true
 #if LOCALIZE
   //#define LOCALIZE_FORCE_FR true
