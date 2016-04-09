@@ -37,7 +37,7 @@ static void health_handler(HealthEventType event, void *context) {
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "cal:%d", health_get_metric_sum(HealthMetricActiveKCalories));
 
   //todo add function to mark current page dirty
-  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_ALTITUDE) {
+  if (s_data.data_subpage != SUBPAGE_UNDEF) {
     layer_mark_dirty(s_data.page_speed);
   }
 }

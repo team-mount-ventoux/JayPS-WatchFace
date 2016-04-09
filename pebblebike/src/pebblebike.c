@@ -105,7 +105,7 @@ void change_units(uint8_t units, bool first_time) {
     layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_bottom_left.unit_layer));
     layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_bottom_right.unit_layer));
   }
-  if (s_data.page_number == PAGE_SPEED) {
+  if (s_data.data_subpage != SUBPAGE_UNDEF) {
     strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
   }
 }

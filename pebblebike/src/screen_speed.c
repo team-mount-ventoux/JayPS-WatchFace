@@ -61,7 +61,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   };
   graph_draw(ctx, GRECT_GRAPH, &heartrates, colors_heartrates, s_data.screenSpeed_layer.field_top2.data_layer, 1);
 #else
-  if (s_data.screenA_config.field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH || s_data.screenA_config.field_top2.type == FIELD_HEARTRATE_GRAPH_ONLY) {
+  if (s_data.screen_config[0].field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH || s_data.screen_config[0].field_top2.type == FIELD_HEARTRATE_GRAPH_ONLY) {
     GraphRange colors_heartrates[3] = {
         {.min = 0,   .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 80, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
@@ -69,35 +69,35 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
     };
     graph_draw(ctx, GRECT_GRAPH, &graph_heartrates, colors_heartrates, FIELD_HEARTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 0);
     //layer_set_hidden(text_layer_get_layer(s_data.screenSpeed_layer.field_top2.unit_layer), true);
-  } else if (s_data.screenA_config.field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH || s_data.screenA_config.field_top2.type == FIELD_ALTITUDE_GRAPH_ONLY) {
+  } else if (s_data.screen_config[0].field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH || s_data.screen_config[0].field_top2.type == FIELD_ALTITUDE_GRAPH_ONLY) {
     GraphRange colors_altitudes[3] = {
         {.min = 100, .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 200, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 300, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_altitudes, colors_altitudes, s_data.screenA_config.field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10);
-  } else if (s_data.screenA_config.field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH || s_data.screenA_config.field_top2.type == FIELD_ASCENTRATE_GRAPH_ONLY) {
+    graph_draw(ctx, GRECT_GRAPH, &graph_altitudes, colors_altitudes, s_data.screen_config[0].field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10);
+  } else if (s_data.screen_config[0].field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH || s_data.screen_config[0].field_top2.type == FIELD_ASCENTRATE_GRAPH_ONLY) {
     GraphRange colors_ascentrates[3] = {
         {.min = 300, .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 600, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 900, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_ascentrates, colors_ascentrates, s_data.screenA_config.field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10);
-  } else if (s_data.screenA_config.field_top2.type == FIELD_SPEED_DATA_AND_GRAPH || s_data.screenA_config.field_top2.type == FIELD_SPEED_GRAPH_ONLY) {
+    graph_draw(ctx, GRECT_GRAPH, &graph_ascentrates, colors_ascentrates, s_data.screen_config[0].field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10);
+  } else if (s_data.screen_config[0].field_top2.type == FIELD_SPEED_DATA_AND_GRAPH || s_data.screen_config[0].field_top2.type == FIELD_SPEED_GRAPH_ONLY) {
     GraphRange colors_speeds[3] = {
         {.min = 0, .color = PBL_IF_COLOR_ELSE(GColorYellow, GColorBlack)},
         {.min = 0.9 * s_gpsdata.avgspeed100/10, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 1.1 * s_gpsdata.avgspeed100/10, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_speeds, colors_speeds, s_data.screenA_config.field_top2.type == FIELD_SPEED_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 1);
+    graph_draw(ctx, GRECT_GRAPH, &graph_speeds, colors_speeds, s_data.screen_config[0].field_top2.type == FIELD_SPEED_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 1);
   }
 #endif
 }
 void screen_speed_layer_init(Window* window) {
-  config_affect_type(&s_data.screenA_config.field_top, config.screenA_top_type);
-  config_affect_type(&s_data.screenA_config.field_top2, config.screenA_top2_type);
-  config_affect_type(&s_data.screenA_config.field_bottom_left, config.screenA_bottom_left_type);
-  config_affect_type(&s_data.screenA_config.field_bottom_right, config.screenA_bottom_right_type);
+  config_affect_type(&s_data.screen_config[0].field_top, config.screenA_top_type);
+  config_affect_type(&s_data.screen_config[0].field_top2, config.screenA_top2_type);
+  config_affect_type(&s_data.screen_config[0].field_bottom_left, config.screenA_bottom_left_type);
+  config_affect_type(&s_data.screen_config[0].field_bottom_right, config.screenA_bottom_right_type);
 
   s_data.page_speed = layer_create(PAGE_GRECT);
   layer_add_child(window_get_root_layer(window), s_data.page_speed);
@@ -161,14 +161,6 @@ void screen_speed_deinit() {
 }
 
 void screen_speed_show_speed(bool force_units) {
-  /*
-  TODO(config)
-  if (s_data.page_number != PAGE_SPEED && s_data.page_number != PAGE_HEARTRATE) {
-    // nothing to do here
-    return;
-  }*/
-
-
   if (0) {
 #if ROTATION
   } else if (rotation == ROTATION_HEARTRATE) {
@@ -202,13 +194,13 @@ static void rotation_timer_callback(void *data) {
     rotation = ROTATION_MIN;
   }
    if (rotation == ROTATION_MIN) {
-     s_data.screenA_config.field_top.type = FIELD_SPEED;
-     s_data.screenA_config.field_bottom_left.type = FIELD_DISTANCE;
-     s_data.screenA_config.field_bottom_right.type = FIELD_AVGSPEED;
+     s_data.screen_config[0].field_top.type = FIELD_SPEED;
+     s_data.screen_config[0].field_bottom_left.type = FIELD_DISTANCE;
+     s_data.screen_config[0].field_bottom_right.type = FIELD_AVGSPEED;
   } else {
-    s_data.screenA_config.field_top.type = FIELD_ALTITUDE;
-    s_data.screenA_config.field_bottom_left.type = FIELD_ASCENT;
-    s_data.screenA_config.field_bottom_right.type = FIELD_DISTANCE;
+    s_data.screen_config[0].field_top.type = FIELD_ALTITUDE;
+    s_data.screen_config[0].field_bottom_left.type = FIELD_ASCENT;
+    s_data.screen_config[0].field_bottom_right.type = FIELD_DISTANCE;
   }
   screen_speed_show_speed(true);
   screen_speed_update_config(true);

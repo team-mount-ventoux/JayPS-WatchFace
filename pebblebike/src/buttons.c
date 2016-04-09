@@ -70,8 +70,9 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
   if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_field();
   } else {
-    int prev_page_number = s_data.page_number;
+    uint8_t prev_page_number = s_data.page_number;
     s_data.page_number++;
+    s_data.data_subpage = SUBPAGE_UNDEF;
 
     if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
       s_data.page_number++;
@@ -86,7 +87,7 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
 #endif
     }
     if (s_data.page_number >= NUMBER_OF_PAGES) {
-      s_data.page_number = PAGE_FIRST;
+      s_data.page_number = PAGE_SPEED;
     }
 
     if (prev_page_number == PAGE_LIVE_TRACKING) {
@@ -101,11 +102,13 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
     }
     if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
+      s_data.data_subpage = s_data.page_number == PAGE_ALTITUDE ? SUBPAGE_B : SUBPAGE_A;
       title_instead_of_units = true;
       screen_speed_show_speed(true);
     }
     update_screens();
   }
+  LOG_DEBUG("page:%d sp:%d", s_data.page_number, s_data.data_subpage);
 }
 
 void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
@@ -201,7 +204,8 @@ void buttons_init() {
   menu_up_button = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_UP_BUTTON);
   menu_down_button = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MENU_DOWN_BUTTON);
   
-  s_data.page_number = PAGE_FIRST;
+  s_data.page_number = PAGE_SPEED;
+  s_data.data_subpage = SUBPAGE_A;
 }
 void buttons_deinit() {
   if (button_timer) {

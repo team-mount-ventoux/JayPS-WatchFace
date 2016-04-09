@@ -41,8 +41,12 @@
 #if PRODUCTION
   #define LOG_ENTER()
   #define LOG_EXIT()
+  #define LOG_INFO(...)
+  #define LOG_DEBUG(...)
 #else
   #define LOG_ENTER() APP_LOG(APP_LOG_LEVEL_DEBUG, "Enter %s", __FUNCTION__)
   #define LOG_EXIT() APP_LOG(APP_LOG_LEVEL_DEBUG, "Exit %s", __FUNCTION__)
+  #define LOG_INFO(args...) APP_LOG(APP_LOG_LEVEL_INFO, args);
+  #define LOG_DEBUG(args...) APP_LOG(APP_LOG_LEVEL_DEBUG, args);
 #endif
 #endif // CONFIG_H

@@ -380,7 +380,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             screen_map_update_location();
 
-            if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
+            if (s_data.data_subpage != SUBPAGE_UNDEF) {
                 layer_mark_dirty(s_data.page_speed);
             }
             if (s_data.page_number == PAGE_LIVE_TRACKING) {

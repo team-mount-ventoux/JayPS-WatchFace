@@ -61,7 +61,11 @@ enum {
   PAGE_LIVE_TRACKING = 3,
   PAGE_MAP = 4,
 };
-#define PAGE_FIRST PAGE_SPEED
+enum {
+  SUBPAGE_A = 0,
+  SUBPAGE_B = 1,
+  SUBPAGE_UNDEF = 20
+};
 enum {
   PERSIST_UNITS_KEY = 0x0,
   PERSIST_CONFIG_KEY = 0x1,
@@ -171,8 +175,7 @@ typedef struct AppData {
 
   ScreenLayer screenSpeed_layer;
 
-  ScreenConfig screenA_config;
-  ScreenConfig screenB_config;
+  ScreenConfig screen_config[2];
 
   //FieldLayer altitude_accuracy;
 
@@ -209,7 +212,8 @@ typedef struct AppData {
   uint8_t live;
   uint8_t debug;
   uint8_t refresh_code;
-  int page_number;
+  uint8_t page_number;
+  uint8_t data_subpage;
 
   int32_t android_version;
   int32_t phone_battery_level;

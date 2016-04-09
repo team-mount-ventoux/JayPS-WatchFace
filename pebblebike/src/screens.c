@@ -16,13 +16,7 @@ void update_screens() {
 #endif
   layer_set_hidden(s_data.page_map, true);
   window_set_background_color(s_data.window, BG_COLOR_WINDOW);
-  if (s_data.page_number == PAGE_SPEED) {
-    layer_set_hidden(s_data.page_speed, false);
-  }
-  if (s_data.page_number == PAGE_HEARTRATE) {
-    layer_set_hidden(s_data.page_speed, false);
-  }
-  if (s_data.page_number == PAGE_ALTITUDE) {
+  if (s_data.data_subpage != SUBPAGE_UNDEF) {
     layer_set_hidden(s_data.page_speed, false);
   }
 #if FUNCTION_LIVE
@@ -176,7 +170,7 @@ void screen_reset_instant_data() {
   strcpy(s_data.ascentrate, "0");
   strcpy(s_data.accuracy, "-");
 
-  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
+  if (s_data.data_subpage != SUBPAGE_UNDEF) {
     layer_mark_dirty(s_data.page_speed);
   }
 }
