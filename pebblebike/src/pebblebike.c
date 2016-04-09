@@ -20,9 +20,6 @@
 #endif
 #include "screen_map.h"
 #include "screen_config.h"
-#if DEBUG
-  #include "screen_debug.h"
-#endif
 #include "graph.h"
 
 GFont font_roboto_bold_16, font_roboto_bold_62;
@@ -221,11 +218,6 @@ static void init(void) {
 #endif
   screen_map_layer_init(s_data.window);
 
-  #if DEBUG
-    screen_debug1_layer_init(s_data.window);
-    screen_debug2_layer_init(s_data.window);
-  #endif
-
   #if PRODUCTION
     screen_reset_instant_data();
   #endif
@@ -270,11 +262,6 @@ static void deinit(void) {
 #endif
   screen_map_layer_deinit();
 
-  #if DEBUG
-    screen_debug1_layer_deinit();
-    screen_debug2_layer_deinit();
-  #endif
-  
   action_bar_deinit();
   menu_deinit();
 

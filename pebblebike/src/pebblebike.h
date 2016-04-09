@@ -60,8 +60,6 @@ enum {
   PAGE_ALTITUDE = 2,
   PAGE_LIVE_TRACKING = 3,
   PAGE_MAP = 4,
-  PAGE_DEBUG1 = 5,
-  PAGE_DEBUG2 = 6,
 };
 #define PAGE_FIRST PAGE_SPEED
 enum {
@@ -70,13 +68,7 @@ enum {
   PERSIST_VERSION = 0x2,
 };
 
-#if DEBUG
-#define NUMBER_OF_PAGES 7
-#endif
-
-#if !DEBUG
 #define NUMBER_OF_PAGES 5
-#endif
 
 #ifdef PBL_PLATFORM_APLITE
 // don't deinit objects in deinit -- save at least 700 bytes
@@ -142,11 +134,6 @@ typedef struct TopBarLayer {
   BitmapLayer *bluetooth_layer;
 } TopBarLayer;
 
-/*typedef struct SpeedLayer {
- Layer *layer;
- char* text;
- } SpeedLayer;*/
-
 typedef struct FieldConfig {
   uint8_t type;
   ///todo remove type_index?
@@ -180,15 +167,9 @@ typedef struct AppData {
   MenuLayer *page_live_tracking;
   Layer *page_map;
 
-#if DEBUG
-  Layer *page_debug1;
-  Layer *page_debug2;
-#endif
-
   TopBarLayer topbar_layer;
 
   ScreenLayer screenSpeed_layer;
-  //ScreenBLayer screenB_layer;
 
   ScreenConfig screenA_config;
   ScreenConfig screenB_config;
@@ -196,10 +177,6 @@ typedef struct AppData {
   //FieldLayer altitude_accuracy;
 
   TextLayer *live_tracking_layer;
-#if DEBUG
-  TextLayer *debug1_layer;
-  TextLayer *debug2_layer;
-#endif
 
   char time[6];  // xx:xx, \0 terminated
   char speed[16];
@@ -222,10 +199,6 @@ typedef struct AppData {
   char steps[7];
   char steps_cadence[7];
 
-#if DEBUG
-  char debug1[200];
-  char debug2[200];
-#endif
   char unitsSpeedOrHeartRate[8];
   char unitsSpeed[8];
   char unitsDistance[8];
@@ -290,10 +263,6 @@ extern AppData s_data;
 extern GPSData s_gpsdata;
 extern LiveData s_live;
 extern bool title_instead_of_units;
-
-#if DEBUG
-extern char tmp[255];
-#endif
 
 void change_units(uint8_t units, bool first_time);
 void change_state(uint8_t state);

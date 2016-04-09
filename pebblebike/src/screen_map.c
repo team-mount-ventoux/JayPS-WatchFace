@@ -89,7 +89,7 @@ void screen_map_update_location() {
 
 void screen_map_update_map(bool force_recenter) {
     int x, y;
-    int debug = 0, debug2 = 0;
+    //int debug = 0, debug2 = 0;
 
     x = (XINI + (s_gpsdata.xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
     y = (YINI - (s_gpsdata.ypos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
@@ -97,19 +97,19 @@ void screen_map_update_map(bool force_recenter) {
     bool need_recenter = false;
     if (x + pathFrame.origin.x < SCREEN_W/4) {
         need_recenter = true;
-        debug += 1;
+        //debug += 1;
     }
     if (3*SCREEN_W/4 < x + pathFrame.origin.x) {
         need_recenter = true;
-        debug += 1;
+        //debug += 1;
     }
     if (y + pathFrame.origin.y < SCREEN_H/4) {
         need_recenter = true;
-        debug2 += 1;
+        //debug2 += 1;
     }
     if (3*SCREEN_H/4 < y + pathFrame.origin.y) {
         need_recenter = true;
-        debug2 += 1;
+        //debug2 += 1;
     }
 
     if (need_recenter || force_recenter) {
@@ -183,7 +183,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
         if (i == 0) {
 #if DEBUG
-            snprintf(s_data.debug2, sizeof(s_data.debug2),
+          APP_LOG(APP_LOG_LEVEL_DEBUG,
                      "%d|%d\n"
                      "%d|%d\n"
                      "%d|%d\n"

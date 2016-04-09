@@ -16,10 +16,6 @@ void update_screens() {
 #endif
   layer_set_hidden(s_data.page_map, true);
   window_set_background_color(s_data.window, BG_COLOR_WINDOW);
-  #if DEBUG
-    layer_set_hidden(s_data.page_debug1, true);
-    layer_set_hidden(s_data.page_debug2, true);
-  #endif
   if (s_data.page_number == PAGE_SPEED) {
     layer_set_hidden(s_data.page_speed, false);
   }
@@ -42,16 +38,6 @@ void update_screens() {
     screen_map_update_map(true); // TODO: really needed?
     //vibes_short_pulse();
   }
-  #if DEBUG
-    if (s_data.page_number == PAGE_DEBUG1) {
-      layer_set_hidden(s_data.page_debug1, false);
-      layer_mark_dirty(s_data.page_debug1); // TODO: really needed?
-    }
-    if (s_data.page_number == PAGE_DEBUG2) {
-      layer_set_hidden(s_data.page_debug2, false);
-      layer_mark_dirty(s_data.page_debug2); // TODO: really needed?
-    }
-  #endif
 }
 
 void set_layer_attr_full(TextLayer *textlayer, const char *text, GFont font, GTextAlignment text_alignment, GColor color, GColor bg_color, Layer *ParentLayer)

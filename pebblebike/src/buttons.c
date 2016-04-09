@@ -85,12 +85,6 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
       }
 #endif
     }
-    if (!s_data.debug) {
-      if (s_data.page_number == PAGE_DEBUG1 || s_data.page_number == PAGE_DEBUG2) {
-        // debug option not checked on android app
-        s_data.page_number = PAGE_FIRST;
-      }
-    }
     if (s_data.page_number >= NUMBER_OF_PAGES) {
       s_data.page_number = PAGE_FIRST;
     }
