@@ -61,6 +61,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   };
   graph_draw(ctx, GRECT_GRAPH, &heartrates, colors_heartrates, s_data.screenSpeed_layer.field_top2.data_layer, 1);
 #else
+  ///todo use screen_config[s_data.data_subpage]
   if (s_data.screen_config[0].field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH || s_data.screen_config[0].field_top2.type == FIELD_HEARTRATE_GRAPH_ONLY) {
     GraphRange colors_heartrates[3] = {
         {.min = 0,   .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},

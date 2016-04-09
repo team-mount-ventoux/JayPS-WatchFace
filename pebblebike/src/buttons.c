@@ -105,6 +105,8 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
       s_data.data_subpage = s_data.page_number == PAGE_ALTITUDE ? SUBPAGE_B : SUBPAGE_A;
       title_instead_of_units = true;
       screen_speed_show_speed(true);
+    } else {
+      config_field_set_text(s_data.topbar_layer.field_center_layer, FIELD_TIME, GTextAlignmentCenter);
     }
     update_screens();
   }

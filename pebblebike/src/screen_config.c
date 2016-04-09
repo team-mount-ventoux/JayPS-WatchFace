@@ -20,7 +20,7 @@ static AppTimer *config_timer;
 uint8_t config_screen = CONFIG_SCREEN_DISABLED;
 uint8_t config_field = CONFIG_FIELD_SCREEN__MIN;
 
-#define CONFIG_NB_FIELD_ORDER 25
+#define CONFIG_NB_FIELD_ORDER 26
 uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     FIELD_ACCURACY,
     FIELD_ALTITUDE,
@@ -59,7 +59,7 @@ uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     FIELD_STEPS_CADENCE,
 #endif
     FIELD_TEMPERATURE,
-    //FIELD_TIME,
+    FIELD_TIME,
     FIELD__UNUSED,
 };
 
@@ -100,6 +100,7 @@ const char *field_get_title(uint8_t field) {
     case FIELD_HEARTRATE_GRAPH_ONLY: return _("Heartrate graph"); break;
     case FIELD_CADENCE: return _("Cadence"); break;
     case FIELD_TEMPERATURE: return _("Temperature"); break;
+    case FIELD_TIME: return _("Time"); break;
 #ifdef PBL_HEALTH
     case FIELD_STEPS: return _("Steps"); break;
     case FIELD_STEPS_CADENCE: return _("Steps cadence"); break;
@@ -134,6 +135,7 @@ const char *field_get_text(uint8_t field) {
       return s_data.heartrate; break;
     case FIELD_CADENCE: return s_data.cadence; break;
     case FIELD_TEMPERATURE: return s_data.temperature; break;
+    case FIELD_TIME: return s_data.time; break;
 #ifdef PBL_HEALTH
     case FIELD_STEPS: return s_data.steps; break;
     case FIELD_STEPS_CADENCE: return s_data.steps_cadence; break;
@@ -173,6 +175,7 @@ const char *field_get_units(uint8_t field) {
       return HEART_RATE_UNIT; break;
     case FIELD_CADENCE: return "rpm"; break;
     case FIELD_TEMPERATURE: return s_data.unitsTemperature; break;
+    case FIELD_TIME: return ""; break;
 #ifdef PBL_HEALTH
     case FIELD_STEPS: return _("steps"); break;
     case FIELD_STEPS_CADENCE: return "spm"; break;
@@ -180,12 +183,17 @@ const char *field_get_units(uint8_t field) {
     default: return "";
   }
 }
-void field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment force_alignement) {
+void config_field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment force_alignement) {
 //  if (field_layer.title_layer != NULL) {
 //    text_layer_set_text(field_layer.title_layer, field_get_title(type));
 //  }
   if (field_layer.data_layer != NULL) {
-    text_layer_set_text(field_layer.data_layer, field_get_text(type));
+    if (field_layer.data_layer == s_data.topbar_layer.field_center_layer.data_layer && title_instead_of_units) {
+      // special case for topbar (no unit_layer), the few seconds after button press (title_instead_of_units==true)
+      text_layer_set_text(field_layer.data_layer, field_get_title(type));
+    } else {
+      text_layer_set_text(field_layer.data_layer, field_get_text(type));
+    }
   }
   if (field_layer.unit_layer != NULL) {
     text_layer_set_text(field_layer.unit_layer, title_instead_of_units ? field_get_title(type) : field_get_units(type));
@@ -203,11 +211,15 @@ void screen_speed_update_config(bool change_page) {
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_top2, s_data.data_subpage == SUBPAGE_B ? config.screenB_top2_type : config.screenA_top2_type);
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_bottom_left, s_data.data_subpage == SUBPAGE_B ? config.screenB_bottom_left_type : config.screenA_bottom_left_type);
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_bottom_right, s_data.data_subpage == SUBPAGE_B ? config.screenB_bottom_right_type : config.screenA_bottom_right_type);
+    config_affect_type(&s_data.screen_config[s_data.data_subpage].field_topbar_center, s_data.data_subpage == SUBPAGE_B ? config.screenB_topbar_center_type : config.screenA_topbar_center_type);
   }
-  field_set_text(s_data.screenSpeed_layer.field_top, s_data.page_number == PAGE_HEARTRATE ? FIELD_HEARTRATE : s_data.screen_config[s_data.data_subpage].field_top.type, GTextAlignmentRight);
-  field_set_text(s_data.screenSpeed_layer.field_top2, s_data.screen_config[s_data.data_subpage].field_top2.type, GTextAlignmentRight);
-  field_set_text(s_data.screenSpeed_layer.field_bottom_left, s_data.screen_config[s_data.data_subpage].field_bottom_left.type, GTextAlignmentCenter);
-  field_set_text(s_data.screenSpeed_layer.field_bottom_right, s_data.screen_config[s_data.data_subpage].field_bottom_right.type, GTextAlignmentCenter);
+  config_field_set_text(s_data.screenSpeed_layer.field_top, s_data.page_number == PAGE_HEARTRATE ? FIELD_HEARTRATE : s_data.screen_config[s_data.data_subpage].field_top.type, GTextAlignmentRight);
+  config_field_set_text(s_data.screenSpeed_layer.field_top2, s_data.screen_config[s_data.data_subpage].field_top2.type, GTextAlignmentRight);
+  config_field_set_text(s_data.screenSpeed_layer.field_bottom_left, s_data.screen_config[s_data.data_subpage].field_bottom_left.type, GTextAlignmentCenter);
+  config_field_set_text(s_data.screenSpeed_layer.field_bottom_right, s_data.screen_config[s_data.data_subpage].field_bottom_right.type, GTextAlignmentCenter);
+  if (config_screen == CONFIG_SCREEN_DISABLED) {
+    config_field_set_text(s_data.topbar_layer.field_center_layer, s_data.screen_config[s_data.data_subpage].field_topbar_center.type, GTextAlignmentCenter);
+  }
 }
 
 void config_change_visibility(FieldLayer* field_layer, bool hidden) {
@@ -269,7 +281,7 @@ void config_start() {
   cur_fieldlayer = &s_data.screenSpeed_layer.field_top;
   layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), true);
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), true);
-  text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(cur_fieldconfig->type));
+  text_layer_set_text(s_data.topbar_layer.field_center_layer.data_layer, field_get_title(cur_fieldconfig->type));
   layer_mark_dirty(s_data.topbar_layer.layer);
 
   vibes_short_pulse();
@@ -285,7 +297,7 @@ void config_stop() {
   config_change_visibility(cur_fieldlayer, false);
   app_timer_cancel(config_timer);
   config_timer = NULL;
-  text_layer_set_text(s_data.topbar_layer.time_layer, s_data.time);
+  config_field_set_text(s_data.topbar_layer.field_center_layer, s_data.screen_config[s_data.data_subpage].field_topbar_center.type, GTextAlignmentCenter);
   layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), s_data.state == STATE_STOP);
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), false);
   layer_mark_dirty(s_data.topbar_layer.layer);
@@ -305,13 +317,14 @@ void config_change_field() {
   switch (config_field) {
     case CONFIG_FIELD_SCREEN_TOP:           cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_top;          cur_fieldlayer = &s_data.screenSpeed_layer.field_top; break;
     case CONFIG_FIELD_SCREEN_TOP2:          cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_top2;         cur_fieldlayer = &s_data.screenSpeed_layer.field_top2; break;
+    case CONFIG_FIELD_SCREEN_TOP_BAR:       cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_topbar_center;         cur_fieldlayer = &s_data.topbar_layer.field_center_layer; break;
     case CONFIG_FIELD_SCREEN_BOTTOM_LEFT:   cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_bottom_left;  cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_left; break;
     case CONFIG_FIELD_SCREEN_BOTTOM_RIGHT:  cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_bottom_right; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_right; break;
   }
 
   config_change_visibility(cur_fieldlayer, true);
 
-  text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(cur_fieldconfig->type));
+  text_layer_set_text(s_data.topbar_layer.field_center_layer.data_layer, field_get_title(cur_fieldconfig->type));
   layer_mark_dirty(s_data.topbar_layer.layer);
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "config_field %d", config_field);
 }
@@ -385,7 +398,7 @@ void config_change_type(uint8_t direction) {
   
   //todo
   screen_speed_update_config(false);
-  text_layer_set_text(s_data.topbar_layer.time_layer, field_get_title(cur_fieldconfig->type));
+  text_layer_set_text(s_data.topbar_layer.field_center_layer.data_layer, field_get_title(cur_fieldconfig->type));
   layer_mark_dirty(s_data.topbar_layer.layer);
 }
 
@@ -398,6 +411,10 @@ void config_load() {
     }
     if (version < MIN_VERSION_PEBBLE_SCREEN_A_TOP2) {
       config.screenA_top2_type          = FIELD_ALTITUDE;
+    }
+    if (version < MIN_VERSION_PEBBLE_SCREEN_A_TOP_BAR) {
+      config.screenA_topbar_center_type = FIELD_TIME;
+      config.screenB_topbar_center_type = FIELD_TIME;
     }
   } else {
 #if DEMO
@@ -412,10 +429,12 @@ void config_load() {
 #endif
     config.screenA_bottom_left_type   = FIELD_DISTANCE;
     config.screenA_bottom_right_type  = FIELD_AVGSPEED;
-    config.screenB_top_type      = FIELD_ALTITUDE;
-    config.screenB_top2_type     = FIELD_ASCENT;
+    config.screenA_topbar_center_type = FIELD_TIME;
+    config.screenB_top_type           = FIELD_ALTITUDE;
+    config.screenB_top2_type          = FIELD_ASCENT;
     config.screenB_bottom_left_type   = FIELD_ASCENTRATE;
     config.screenB_bottom_right_type  = FIELD_SLOPE;
+    config.screenB_topbar_center_type = FIELD_TIME;
   }
 #ifdef PBL_HEALTH
   health_init_if_needed();
@@ -426,10 +445,12 @@ void config_save() {
   config.screenA_top2_type          = s_data.screen_config[SUBPAGE_A].field_top2.type;
   config.screenA_bottom_left_type   = s_data.screen_config[SUBPAGE_A].field_bottom_left.type;
   config.screenA_bottom_right_type  = s_data.screen_config[SUBPAGE_A].field_bottom_right.type;
+  config.screenA_topbar_center_type = s_data.screen_config[SUBPAGE_A].field_topbar_center.type;;
   config.screenB_top_type           = s_data.screen_config[SUBPAGE_B].field_top.type;
   config.screenB_top2_type          = s_data.screen_config[SUBPAGE_B].field_top2.type;
   config.screenB_bottom_left_type   = s_data.screen_config[SUBPAGE_B].field_bottom_left.type;
   config.screenB_bottom_right_type  = s_data.screen_config[SUBPAGE_B].field_bottom_right.type;
+  config.screenB_topbar_center_type = s_data.screen_config[SUBPAGE_B].field_topbar_center.type;;
   persist_write_data(PERSIST_CONFIG_KEY, &config, sizeof(config));
   persist_write_int(PERSIST_VERSION, VERSION_PEBBLE);
 }

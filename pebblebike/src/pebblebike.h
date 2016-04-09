@@ -115,7 +115,7 @@ enum {
   FIELD_SLOPE,
   FIELD_SPEED,
   FIELD_TEMPERATURE,
-  //FIELD_TIME,
+  FIELD_TIME,
 #ifdef PBL_HEALTH
   FIELD_STEPS,
   FIELD_STEPS_CADENCE,
@@ -130,13 +130,6 @@ enum {
   FIELD_SPEED_GRAPH_ONLY,
   FIELD__UNUSED,
 };
-typedef struct TopBarLayer {
-  Layer *layer;
-  TextLayer *time_layer;
-  TextLayer *accuracy_layer;
-  GBitmap *bluetooth_image;
-  BitmapLayer *bluetooth_layer;
-} TopBarLayer;
 
 typedef struct FieldConfig {
   uint8_t type;
@@ -148,15 +141,20 @@ typedef struct ScreenConfig {
   FieldConfig field_top2;
   FieldConfig field_bottom_left;
   FieldConfig field_bottom_right;
+  FieldConfig field_topbar_center;
 } ScreenConfig;
 typedef struct FieldLayer {
-  //Layer *main_layer;
-  ///@todo remove title_layer ? used only for ScreenBLayer
-  //TextLayer *title_layer;
   TextLayer *data_layer;
   TextLayer *unit_layer;
 } FieldLayer;
 
+typedef struct TopBarLayer {
+  Layer *layer;
+  FieldLayer field_center_layer;
+  TextLayer *accuracy_layer;
+  GBitmap *bluetooth_image;
+  BitmapLayer *bluetooth_layer;
+} TopBarLayer;
 typedef struct ScreenLayer {
   FieldLayer field_top;
   FieldLayer field_top2;
@@ -172,12 +170,9 @@ typedef struct AppData {
   Layer *page_map;
 
   TopBarLayer topbar_layer;
-
   ScreenLayer screenSpeed_layer;
 
   ScreenConfig screen_config[2];
-
-  //FieldLayer altitude_accuracy;
 
   TextLayer *live_tracking_layer;
 

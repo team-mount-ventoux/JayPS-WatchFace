@@ -140,7 +140,8 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
   if (!clock_is_24h_style() && (s_data.time[0] == '0')) {
     memmove(s_data.time, &s_data.time[1], sizeof(s_data.time) - 1);
   }
-  layer_mark_dirty(s_data.topbar_layer.layer);
+  //layer_mark_dirty(s_data.topbar_layer.layer);
+  update_screens();
 }
 
 void bt_callback(bool connected) {

@@ -67,6 +67,8 @@ void health_init_if_needed() {
   health = health || config.screenA_bottom_left_type == FIELD_STEPS_CADENCE;
   health = health || config.screenA_bottom_right_type == FIELD_STEPS;
   health = health || config.screenA_bottom_right_type == FIELD_STEPS_CADENCE;
+  health = health || config.screenA_topbar_center_type == FIELD_STEPS;
+  health = health || config.screenA_topbar_center_type == FIELD_STEPS_CADENCE;
   health = health || config.screenB_top_type == FIELD_STEPS;
   health = health || config.screenB_top_type == FIELD_STEPS_CADENCE;
   health = health || config.screenB_top2_type == FIELD_STEPS;
@@ -75,6 +77,8 @@ void health_init_if_needed() {
   health = health || config.screenB_bottom_left_type == FIELD_STEPS_CADENCE;
   health = health || config.screenB_bottom_right_type == FIELD_STEPS;
   health = health || config.screenB_bottom_right_type == FIELD_STEPS_CADENCE;
+  health = health || config.screenB_topbar_center_type == FIELD_STEPS;
+  health = health || config.screenB_topbar_center_type == FIELD_STEPS_CADENCE;
 #endif
   if (health) {
     health_init();
