@@ -170,6 +170,8 @@ static void init(void) {
   strcpy(s_data.avgspeed, "14.0");
   strcpy(s_data.altitude, "1139");
   strcpy(s_data.accuracy, "4");
+  strcpy(s_data.steps, "7548");
+  strcpy(s_data.elapsedtime, "1:15:28");
   s_data.live = 1;
   s_data.state = STATE_START;
 #else
