@@ -5,7 +5,7 @@
 #include "communication.h"
 #include "screens.h"
 #include "screen_map.h"
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
   #include "screen_live.h"
 #endif
 #include "screen_speed.h"
@@ -52,7 +52,7 @@ void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
 void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   button_click();
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
     screen_live_menu(true);
 #endif
   } else if (config_screen != CONFIG_SCREEN_DISABLED) {
@@ -72,7 +72,6 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
   } else {
     uint8_t prev_page_number = s_data.page_number;
     s_data.page_number++;
-    s_data.data_subpage = SUBPAGE_UNDEF;
 
     if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
       s_data.page_number++;
@@ -90,6 +89,15 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
       s_data.page_number = PAGE_SPEED;
     }
 
+    s_data.data_subpage = SUBPAGE_UNDEF;
+    if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
+      s_data.data_subpage = s_data.page_number == PAGE_ALTITUDE ? SUBPAGE_B : SUBPAGE_A;
+      title_instead_of_units = true;
+      screen_speed_show_speed(true);
+    } else {
+      config_field_set_text(s_data.topbar_layer.field_center_layer, FIELD_TIME, GTextAlignmentCenter);
+    }
+
     if (prev_page_number == PAGE_LIVE_TRACKING) {
       buttons_update();
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
@@ -101,13 +109,7 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
     } else if (s_data.page_number == PAGE_MAP) {
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
     }
-    if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
-      s_data.data_subpage = s_data.page_number == PAGE_ALTITUDE ? SUBPAGE_B : SUBPAGE_A;
-      title_instead_of_units = true;
-      screen_speed_show_speed(true);
-    } else {
-      config_field_set_text(s_data.topbar_layer.field_center_layer, FIELD_TIME, GTextAlignmentCenter);
-    }
+
     update_screens();
   }
   LOG_DEBUG("page:%d sp:%d", s_data.page_number, s_data.data_subpage);
@@ -118,7 +120,7 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   if (s_data.page_number == PAGE_MAP) {
     screen_map_zoom_out(2);
   } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
     screen_live_menu(false);
 #endif
   } else if (config_screen != CONFIG_SCREEN_DISABLED) {
@@ -126,6 +128,11 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   } else {
     menu_show();
   }
+#ifdef ENABLE_DEMO
+//  s_gpsdata.heartrate += 8;
+//  snprintf(s_data.heartrate, 5, "%d", s_gpsdata.heartrate);
+//  screen_speed_show_speed(false);
+#endif
 }
 void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context) {
   button_click();

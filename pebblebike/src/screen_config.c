@@ -5,7 +5,8 @@
 #include "screens.h"
 #include "buttons.h"
 #include "screen_config.h"
-#if LOCALIZE
+#include "heartrate.h"
+#ifdef ENABLE_LOCALIZE
   #include "localize.h"
 #endif
 #ifdef PBL_HEALTH
@@ -148,6 +149,7 @@ const char *field_get_text(uint8_t field) {
     default: return "-";
   }
 }
+
 const char *field_get_units(uint8_t field) {
   switch(field) {
     case FIELD_AVGSPEED: return s_data.unitsSpeed; break;
@@ -172,7 +174,12 @@ const char *field_get_units(uint8_t field) {
     case FIELD_ACCURACY: return "m"; break;
     case FIELD_HEARTRATE:
     case FIELD_HEARTRATE_DATA_AND_GRAPH:
-      return HEART_RATE_UNIT; break;
+      if (s_gpsdata.heartrate > 0 && s_gpsdata.heartrate != 255) {
+        return heartrate_zone;
+      } else {
+        return HEART_RATE_UNIT;
+      }
+      break;
     case FIELD_CADENCE: return "rpm"; break;
     case FIELD_TEMPERATURE: return s_data.unitsTemperature; break;
     case FIELD_TIME: return ""; break;
@@ -187,6 +194,7 @@ void config_field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment 
 //  if (field_layer.title_layer != NULL) {
 //    text_layer_set_text(field_layer.title_layer, field_get_title(type));
 //  }
+
   if (field_layer.data_layer != NULL) {
     if (field_layer.data_layer == s_data.topbar_layer.field_center_layer.data_layer && title_instead_of_units) {
       // special case for topbar (no unit_layer), the few seconds after button press (title_instead_of_units==true)
@@ -197,6 +205,16 @@ void config_field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment 
   }
   if (field_layer.unit_layer != NULL) {
     text_layer_set_text(field_layer.unit_layer, title_instead_of_units ? field_get_title(type) : field_get_units(type));
+#ifdef PBL_COLOR
+    if (field_layer.data_layer == s_data.screenSpeed_layer.field_top.data_layer) {
+      if (type == FIELD_HEARTRATE && s_gpsdata.heartrate > 0 && s_gpsdata.heartrate != 255) {
+        bg_color_speed_main = heartrate_color;
+      } else {
+        bg_color_speed_main = BG_COLOR_SPEED_MAIN;
+      }
+    }
+#endif
+
 #ifndef PBL_ROUND
     text_layer_set_text_alignment(field_layer.unit_layer, title_instead_of_units ? GTextAlignmentCenter : force_alignement);
 #endif
@@ -207,6 +225,7 @@ void screen_speed_update_config(bool change_page) {
     return;
   }
   if (change_page) {
+    LOG_DEBUG("screen_speed_update_config(true)");
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_top, s_data.data_subpage == SUBPAGE_B ? config.screenB_top_type : config.screenA_top_type);
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_top2, s_data.data_subpage == SUBPAGE_B ? config.screenB_top2_type : config.screenA_top2_type);
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_bottom_left, s_data.data_subpage == SUBPAGE_B ? config.screenB_bottom_left_type : config.screenA_bottom_left_type);
@@ -417,8 +436,9 @@ void config_load() {
       config.screenB_topbar_center_type = FIELD_TIME;
     }
   } else {
-#if DEMO
-    config.screenA_top_type           = FIELD_MAXSPEED;
+#ifdef ENABLE_DEMO
+//    config.screenA_top_type           = FIELD_MAXSPEED;
+    config.screenA_top_type           = FIELD_HEARTRATE;
 #else
     config.screenA_top_type           = FIELD_SPEED;
 #endif
@@ -455,7 +475,6 @@ void config_save() {
   persist_write_int(PERSIST_VERSION, VERSION_PEBBLE);
 }
 void config_affect_type(FieldConfig *field, uint8_t type) {
-  LOG_ENTER();
   field->type = type;
   field->type_index = 0;
   for(int i = 0; i < CONFIG_NB_FIELD_ORDER; i++) {

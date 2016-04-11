@@ -41,7 +41,7 @@
 #define COLOR_MAP GColorBlack
 
 #ifdef PBL_COLOR
-  #ifdef DEBUG_COLOR
+  #ifdef ENABLE_DEBUG_COLOR
     #undef BG_COLOR_TITLE
     #define BG_COLOR_TITLE GColorRed
     #undef BG_COLOR_DATA

@@ -8,6 +8,7 @@
 #include "screen_speed.h"
 #include "screen_config.h"
 #include "graph.h"
+#include "heartrate.h"
 
 enum {
   BYTE_SETTINGS = 0,
@@ -42,7 +43,7 @@ static AppTimer *reset_data_timer;
 
 void communication_init() {
   app_message_register_inbox_received(communication_in_received_callback);
-#if DEBUG
+#ifdef ENABLE_DEBUG
   app_message_register_inbox_dropped(communication_in_dropped_callback);
 #endif
   app_message_open(/* size_inbound */ 124, /* size_outbound */ 256);
@@ -88,7 +89,7 @@ void send_version() {
     app_message_outbox_send();
 }
 
-#if DEBUG
+#ifdef ENABLE_DEBUG
 void communication_in_dropped_callback(AppMessageResult reason, void *context) {
   // incoming message dropped
 
@@ -183,7 +184,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
     while (tuple) {
         switch (tuple->key) {
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
         case MSG_LIVE_NAME0:
             //vibes_short_pulse();
             strncpy(s_live.friends[0].name, tuple->value->cstring, 10);
@@ -235,6 +236,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         case MSG_LOCATION_DATA:
         case MSG_LOCATION_DATA_V2:
         case MSG_LOCATION_DATA_V3:
+            LOG_DEBUG("MSG_LOCATION_DATA %ld", tuple->key);
             nb_tuple_altitude++;
             if (tuple->key == MSG_LOCATION_DATA) {
                 //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA");
@@ -318,7 +320,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             if ((xpos == 0 && ypos == 0) || (time0 > s_gpsdata.time)) {
                 // ignore old values (can happen if gps is stopped/restarted)
-                #if DEBUG
+                #ifdef ENABLE_DEBUG
                   if (s_data.debug) {
                     
                         APP_LOG(APP_LOG_LEVEL_DEBUG, "==> time0=%d t=%d xpos=%d ypos=%d", time0, s_gpsdata.time, xpos, ypos);      
@@ -352,6 +354,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
               snprintf(s_data.heartrate,  sizeof(s_data.heartrate),  "%d",   s_gpsdata.heartrate);
               if (s_gpsdata.heartrate > 0) {
                 graph_add_data(&graph_heartrates, s_gpsdata.heartrate);
+                heartrate_new_data(s_gpsdata.heartrate);
               }
             } else {
               strcpy(s_data.heartrate, "-");
@@ -368,23 +371,27 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             }
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "t:%d => %s", s_gpsdata.time, s_data.elapsedtime);
 
-            screen_speed_show_speed(false);
 
-            // reset data (instant speed...) after X if no data is received
-            if (reset_data_timer) {
-              //APP_LOG(APP_LOG_LEVEL_DEBUG, "app_timer_cancel()");
-              app_timer_cancel(reset_data_timer);
-            }
-            // s_data.refresh_code == 3 => _refresh_interval [5;+inf
-            reset_data_timer = app_timer_register(s_data.refresh_code == 3 ? 60000 : 20000, reset_data_timer_callback, NULL);
+            if (config_screen == CONFIG_SCREEN_DISABLED) {
+              // config not in progress
+              screen_speed_show_speed(false);
 
-            screen_map_update_location();
+              // reset data (instant speed...) after X if no data is received
+              if (reset_data_timer) {
+                //APP_LOG(APP_LOG_LEVEL_DEBUG, "app_timer_cancel()");
+                app_timer_cancel(reset_data_timer);
+              }
+              // s_data.refresh_code == 3 => _refresh_interval [5;+inf
+              reset_data_timer = app_timer_register(s_data.refresh_code == 3 ? 60000 : 20000, reset_data_timer_callback, NULL);
 
-            if (s_data.data_subpage != SUBPAGE_UNDEF) {
-                layer_mark_dirty(s_data.page_speed);
-            }
-            if (s_data.page_number == PAGE_LIVE_TRACKING) {
-                layer_mark_dirty((Layer *) s_data.page_live_tracking);
+              screen_map_update_location();
+
+              if (s_data.data_subpage != SUBPAGE_UNDEF) {
+                  layer_mark_dirty(s_data.page_speed);
+              }
+              if (s_data.page_number == PAGE_LIVE_TRACKING) {
+                  layer_mark_dirty((Layer *) s_data.page_live_tracking);
+              }
             }
             break;
         case MSG_SENSOR_TEMPERATURE:

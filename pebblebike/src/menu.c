@@ -4,7 +4,7 @@
 #include "pebblebike.h"
 #include "communication.h"
 #include "screen_config.h"
-#if LOCALIZE
+#ifdef ENABLE_LOCALIZE
   #include "localize.h"
 #endif
 
@@ -19,7 +19,7 @@ static Window *window;
 static SimpleMenuLayer *menu_layer;
 static SimpleMenuSection menu_sections[4]; // Sections
 static SimpleMenuItem menu_section0_items[3]; // Section Actions
-#if ORUXMAPS
+#ifdef ENABLE_ORUXMAPS
   static SimpleMenuItem menu_section_orux_items[3]; // Section OruxMap
 #endif
 #if MENU_HELP_BUTTONS
@@ -41,7 +41,7 @@ void handle_appear(Window *window)
   // todo sdk2
   //scroll_layer_set_frame(&menu_layer.menu.scroll_layer, window->layer.bounds);
 }
-#if ORUXMAPS
+#ifdef ENABLE_ORUXMAPS
 void menu_orux_callback(int index, void *context) {
   switch (index) {
   case 0:
@@ -106,7 +106,7 @@ void init_settings_window()
     .num_items = i
   };
 
-#if ORUXMAPS
+#ifdef ENABLE_ORUXMAPS
     // Section "Orux"
     i = 0;
     menu_section_orux_items[i++] = (SimpleMenuItem) {

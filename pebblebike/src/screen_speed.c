@@ -40,7 +40,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_stroke_color(ctx, COLOR_LINES);
   graphics_draw_line(ctx, GPoint(PAGE_OFFSET_X + PAGE_W / 2, PAGE_SPEED_TOP_H + 2), GPoint(PAGE_OFFSET_X + PAGE_W / 2, PAGE_H - 2));
 
-  graphics_context_set_fill_color(ctx, BG_COLOR_SPEED_MAIN);
+  graphics_context_set_fill_color(ctx, bg_color_speed_main);
   graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_TOP_DATA_H, SCREEN_W, PAGE_SPEED_MAIN_H), 0, GCornerNone);
 
 #ifndef PBL_SDK_2
@@ -48,9 +48,12 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_TOP_DATA_H, SCREEN_W, 2), 0, GCornerNone);
   graphics_fill_rect(ctx, GRect(0, PAGE_SPEED_BOTTOM_DATA_H, SCREEN_W, 2), 0, GCornerNone);
 #endif
+  if (s_data.data_subpage == SUBPAGE_UNDEF) {
+    return;
+  }
 
 #define GRECT_GRAPH GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34))
-#if DEMO
+#ifdef ENABLE_DEMO
   GraphData heartrates;
   int16_t points[GRAPH_NB_POINTS] = {135,145,150,148,150,155,162,170,180,185,182,175,170,160,155,163,165,155,162,164};
   memcpy(heartrates.points, points, sizeof(int16_t)*GRAPH_NB_POINTS);
@@ -94,10 +97,10 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 #endif
 }
 void screen_speed_layer_init(Window* window) {
-  config_affect_type(&s_data.screen_config[0].field_top, config.screenA_top_type);
-  config_affect_type(&s_data.screen_config[0].field_top2, config.screenA_top2_type);
-  config_affect_type(&s_data.screen_config[0].field_bottom_left, config.screenA_bottom_left_type);
-  config_affect_type(&s_data.screen_config[0].field_bottom_right, config.screenA_bottom_right_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top, config.screenA_top_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top2, config.screenA_top2_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_left, config.screenA_bottom_left_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_right, config.screenA_bottom_right_type);
 
   s_data.page_speed = layer_create(PAGE_GRECT);
   layer_add_child(window_get_root_layer(window), s_data.page_speed);
@@ -177,8 +180,10 @@ void screen_speed_show_speed(bool force_units) {
 #endif
   } else {
     copy_speed(s_data.speed, sizeof(s_data.speed), s_gpsdata.speed100);
+    ///@todo for hr zones in units
+    screen_speed_update_config(true);
     if (force_units) {
-      screen_speed_update_config(true);
+      //screen_speed_update_config(true);
     }
   }
 }
@@ -194,13 +199,13 @@ static void rotation_timer_callback(void *data) {
     rotation = ROTATION_MIN;
   }
    if (rotation == ROTATION_MIN) {
-     s_data.screen_config[0].field_top.type = FIELD_SPEED;
-     s_data.screen_config[0].field_bottom_left.type = FIELD_DISTANCE;
-     s_data.screen_config[0].field_bottom_right.type = FIELD_AVGSPEED;
+     s_data.screen_config[SUBPAGE_A].field_top.type = FIELD_SPEED;
+     s_data.screen_config[SUBPAGE_A].field_bottom_left.type = FIELD_DISTANCE;
+     s_data.screen_config[SUBPAGE_A].field_bottom_right.type = FIELD_AVGSPEED;
   } else {
-    s_data.screen_config[0].field_top.type = FIELD_ALTITUDE;
-    s_data.screen_config[0].field_bottom_left.type = FIELD_ASCENT;
-    s_data.screen_config[0].field_bottom_right.type = FIELD_DISTANCE;
+    s_data.screen_config[SUBPAGE_A].field_top.type = FIELD_ALTITUDE;
+    s_data.screen_config[SUBPAGE_A].field_bottom_left.type = FIELD_ASCENT;
+    s_data.screen_config[SUBPAGE_A].field_bottom_right.type = FIELD_DISTANCE;
   }
   screen_speed_show_speed(true);
   screen_speed_update_config(true);

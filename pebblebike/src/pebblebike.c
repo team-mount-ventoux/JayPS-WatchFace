@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "config.h"
-#if LOCALIZE
+#ifdef ENABLE_LOCALIZE
   #include "localize.h"
 #endif
 #include "pebblebike.h"
@@ -10,12 +10,12 @@
 #ifdef PBL_HEALTH
   #include "health.h"
 #endif
+#include "heartrate.h"
 #include "buttons.h"
 #include "menu.h"
 #include "screens.h"
 #include "screen_speed.h"
-//#include "screen_altitude.h"
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
   #include "screen_live.h"
 #endif
 #include "screen_map.h"
@@ -29,10 +29,11 @@ GFont font_roboto_bold_62;
 
 AppData s_data;
 GPSData s_gpsdata;
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
 LiveData s_live;
 #endif
 bool title_instead_of_units = true;
+GColor bg_color_speed_main;
 int nbchange_state=0;
 
 void change_units(uint8_t units, bool first_time) {
@@ -149,7 +150,9 @@ void bt_callback(bool connected) {
 }
 
 static void init(void) {
-#ifdef DEBUG_FIELDS_SIZE
+  s_gpsdata.heartrate = 255; // no data at startup
+  bg_color_speed_main = BG_COLOR_SPEED_MAIN;
+#ifdef ENABLE_DEBUG_FIELDS_SIZE
   strcpy(s_data.speed, "188.8");
   strcpy(s_data.distance, "88.8");
   strcpy(s_data.avgspeed, "888.8");
@@ -164,7 +167,7 @@ static void init(void) {
   strcpy(s_data.heartrate, "128");
   strcpy(s_data.cadence, "90");
 #endif
-#if DEMO
+#ifdef ENABLE_DEMO
   strcpy(s_data.maxspeed, "26.1");
   strcpy(s_data.distance, "2.0");
   strcpy(s_data.avgspeed, "14.0");
@@ -172,6 +175,9 @@ static void init(void) {
   strcpy(s_data.accuracy, "4");
   strcpy(s_data.steps, "7548");
   strcpy(s_data.elapsedtime, "1:15:28");
+  strcpy(s_data.heartrate, "112");
+  s_gpsdata.heartrate = 112;
+  heartrate_new_data(s_gpsdata.heartrate);
   s_data.live = 1;
   s_data.state = STATE_START;
 #else
@@ -195,7 +201,7 @@ static void init(void) {
 
   config_load();
 
-#if LOCALIZE
+#ifdef ENABLE_LOCALIZE
   locale_init();
 #endif
 
@@ -205,7 +211,6 @@ static void init(void) {
   font_roboto_bold_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16));
 #endif
   font_roboto_bold_62 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_62));
-  s_gpsdata.heartrate = 255; // no data at startup
 
   // set default unit of measure
   change_units(UNITS_IMPERIAL, true);
@@ -221,13 +226,13 @@ static void init(void) {
 
   screen_speed_layer_init(s_data.window);
   //screen_altitude_layer_init(s_data.window);
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
   screen_live_layer_init(s_data.window);
 #endif
   screen_map_layer_init(s_data.window);
 
-  #if PRODUCTION
-    #if !DEMO
+  #ifdef PRODUCTION
+    #ifndef ENABLE_DEMO
       screen_reset_instant_data();
     #endif
   #endif
@@ -267,7 +272,7 @@ static void deinit(void) {
   screen_speed_deinit();
   graph_deinit();
   //screen_altitude_layer_deinit();
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
   screen_live_layer_deinit();
 #endif
   screen_map_layer_deinit();

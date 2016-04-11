@@ -11,7 +11,7 @@ static AppTimer *disconnect_timer;
 void update_screens() {
   layer_set_hidden(s_data.page_speed, true);
   //layer_set_hidden(s_data.page_altitude, true);
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
   layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), true);
 #endif
   layer_set_hidden(s_data.page_map, true);
@@ -19,7 +19,7 @@ void update_screens() {
   if (s_data.data_subpage != SUBPAGE_UNDEF) {
     layer_set_hidden(s_data.page_speed, false);
   }
-#if FUNCTION_LIVE
+#ifdef ENABLE_FUNCTION_LIVE
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
     window_set_background_color(s_data.window, GColorWhite);
     layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), false);
@@ -41,7 +41,7 @@ void set_layer_attr_full(TextLayer *textlayer, const char *text, GFont font, GTe
   text_layer_set_text_color(textlayer, color);
   text_layer_set_background_color(textlayer, bg_color);
   text_layer_set_font(textlayer, font);
-  text_layer_set_overflow_mode(textlayer, GTextOverflowModeWordWrap);
+  text_layer_set_overflow_mode(textlayer, GTextOverflowModeFill);
   if (ParentLayer != NULL) {
       layer_add_child(ParentLayer, text_layer_get_layer(textlayer));
   }

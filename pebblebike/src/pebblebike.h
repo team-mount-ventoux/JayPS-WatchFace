@@ -264,6 +264,7 @@ extern AppData s_data;
 extern GPSData s_gpsdata;
 extern LiveData s_live;
 extern bool title_instead_of_units;
+extern GColor bg_color_speed_main;
 
 void change_units(uint8_t units, bool first_time);
 void change_state(uint8_t state);

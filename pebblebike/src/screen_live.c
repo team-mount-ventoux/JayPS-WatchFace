@@ -122,7 +122,7 @@ void screen_live_layer_init(Window* window) {
     s_live.sorted_friends[i] = &s_live.friends[i];
   }
 
-#if DEMO
+#ifdef ENABLE_DEMO
   s_live.nb = 2;
   strcpy(s_live.friends[0].name, "Jay");
   s_live.friends[0].distance = 20;
