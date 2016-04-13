@@ -93,7 +93,7 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
     if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
       s_data.data_subpage = s_data.page_number == PAGE_ALTITUDE ? SUBPAGE_B : SUBPAGE_A;
       title_instead_of_units = true;
-      screen_speed_show_speed(true);
+      screen_speed_update_config(true);
     } else {
       config_field_set_text(s_data.topbar_layer.field_center_layer, FIELD_TIME, GTextAlignmentCenter);
     }
@@ -131,7 +131,7 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
 #ifdef ENABLE_DEMO
 //  s_gpsdata.heartrate += 8;
 //  snprintf(s_data.heartrate, 5, "%d", s_gpsdata.heartrate);
-//  screen_speed_show_speed(false);
+//  screen_speed_update_config(true);
 #endif
 }
 void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context) {
@@ -166,7 +166,7 @@ void handle_backbutton_click(ClickRecognizerRef recognizer, void *context) {
     // TODO: show notif
 
     title_instead_of_units = true;
-    screen_speed_show_speed(true);
+    screen_speed_update_config(true);
   }
 }
 

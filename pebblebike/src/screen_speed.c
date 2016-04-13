@@ -163,30 +163,6 @@ void screen_speed_deinit() {
   layer_destroy(s_data.page_speed);
 }
 
-void screen_speed_show_speed(bool force_units) {
-  if (0) {
-#if ROTATION
-  } else if (rotation == ROTATION_HEARTRATE) {
-    if (force_units) {
-      screen_speed_update_config(true);
-    }
-#endif
-#if ROTATION  
-  } else if (rotation == ROTATION_ALTITUDE) {
-    snprintf(s_data.speed, sizeof(s_data.speed), "%d", s_gpsdata.altitude);
-    if (force_units) {
-      strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsAltitude, 8);
-    }
-#endif
-  } else {
-    copy_speed(s_data.speed, sizeof(s_data.speed), s_gpsdata.speed100);
-    ///@todo for hr zones in units
-    screen_speed_update_config(true);
-    if (force_units) {
-      //screen_speed_update_config(true);
-    }
-  }
-}
 #if ROTATION
 static void rotation_timer_callback(void *data) {
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "rotation_timer");
@@ -207,7 +183,6 @@ static void rotation_timer_callback(void *data) {
     s_data.screen_config[SUBPAGE_A].field_bottom_left.type = FIELD_ASCENT;
     s_data.screen_config[SUBPAGE_A].field_bottom_right.type = FIELD_DISTANCE;
   }
-  screen_speed_show_speed(true);
   screen_speed_update_config(true);
   update_screens();
 }

@@ -344,7 +344,9 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
             snprintf(s_data.distance,   sizeof(s_data.distance),   "%ld.%ld", s_gpsdata.distance100 / 100, s_gpsdata.distance100 % 100 / 10);
+            copy_speed(s_data.speed,    sizeof(s_data.speed),    s_gpsdata.speed100);
             copy_speed(s_data.avgspeed, sizeof(s_data.avgspeed), s_gpsdata.avgspeed100);
+            copy_speed(s_data.maxspeed, sizeof(s_data.maxspeed), s_gpsdata.maxspeed100);
             snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
             snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
             snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
@@ -374,7 +376,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             if (config_screen == CONFIG_SCREEN_DISABLED) {
               // config not in progress
-              screen_speed_show_speed(false);
+              screen_speed_update_config(true);
 
               // reset data (instant speed...) after X if no data is received
               if (reset_data_timer) {
