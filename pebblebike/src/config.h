@@ -4,8 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define PRODUCTION
-#define VERSION_PEBBLE 287
-#define VERSION_TEXT "Version 2.5.0-alpha8"
+#define VERSION_PEBBLE 288
+#define VERSION_TEXT "Version 2.5.0-alpha9"
 #define APP_COMPANY "N Jackson & JayPS"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 //#define ENABLE_ROTATION
 //#define ENABLE_DEBUG_COLOR
 //#define ENABLE_DEBUG_FIELDS_SIZE
-#define ENABLE_DEMO
+//#define ENABLE_DEMO
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef PRODUCTION
@@ -39,7 +39,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef ENABLE_LOCALIZE
-  //#define LOCALIZE_FORCE_FR true
+  //#define ENABLE_LOCALIZE_FORCE_FR
 #else
   #define _(a) (a)
 #endif

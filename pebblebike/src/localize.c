@@ -5,7 +5,7 @@ DictionaryIterator s_locale_dict;
 
 
 void locale_init(void) {
-#ifdef LOCALIZE_FORCE_FR
+#ifdef ENABLE_LOCALIZE_FORCE_FR
   //hard-coded for testing
   const char* locale_str = "fr";
 #else

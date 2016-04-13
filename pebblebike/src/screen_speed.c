@@ -97,6 +97,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 #endif
 }
 void screen_speed_layer_init(Window* window) {
+  config_init();
   config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top, config.screenA_top_type);
   config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top2, config.screenA_top2_type);
   config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_left, config.screenA_bottom_left_type);

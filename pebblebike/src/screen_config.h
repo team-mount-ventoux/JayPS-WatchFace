@@ -39,6 +39,7 @@ typedef struct ConfigData {
 } ConfigData;
 extern ConfigData config;
 
+void config_init();
 void config_start();
 void config_stop();
 void config_change_field();

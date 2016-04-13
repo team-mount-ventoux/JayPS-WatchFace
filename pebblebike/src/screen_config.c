@@ -257,12 +257,8 @@ static void config_timer_callback(void *data) {
   config_timer = app_timer_register(config_hidden ? 200 : 1000, config_timer_callback, NULL);
   config_change_visibility(cur_fieldlayer, config_hidden);
 }
-
-void config_start() {
-  if (s_data.data_subpage == SUBPAGE_UNDEF) {
-    return;
-  }
-#ifdef LOCALIZE_FORCE_FR
+void config_init() {
+#ifdef ENABLE_LOCALIZE_FORCE_FR
   //hard-coded for testing
   const char* locale_str = "fr";
 #else
@@ -282,11 +278,16 @@ void config_start() {
         }
       }
     }
-    #ifdef LOCALIZE_FORCE_FR
+    #ifdef ENABLE_LOCALIZE_FORCE_FR
     for(int i=0; i< CONFIG_NB_FIELD_ORDER; i++) {
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "%d:%s", i, field_get_title(config_order[i]));
+      LOG_INFO("%d:%s", i, field_get_title(config_order[i]));
     }
     #endif
+  }
+}
+void config_start() {
+  if (s_data.data_subpage == SUBPAGE_UNDEF) {
+    return;
   }
 
 #ifdef PBL_HEALTH
@@ -404,7 +405,6 @@ void config_previous_type_graph(bool can_display_graph) {
 
 
 void config_change_type(uint8_t direction) {
-  LOG_ENTER();
   if (direction == CONFIG_CHANGE_TYPE_NEXT) {
     config_next_type_graph(config_field == CONFIG_FIELD_SCREEN_TOP2);
     cur_fieldconfig->type = config_order[cur_fieldconfig->type_index];
@@ -419,6 +419,7 @@ void config_change_type(uint8_t direction) {
   screen_speed_update_config(false);
   text_layer_set_text(s_data.topbar_layer.field_center_layer.data_layer, field_get_title(cur_fieldconfig->type));
   layer_mark_dirty(s_data.topbar_layer.layer);
+  //LOG_DEBUG("config_change_type newtype=%d [index:%d]", cur_fieldconfig->type, cur_fieldconfig->type_index);
 }
 
 void config_load() {
@@ -483,5 +484,5 @@ void config_affect_type(FieldConfig *field, uint8_t type) {
       break;
     }
   }
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "type %d -> index: %d", field->type, field->type_index);
+  //LOG_DEBUG("type %d -> index: %d", field->type, field->type_index);
 }
