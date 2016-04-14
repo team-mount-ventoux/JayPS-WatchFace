@@ -40,6 +40,7 @@ enum {
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
 static AppTimer *reset_data_timer;
+static AppTimer *version_data_timer;
 
 void communication_init() {
   app_message_register_inbox_received(communication_in_received_callback);
@@ -51,6 +52,9 @@ void communication_init() {
 void communication_deinit() {
   if (reset_data_timer) {
     app_timer_cancel(reset_data_timer);
+  }
+  if (version_data_timer) {
+    app_timer_cancel(version_data_timer);
   }
 }
 
@@ -72,7 +76,11 @@ void send_cmd(uint8_t cmd) {
 
     app_message_outbox_send();
 }
-void send_version() {
+static void version_data_timer_callback(void *data) {
+  version_data_timer = NULL;
+  send_version(false);
+}
+void send_version(bool first_time) {
     Tuplet tuplet_version_pebble = TupletInteger(MSG_VERSION_PEBBLE, VERSION_PEBBLE);
     Tuplet tuplet_config = TupletBytes(MSG_CONFIG, (uint8_t*) &config, sizeof(config));
 
@@ -87,6 +95,13 @@ void send_version() {
     dict_write_end(iter);
 
     app_message_outbox_send();
+
+    if (first_time) {
+      // Register a timer to resend the pebble version (and receive the android version and data)
+      // in some unknown conditions, first message sent by the android app is never received on the pebble side
+      // (conflict with other 3rd party pebble apps?)
+      version_data_timer = app_timer_register(5000, version_data_timer_callback, NULL);
+    }
 }
 
 #ifdef ENABLE_DEBUG
@@ -408,9 +423,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             break;
 
         case MSG_VERSION_ANDROID:
-            //vibes_short_pulse();
-            s_data.android_version = tuple->value->int32;
-            break;
+          if (version_data_timer) {
+            app_timer_cancel(version_data_timer);
+          }
+          s_data.android_version = tuple->value->int32;
+          LOG_INFO("android_version=%ld", s_data.android_version);
+          break;
 
         case MSG_BATTERY_LEVEL:
           //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_BATTERY_LEVEL:%ld", tuple->value->int32);

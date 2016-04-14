@@ -257,7 +257,7 @@ static void init(void) {
   tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
   bluetooth_connection_service_subscribe(bt_callback);
   
-  send_version();
+  send_version(true);
 }
 static void deinit(void) {
 #ifdef PBL_HEALTH
