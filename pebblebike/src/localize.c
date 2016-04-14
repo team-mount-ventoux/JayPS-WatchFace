@@ -5,9 +5,9 @@ DictionaryIterator s_locale_dict;
 
 
 void locale_init(void) {
-#ifdef ENABLE_LOCALIZE_FORCE_FR
+#ifdef ENABLE_LOCALIZE_FORCE
   //hard-coded for testing
-  const char* locale_str = "fr";
+  const char* locale_str = ENABLE_LOCALIZE_FORCE;
 #else
   // Detect system locale
   const char* locale_str = i18n_get_system_locale();
@@ -18,10 +18,10 @@ void locale_init(void) {
   if (strncmp(locale_str, "fr", 2) == 0) {
     locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_FRENCH);
     locale_size = resource_size(locale_handle);
-  /*} else if (strncmp(locale_str, "es", 2) == 0) {
+  } else if (strncmp(locale_str, "es", 2) == 0) {
     locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_SPANISH);
     locale_size = resource_size(locale_handle);
-  } else if (strncmp(locale_str, "de", 2) == 0) {
+  /*} else if (strncmp(locale_str, "de", 2) == 0) {
     locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_GERMAN);
     locale_size = resource_size(locale_handle);*/
   }

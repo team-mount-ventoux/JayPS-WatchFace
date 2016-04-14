@@ -17,6 +17,7 @@
 //#define ENABLE_ROTATION
 //#define ENABLE_DEBUG_COLOR
 //#define ENABLE_DEBUG_FIELDS_SIZE
+#define ENABLE_LOCALIZE_FORCE "es"
 //#define ENABLE_DEMO
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +29,7 @@
   #undef ENABLE_ROTATION
   #undef ENABLE_DEBUG_COLOR
   #undef ENABLE_DEBUG_FIELDS_SIZE
+  #undef ENABLE_LOCALIZE_FORCE
   #undef ENABLE_DEMO
 #endif
 
@@ -38,9 +40,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-#ifdef ENABLE_LOCALIZE
-  //#define ENABLE_LOCALIZE_FORCE_FR
-#else
+#ifndef ENABLE_LOCALIZE
   #define _(a) (a)
 #endif
 

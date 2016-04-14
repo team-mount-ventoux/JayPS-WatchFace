@@ -258,14 +258,14 @@ static void config_timer_callback(void *data) {
   config_change_visibility(cur_fieldlayer, config_hidden);
 }
 void config_init() {
-#ifdef ENABLE_LOCALIZE_FORCE_FR
+#ifdef ENABLE_LOCALIZE_FORCE
   //hard-coded for testing
-  const char* locale_str = "fr";
+  const char* locale_str = ENABLE_LOCALIZE_FORCE;
 #else
   // Detect system locale
   const char* locale_str = i18n_get_system_locale();
 #endif
-  if (strncmp(locale_str, "fr", 2) == 0) {
+  if (strncmp(locale_str, "fr", 2) == 0 || strncmp(locale_str, "es", 2) == 0) {
     // sort config_order by title
     // the algo is not optimised (O(n²)) but it should be a problem because CONFIG_NB_FIELD_ORDER is low
     uint8_t tmp;
@@ -278,7 +278,7 @@ void config_init() {
         }
       }
     }
-    #ifdef ENABLE_LOCALIZE_FORCE_FR
+    #ifdef ENABLE_LOCALIZE_FORCE
     for(int i=0; i< CONFIG_NB_FIELD_ORDER; i++) {
       LOG_INFO("%d:%s", i, field_get_title(config_order[i]));
     }
