@@ -17,7 +17,7 @@
 //#define ENABLE_ROTATION
 //#define ENABLE_DEBUG_COLOR
 //#define ENABLE_DEBUG_FIELDS_SIZE
-#define ENABLE_LOCALIZE_FORCE "es"
+//#define ENABLE_LOCALIZE_FORCE "es"
 //#define ENABLE_DEMO
 
 ////////////////////////////////////////////////////////////////////////////////

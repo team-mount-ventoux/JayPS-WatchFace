@@ -175,8 +175,8 @@ static void init(void) {
   strcpy(s_data.accuracy, "4");
   strcpy(s_data.steps, "7548");
   strcpy(s_data.elapsedtime, "1:15:28");
-  strcpy(s_data.heartrate, "112");
-  s_gpsdata.heartrate = 112;
+  strcpy(s_data.heartrate, "147");
+  s_gpsdata.heartrate = 147;
   heartrate_new_data(s_gpsdata.heartrate);
   s_data.live = 1;
   s_data.state = STATE_START;
