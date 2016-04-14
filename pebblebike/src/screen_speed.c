@@ -5,6 +5,7 @@
 #include "screens.h"
 #include "screen_config.h"
 #include "graph.h"
+#include "heartrate.h"
 
 Layer *line_layer;
 
@@ -53,6 +54,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   }
 
 #define GRECT_GRAPH GRect(PBL_IF_ROUND_ELSE(19, 1), 1, SCREEN_W - 2*PBL_IF_ROUND_ELSE(19, 1), PBL_IF_ROUND_ELSE(25,34))
+#define SIZE_GR(data) sizeof(data) / sizeof(GraphRange)
 #ifdef ENABLE_DEMO
   GraphData heartrates;
   int16_t points[GRAPH_NB_POINTS] = {135,145,150,148,150,155,162,170,180,185,182,175,170,160,155,163,165,155,162,164};
@@ -62,15 +64,22 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
       {.min = 150, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
       {.min = 170, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
   };
-  graph_draw(ctx, GRECT_GRAPH, &heartrates, colors_heartrates, s_data.screenSpeed_layer.field_top2.data_layer, 1);
+  graph_draw(ctx, GRECT_GRAPH, &heartrates, colors_heartrates, SIZE_GR(colors_heartrates), s_data.screenSpeed_layer.field_top2.data_layer, 1, false);
 #else
   if (s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH || s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_HEARTRATE_GRAPH_ONLY) {
-    GraphRange colors_heartrates[3] = {
-        {.min = 0,   .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
-        {.min = 80, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
-        {.min = 120, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
+#ifdef PBL_COLOR
+    GraphRange colors_heartrates[4] = {
+        {.min = heartrate_zones_min_hr[2], .color = heartrate_zones_color[2]},
+        {.min = heartrate_zones_min_hr[3], .color = heartrate_zones_color[3]},
+        {.min = heartrate_zones_min_hr[4], .color = heartrate_zones_color[4]},
+        {.min = heartrate_zones_min_hr[5], .color = heartrate_zones_color[5]},
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_heartrates, colors_heartrates, s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 0);
+#else
+    GraphRange colors_heartrates[1] = {
+        {.min = 0, .color = GColorBlack},
+    };
+#endif
+    graph_draw(ctx, GRECT_GRAPH, &graph_heartrates, colors_heartrates, SIZE_GR(colors_heartrates), s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 0, false);
     //layer_set_hidden(text_layer_get_layer(s_data.screenSpeed_layer.field_top2.unit_layer), true);
   } else if (s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH || s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_ALTITUDE_GRAPH_ONLY) {
     GraphRange colors_altitudes[3] = {
@@ -78,21 +87,21 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
         {.min = 200, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 300, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_altitudes, colors_altitudes, s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10);
+    graph_draw(ctx, GRECT_GRAPH, &graph_altitudes, colors_altitudes, SIZE_GR(colors_altitudes), s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_ALTITUDE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10, true);
   } else if (s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH || s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_ASCENTRATE_GRAPH_ONLY) {
     GraphRange colors_ascentrates[3] = {
         {.min = 300, .color = PBL_IF_COLOR_ELSE(GColorGreen, GColorBlack)},
         {.min = 600, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 900, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_ascentrates, colors_ascentrates, s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10);
+    graph_draw(ctx, GRECT_GRAPH, &graph_ascentrates, colors_ascentrates, SIZE_GR(colors_ascentrates), s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_ASCENTRATE_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 10, false);
   } else if (s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_SPEED_DATA_AND_GRAPH || s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_SPEED_GRAPH_ONLY) {
     GraphRange colors_speeds[3] = {
         {.min = 0, .color = PBL_IF_COLOR_ELSE(GColorYellow, GColorBlack)},
         {.min = 0.9 * s_gpsdata.avgspeed100/10, .color = PBL_IF_COLOR_ELSE(GColorOrange, GColorBlack)},
         {.min = 1.1 * s_gpsdata.avgspeed100/10, .color = PBL_IF_COLOR_ELSE(GColorRed, GColorBlack)}
     };
-    graph_draw(ctx, GRECT_GRAPH, &graph_speeds, colors_speeds, s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_SPEED_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 1);
+    graph_draw(ctx, GRECT_GRAPH, &graph_speeds, colors_speeds, SIZE_GR(colors_speeds), s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_SPEED_DATA_AND_GRAPH ? s_data.screenSpeed_layer.field_top2.data_layer : NULL, 1, true);
   }
 #endif
 }

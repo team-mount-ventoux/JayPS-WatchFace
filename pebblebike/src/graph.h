@@ -28,6 +28,6 @@ extern GraphData graph_ascentrates;
 void graph_init();
 void graph_deinit();
 void graph_add_data(GraphData* data, int16_t value);
-void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors, TextLayer* text_layer, int min_block_value);
+void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors, uint8_t nb_colors, TextLayer* text_layer, int min_block_value, bool stacked);
 
 #endif // GRAPH_H

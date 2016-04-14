@@ -1,4 +1,5 @@
 #include "pebble.h"
+#include "config.h"
 #include "colors.h"
 #include "graph.h"
 
@@ -86,7 +87,8 @@ void graph_add_data(GraphData* graph, int16_t value) {
 }
 
 #define GRAPH_BLOCK_SIZE 6
-void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors, TextLayer* text_layer, int min_block_value) {
+void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* colors, uint8_t nb_colors, TextLayer* text_layer, int min_block_value, bool stacked) {
+  //LOG_INFO("graph_draw nb_colors:%d stacked:%d", nb_colors, stacked);
   //graphics_context_set_fill_color(ctx, GColorRed);
   //graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
@@ -118,12 +120,18 @@ void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* color
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: pts=%d height=%d", i, graph->points[i], height);
       for (int j = 0; j <= (int) (height / GRAPH_BLOCK_SIZE); j++) {
         GColor color = PBL_IF_COLOR_ELSE(GColorWhite, GColorBlack);
-        for (int k = 0; k < 3; k++) {
-          //if (graph->points[i] >= options.colors[k].min) {
-          if ((j * GRAPH_BLOCK_SIZE * 100 / coeff100) + min >= colors[k].min) {
-            color = colors[k].color;
+        for (int k = 0; k < nb_colors; k++) {
+          if (stacked) {
+            if ((j * GRAPH_BLOCK_SIZE * 100 / coeff100) + min >= colors[k].min) {
+              color = colors[k].color;
+            }
+          } else {
+            if (graph->points[i] >= colors[k].min) {
+              color = colors[k].color;
+            }
           }
         }
+        //LOG_INFO("color=%x", color.argb);
         graphics_context_set_fill_color(ctx, color);
 
         int height2 = j < (int) (height / GRAPH_BLOCK_SIZE) ? GRAPH_BLOCK_SIZE : height % GRAPH_BLOCK_SIZE;
