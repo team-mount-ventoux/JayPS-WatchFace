@@ -146,7 +146,7 @@ void screen_speed_layer_init(Window* window) {
   s_data.screenSpeed_layer.field_top.unit_layer = text_layer_create(GRect(PBL_IF_ROUND_ELSE(10, 3), PAGE_SPEED_MIDDLE_DATA_H + 19, SCREEN_W - 2*PBL_IF_ROUND_ELSE(10, 3), 22));
   set_layer_attr_full(s_data.screenSpeed_layer.field_top.unit_layer, s_data.unitsSpeedOrHeartRate, fonts_get_system_font(FONT_KEY_GOTHIC_14), GTextAlignmentRight, COLOR_SPEED_UNITS, BG_COLOR_SPEED_UNITS, s_data.page_speed);
 
-  s_data.screenSpeed_layer.field_top.data_layer = text_layer_create(GRect(0, PAGE_SPEED_MIDDLE_DATA_H - 42 - PBL_IF_ROUND_ELSE(0,0), SCREEN_W, 80));
+  s_data.screenSpeed_layer.field_top.data_layer = text_layer_create(GRect(-20, PAGE_SPEED_MIDDLE_DATA_H - 42 - PBL_IF_ROUND_ELSE(0,0), SCREEN_W + 40, 80));
   set_layer_attr_full(s_data.screenSpeed_layer.field_top.data_layer, s_data.speed, font_roboto_bold_62, GTextAlignmentCenter, COLOR_SPEED_DATA, BG_COLOR_SPEED_DATA, s_data.page_speed);
 
   // END top
