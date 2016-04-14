@@ -440,13 +440,14 @@ void config_load() {
 #ifdef ENABLE_DEMO
 //    config.screenA_top_type           = FIELD_MAXSPEED;
     config.screenA_top_type           = FIELD_HEARTRATE;
+    config.screenA_top2_type          = FIELD_HEARTRATE_GRAPH_ONLY;
 #else
     config.screenA_top_type           = FIELD_SPEED;
-#endif
-#ifdef PBL_COLOR
-    config.screenA_top2_type          = FIELD_ALTITUDE_DATA_AND_GRAPH;
-#else
-    config.screenA_top2_type          = FIELD_ALTITUDE;
+  #ifdef PBL_COLOR
+      config.screenA_top2_type          = FIELD_ALTITUDE_DATA_AND_GRAPH;
+  #else
+      config.screenA_top2_type          = FIELD_ALTITUDE;
+  #endif
 #endif
     config.screenA_bottom_left_type   = FIELD_DISTANCE;
     config.screenA_bottom_right_type  = FIELD_AVGSPEED;

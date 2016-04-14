@@ -150,6 +150,7 @@ void bt_callback(bool connected) {
 }
 
 static void init(void) {
+  heartrate_init();
   s_gpsdata.heartrate = 255; // no data at startup
   bg_color_speed_main = BG_COLOR_SPEED_MAIN;
 #ifdef ENABLE_DEBUG_FIELDS_SIZE

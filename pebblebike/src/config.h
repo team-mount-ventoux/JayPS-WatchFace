@@ -4,8 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define PRODUCTION
-#define VERSION_PEBBLE 288
-#define VERSION_TEXT "Version 2.5.0-alpha9"
+#define VERSION_PEBBLE 289
+#define VERSION_TEXT "Version 2.5.0-alpha10"
 #define APP_COMPANY "N Jackson & JayPS"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +47,7 @@
 #ifndef PBL_PLATFORM_APLITE
   // save memory on APLITE (1050 bytes)
   #define ENABLE_FUNCTION_LIVE
+  #define ENABLE_MENU_HEART_ZONES
 #endif
 
 #ifdef ENABLE_LOGS

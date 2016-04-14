@@ -1,7 +1,9 @@
 #include "pebble.h"
 #include "pebblebike.h"
 #include "heartrate.h"
-
+#ifdef ENABLE_LOCALIZE
+  #include "localize.h"
+#endif
 char heartrate_zone[40];
 #ifdef PBL_COLOR
 GColor heartrate_color;
@@ -13,33 +15,37 @@ time_t time_prev = 0;
 uint8_t zone_prev = 0;
 time_t zone_time_ini = 0;
 
-uint8_t max_heartrate = 185;
+uint8_t heartrate_max = 185;
 
 uint8_t heartrate_zones_min_hr[NB_HR_ZONES + 1] = { 0, 0, 0, 0, 0, 0 };
-uint16_t zone_durations[NB_HR_ZONES + 1] = { 0, 0, 0, 0, 0, 0 };
-char zone_textes[NB_HR_ZONES + 1][15] = { "", "Very Light", "Light", "Moderate", "Hard", "Maximum" };
+uint16_t heartrate_zones_duration[NB_HR_ZONES + 1] = { 0, 0, 0, 0, 0, 0 };
+char heartrate_zones_name[NB_HR_ZONES + 1][15] = { "", "", "", "", "", ""};
 
+void heartrate_init() {
+  heartrate_zones_min_hr[1] = 50 * heartrate_max / 100;
+  heartrate_zones_min_hr[2] = 60 * heartrate_max / 100;
+  heartrate_zones_min_hr[3] = 70 * heartrate_max / 100;
+  heartrate_zones_min_hr[4] = 80 * heartrate_max / 100;
+  heartrate_zones_min_hr[5] = 90 * heartrate_max / 100;
+#ifdef PBL_COLOR
+  heartrate_zones_color[0] = BG_COLOR_SPEED_MAIN;
+  heartrate_zones_color[1] = BG_COLOR_SPEED_MAIN;
+  heartrate_zones_color[2] = GColorIslamicGreen;
+  heartrate_zones_color[3] = GColorDarkGreen;
+  heartrate_zones_color[4] = GColorWindsorTan; //GColorOrange;
+  heartrate_zones_color[5] = GColorDarkCandyAppleRed;
+#endif
+  strcpy(heartrate_zones_name[1], "Very Light");
+  strcpy(heartrate_zones_name[2], "Light");
+  strcpy(heartrate_zones_name[3], "Moderate");
+  strcpy(heartrate_zones_name[4], "Hard");
+  strcpy(heartrate_zones_name[5], "Maximum");
+}
 void heartrate_new_data(uint8_t heartrate) {
   if (s_gpsdata.heartrate == 0 || s_gpsdata.heartrate == 255) {
     return;
   }
-  if (heartrate_zones_min_hr[1] == 0) {
-    // not initialized
-    heartrate_zones_min_hr[1] = 50 * max_heartrate / 100;
-    heartrate_zones_min_hr[2] = 60 * max_heartrate / 100;
-    heartrate_zones_min_hr[3] = 70 * max_heartrate / 100;
-    heartrate_zones_min_hr[4] = 80 * max_heartrate / 100;
-    heartrate_zones_min_hr[5] = 90 * max_heartrate / 100;
-#ifdef PBL_COLOR
-    heartrate_zones_color[0] = BG_COLOR_SPEED_MAIN;
-    heartrate_zones_color[1] = BG_COLOR_SPEED_MAIN;
-    heartrate_zones_color[2] = GColorIslamicGreen;
-    heartrate_zones_color[3] = GColorDarkGreen;
-    heartrate_zones_color[4] = GColorWindsorTan; //GColorOrange;
-    heartrate_zones_color[5] = GColorDarkCandyAppleRed;
-#endif
-  }
-  uint8_t ratio = 100 * s_gpsdata.heartrate / max_heartrate;
+  uint8_t ratio = 100 * s_gpsdata.heartrate / heartrate_max;
   if (ratio < 60) {
     zone = 1;
   } else if (ratio >= 90) {
@@ -55,21 +61,21 @@ void heartrate_new_data(uint8_t heartrate) {
       vibes_short_pulse();
       LOG_INFO("vibes_short_pulse");
     }
-    zone_durations[zone_prev] += delta_duration;
+    heartrate_zones_duration[zone_prev] += delta_duration;
     zone_prev = zone;
     zone_time_ini = time(NULL);
   }
   time_prev = time(NULL);
-  zone_durations[zone] += delta_duration;
+  heartrate_zones_duration[zone] += delta_duration;
 #ifdef PBL_COLOR
   heartrate_color = heartrate_zones_color[zone];
 #endif
   char buffer_duration[10];
-  if (zone_durations[zone] < 60) {
-    snprintf(buffer_duration, sizeof(buffer_duration), "%02d\"", zone_durations[zone]);
+  if (heartrate_zones_duration[zone] < 60) {
+    snprintf(buffer_duration, sizeof(buffer_duration), "%02d\"", heartrate_zones_duration[zone]);
   } else {
-    snprintf(buffer_duration, sizeof(buffer_duration), "%d'%02d\"", zone_durations[zone] / 60, zone_durations[zone] % 60);
+    snprintf(buffer_duration, sizeof(buffer_duration), "%d'%02d\"", heartrate_zones_duration[zone] / 60, heartrate_zones_duration[zone] % 60);
   }
-  snprintf(heartrate_zone, sizeof(heartrate_zone), "%d - %s - %s", zone, zone_textes[zone], buffer_duration);
-  LOG_DEBUG("h=%d r=%d z=%d %d/%d/%d/%d/%d %s", s_gpsdata.heartrate, ratio, zone, zone_durations[1], zone_durations[2], zone_durations[3], zone_durations[4], zone_durations[5], heartrate_zone);
+  snprintf(heartrate_zone, sizeof(heartrate_zone), "%d - %s - %s", zone, heartrate_zones_name[zone], buffer_duration);
+  LOG_DEBUG("h=%d r=%d z=%d %d/%d/%d/%d/%d %s", s_gpsdata.heartrate, ratio, zone, heartrate_zones_duration[1], heartrate_zones_duration[2], heartrate_zones_duration[3], heartrate_zones_duration[4], heartrate_zones_duration[5], heartrate_zone);
 }
