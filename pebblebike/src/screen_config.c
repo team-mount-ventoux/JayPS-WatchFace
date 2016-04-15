@@ -270,7 +270,13 @@ void config_init() {
     // the algo is not optimised (O(n²)) but it should be a problem because CONFIG_NB_FIELD_ORDER is low
     uint8_t tmp;
     for (int i = 0; i < CONFIG_NB_FIELD_ORDER - 1; i++) {
+      if (config_order[i] == FIELD__UNUSED) {
+        break;
+      }
       for (int j = i + 1; j < CONFIG_NB_FIELD_ORDER - 1; j++) {
+        if (config_order[j] == FIELD__UNUSED) {
+          break;
+        }
         if (strcmp(field_get_title(config_order[j]), field_get_title(config_order[i])) < 0) {
           tmp = config_order[i];
           config_order[i] = config_order[j];
