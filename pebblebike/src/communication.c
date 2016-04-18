@@ -434,6 +434,17 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_BATTERY_LEVEL:%ld", tuple->value->int32);
           s_data.phone_battery_level = tuple->value->int32;
           break;
+
+        case MSG_HR_MAX:
+          heartrate_max = tuple->value->uint8;
+          LOG_INFO("heartrate_max=%d", heartrate_max);
+          break;
+
+        case MSG_HR_ZONE_NOTIFICATION_MODE:
+          heartrate_zones_notification_mode = tuple->value->uint8;
+          LOG_INFO("heartrate_zones_notification_mode=%d", heartrate_zones_notification_mode);
+          break;
+
         }
         tuple = dict_read_next(iter);
     }

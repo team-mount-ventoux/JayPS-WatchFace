@@ -15,18 +15,13 @@ time_t time_prev = 0;
 uint8_t zone_prev = 0;
 time_t zone_time_ini = 0;
 
-uint8_t heartrate_max = 185;
+uint8_t heartrate_max = 0;
+HR_ZONE_NOTIFICATION_MODES heartrate_zones_notification_mode = 0;
 
-uint8_t heartrate_zones_min_hr[NB_HR_ZONES + 1] = { 0, 0, 0, 0, 0, 0 };
 uint16_t heartrate_zones_duration[NB_HR_ZONES + 1] = { 0, 0, 0, 0, 0, 0 };
 char heartrate_zones_name[NB_HR_ZONES + 1][15] = { "", "", "", "", "", ""};
 
 void heartrate_init() {
-  heartrate_zones_min_hr[1] = 50 * heartrate_max / 100;
-  heartrate_zones_min_hr[2] = 60 * heartrate_max / 100;
-  heartrate_zones_min_hr[3] = 70 * heartrate_max / 100;
-  heartrate_zones_min_hr[4] = 80 * heartrate_max / 100;
-  heartrate_zones_min_hr[5] = 90 * heartrate_max / 100;
 #ifdef PBL_COLOR
   heartrate_zones_color[0] = BG_COLOR_DATA_MAIN;
   heartrate_zones_color[1] = BG_COLOR_DATA_MAIN;
@@ -57,9 +52,12 @@ void heartrate_new_data(uint8_t heartrate) {
 
   uint16_t delta_duration = time_prev != 0 ? time(NULL) - time_prev : 0;
   if (zone != zone_prev) {
-    if (zone_time_ini > 0 && time(NULL) - zone_time_ini > 30) {
-      vibes_short_pulse();
-      LOG_INFO("vibes_short_pulse");
+    if (heartrate_zones_notification_mode != HR_ZONE_NOTIFICATION_DISABLE && zone_time_ini > 0 && time(NULL) - zone_time_ini > 30) {
+      LOG_INFO("mode=%d zone=%d", heartrate_zones_notification_mode, zone);
+      if (heartrate_zones_notification_mode != HR_ZONE_NOTIFICATION_VIBRATE_ENTERING_MAXIMUM_ZONE || zone == 5) {
+        vibes_short_pulse();
+        LOG_INFO("vibes_short_pulse");
+      }
     }
     heartrate_zones_duration[zone_prev] += delta_duration;
     zone_prev = zone;
@@ -78,4 +76,9 @@ void heartrate_new_data(uint8_t heartrate) {
   }
   snprintf(heartrate_zone, sizeof(heartrate_zone), "%d - %s - %s", zone, heartrate_zones_name[zone], buffer_duration);
   LOG_DEBUG("h=%d r=%d z=%d %d/%d/%d/%d/%d %s", s_gpsdata.heartrate, ratio, zone, heartrate_zones_duration[1], heartrate_zones_duration[2], heartrate_zones_duration[3], heartrate_zones_duration[4], heartrate_zones_duration[5], heartrate_zone);
+}
+uint8_t heartrate_zones_min_hr(uint8_t zone) {
+  // zone1: 50% heartrate_max
+  // zone5: 90% heartrate_max
+  return (4 + zone) * heartrate_max / 10;
 }

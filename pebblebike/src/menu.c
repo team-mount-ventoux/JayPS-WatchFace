@@ -137,28 +137,30 @@ void init_settings_window()
 #endif
 #ifdef ENABLE_MENU_HEART_ZONES
   // Section "Heart rate zones"
-  i = 0;
-  char buffer_duration[10];
-  for (int j = 1; j <= NB_HR_ZONES; j++) {
-    snprintf(heartzones_titles[j], sizeof(heartzones_titles[j]), "%d - %s", j, heartrate_zones_name[j]);
-    if (heartrate_zones_duration[j] < 60) {
-      snprintf(buffer_duration, sizeof(buffer_duration), "%02d\"", heartrate_zones_duration[j]);
-    } else {
-      snprintf(buffer_duration, sizeof(buffer_duration), "%d'%02d\"", heartrate_zones_duration[j] / 60, heartrate_zones_duration[j] % 60);
+  if (heartrate_max > 0) {
+    i = 0;
+    char buffer_duration[10];
+    for (int j = 1; j <= NB_HR_ZONES; j++) {
+      snprintf(heartzones_titles[j], sizeof(heartzones_titles[j]), "%d - %s", j, heartrate_zones_name[j]);
+      if (heartrate_zones_duration[j] < 60) {
+        snprintf(buffer_duration, sizeof(buffer_duration), "%02d\"", heartrate_zones_duration[j]);
+      } else {
+        snprintf(buffer_duration, sizeof(buffer_duration), "%d'%02d\"", heartrate_zones_duration[j] / 60, heartrate_zones_duration[j] % 60);
+      }
+      snprintf(heartzones_subtitles[j], sizeof(heartzones_subtitles[j]), "[%d-%d] : %s", j == 1 ? 0 : heartrate_zones_min_hr(j), j == NB_HR_ZONES ? heartrate_max : heartrate_zones_min_hr(j+1), buffer_duration);
+      //LOG_INFO("%d %s %s", j, heartzones_titles[j], heartzones_subtitles[j]);
+      menu_section_heartzones_items[i++] = (SimpleMenuItem) {
+        .title = heartzones_titles[j],
+        .subtitle = heartzones_subtitles[j],
+      };
     }
-    snprintf(heartzones_subtitles[j], sizeof(heartzones_subtitles[j]), "[%d-%d] : %s", j == 1 ? 0 : heartrate_zones_min_hr[j], j == NB_HR_ZONES ? heartrate_max : heartrate_zones_min_hr[j+1], buffer_duration);
-    //LOG_INFO("%d %s %s", j, heartzones_titles[j], heartzones_subtitles[j]);
-    menu_section_heartzones_items[i++] = (SimpleMenuItem) {
-      .title = heartzones_titles[j],
-      .subtitle = heartzones_subtitles[j],
+    // Header
+    menu_sections[s++] = (SimpleMenuSection) {
+      .title = _("Heart rate zones"),
+      .items = menu_section_heartzones_items,
+      .num_items = ARRAY_LENGTH(menu_section_heartzones_items)
     };
   }
-  // Header
-  menu_sections[s++] = (SimpleMenuSection) {
-    .title = _("Heart rate zones"),
-    .items = menu_section_heartzones_items,
-    .num_items = ARRAY_LENGTH(menu_section_heartzones_items)
-  };
 #endif
 #if MENU_HELP_BUTTONS
     // Section "Buttons"

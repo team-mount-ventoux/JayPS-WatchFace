@@ -68,10 +68,10 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   if (s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_HEARTRATE_DATA_AND_GRAPH || s_data.screen_config[s_data.data_subpage].field_top2.type == FIELD_HEARTRATE_GRAPH_ONLY) {
 #ifdef PBL_COLOR
     GraphRange colors_heartrates[4] = {
-        {.min = heartrate_zones_min_hr[2], .color = heartrate_zones_color[2]},
-        {.min = heartrate_zones_min_hr[3], .color = heartrate_zones_color[3]},
-        {.min = heartrate_zones_min_hr[4], .color = heartrate_zones_color[4]},
-        {.min = heartrate_zones_min_hr[5], .color = heartrate_zones_color[5]},
+        {.min = heartrate_zones_min_hr(2), .color = heartrate_zones_color[2]},
+        {.min = heartrate_zones_min_hr(3), .color = heartrate_zones_color[3]},
+        {.min = heartrate_zones_min_hr(4), .color = heartrate_zones_color[4]},
+        {.min = heartrate_zones_min_hr(5), .color = heartrate_zones_color[5]},
     };
 #else
     GraphRange colors_heartrates[1] = {
