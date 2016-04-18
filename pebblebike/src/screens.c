@@ -9,7 +9,7 @@ ActionBarLayer *action_bar;
 static AppTimer *disconnect_timer;
 
 void update_screens() {
-  layer_set_hidden(s_data.page_speed, true);
+  layer_set_hidden(s_data.page_data, true);
   //layer_set_hidden(s_data.page_altitude, true);
 #ifdef ENABLE_FUNCTION_LIVE
   layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), true);
@@ -17,7 +17,7 @@ void update_screens() {
   layer_set_hidden(s_data.page_map, true);
   window_set_background_color(s_data.window, BG_COLOR_WINDOW);
   if (s_data.data_subpage != SUBPAGE_UNDEF) {
-    layer_set_hidden(s_data.page_speed, false);
+    layer_set_hidden(s_data.page_data, false);
   }
 #ifdef ENABLE_FUNCTION_LIVE
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
@@ -171,7 +171,7 @@ void screen_reset_instant_data() {
   strcpy(s_data.accuracy, "-");
 
   if (s_data.data_subpage != SUBPAGE_UNDEF) {
-    layer_mark_dirty(s_data.page_speed);
+    layer_mark_dirty(s_data.page_data);
   }
 }
 

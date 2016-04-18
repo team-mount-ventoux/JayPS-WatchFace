@@ -5,10 +5,10 @@
 #include "screens.h"
 #include "screen_map.h"
 #include "screen_live.h"
-#include "screen_speed.h"
 #include "screen_config.h"
 #include "graph.h"
 #include "heartrate.h"
+#include "screen_data.h"
 
 enum {
   BYTE_SETTINGS = 0,
@@ -391,7 +391,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             if (config_screen == CONFIG_SCREEN_DISABLED) {
               // config not in progress
-              screen_speed_update_config(true);
+              screen_data_update_config(true);
 
               // reset data (instant speed...) after X if no data is received
               if (reset_data_timer) {
@@ -404,7 +404,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
               screen_map_update_location();
 
               if (s_data.data_subpage != SUBPAGE_UNDEF) {
-                  layer_mark_dirty(s_data.page_speed);
+                  layer_mark_dirty(s_data.page_data);
               }
               if (s_data.page_number == PAGE_LIVE_TRACKING) {
                   layer_mark_dirty((Layer *) s_data.page_live_tracking);

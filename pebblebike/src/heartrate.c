@@ -28,8 +28,8 @@ void heartrate_init() {
   heartrate_zones_min_hr[4] = 80 * heartrate_max / 100;
   heartrate_zones_min_hr[5] = 90 * heartrate_max / 100;
 #ifdef PBL_COLOR
-  heartrate_zones_color[0] = BG_COLOR_SPEED_MAIN;
-  heartrate_zones_color[1] = BG_COLOR_SPEED_MAIN;
+  heartrate_zones_color[0] = BG_COLOR_DATA_MAIN;
+  heartrate_zones_color[1] = BG_COLOR_DATA_MAIN;
   heartrate_zones_color[2] = GColorIslamicGreen;
   heartrate_zones_color[3] = GColorDarkGreen;
   heartrate_zones_color[4] = GColorWindsorTan; //GColorOrange;

@@ -98,7 +98,7 @@ void init_settings_window()
     .subtitle = _("distance, time, ascent..."),
     .callback = &menu_reset_data_callback,
   };
-  if (s_data.page_number == PAGE_SPEED || s_data.page_number == PAGE_ALTITUDE) {
+  if (s_data.page_number == PAGE_DATA || s_data.page_number == PAGE_ALTITUDE) {
     menu_section0_items[i++] = (SimpleMenuItem) {
       .title = _("Configure screen"),
       .subtitle = _("Change fields"),

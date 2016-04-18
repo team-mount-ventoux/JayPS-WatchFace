@@ -1,11 +1,11 @@
 #include "pebble.h"
 #include "config.h"
 #include "pebblebike.h"
-#include "screen_speed.h"
 #include "screens.h"
 #include "buttons.h"
 #include "screen_config.h"
 #include "heartrate.h"
+#include "screen_data.h"
 #ifdef ENABLE_LOCALIZE
   #include "localize.h"
 #endif
@@ -206,11 +206,11 @@ void config_field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment 
   if (field_layer.unit_layer != NULL) {
     text_layer_set_text(field_layer.unit_layer, title_instead_of_units ? field_get_title(type) : field_get_units(type));
 #ifdef PBL_COLOR
-    if (field_layer.data_layer == s_data.screenSpeed_layer.field_top.data_layer) {
+    if (field_layer.data_layer == s_data.screenData_layer.field_top.data_layer) {
       if (type == FIELD_HEARTRATE && s_gpsdata.heartrate > 0 && s_gpsdata.heartrate != 255) {
-        bg_color_speed_main = heartrate_color;
+        bg_color_data_main = heartrate_color;
       } else {
-        bg_color_speed_main = BG_COLOR_SPEED_MAIN;
+        bg_color_data_main = BG_COLOR_DATA_MAIN;
       }
     }
 #endif
@@ -220,22 +220,22 @@ void config_field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment 
 #endif
   }
 }
-void screen_speed_update_config(bool change_page) {
+void screen_data_update_config(bool change_page) {
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
     return;
   }
   if (change_page) {
-    LOG_DEBUG("screen_speed_update_config(true)");
+    LOG_DEBUG("screen_data_update_config(true)");
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_top, s_data.data_subpage == SUBPAGE_B ? config.screenB_top_type : config.screenA_top_type);
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_top2, s_data.data_subpage == SUBPAGE_B ? config.screenB_top2_type : config.screenA_top2_type);
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_bottom_left, s_data.data_subpage == SUBPAGE_B ? config.screenB_bottom_left_type : config.screenA_bottom_left_type);
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_bottom_right, s_data.data_subpage == SUBPAGE_B ? config.screenB_bottom_right_type : config.screenA_bottom_right_type);
     config_affect_type(&s_data.screen_config[s_data.data_subpage].field_topbar_center, s_data.data_subpage == SUBPAGE_B ? config.screenB_topbar_center_type : config.screenA_topbar_center_type);
   }
-  config_field_set_text(s_data.screenSpeed_layer.field_top, s_data.page_number == PAGE_HEARTRATE ? FIELD_HEARTRATE : s_data.screen_config[s_data.data_subpage].field_top.type, GTextAlignmentRight);
-  config_field_set_text(s_data.screenSpeed_layer.field_top2, s_data.screen_config[s_data.data_subpage].field_top2.type, GTextAlignmentRight);
-  config_field_set_text(s_data.screenSpeed_layer.field_bottom_left, s_data.screen_config[s_data.data_subpage].field_bottom_left.type, GTextAlignmentCenter);
-  config_field_set_text(s_data.screenSpeed_layer.field_bottom_right, s_data.screen_config[s_data.data_subpage].field_bottom_right.type, GTextAlignmentCenter);
+  config_field_set_text(s_data.screenData_layer.field_top, s_data.page_number == PAGE_HEARTRATE ? FIELD_HEARTRATE : s_data.screen_config[s_data.data_subpage].field_top.type, GTextAlignmentRight);
+  config_field_set_text(s_data.screenData_layer.field_top2, s_data.screen_config[s_data.data_subpage].field_top2.type, GTextAlignmentRight);
+  config_field_set_text(s_data.screenData_layer.field_bottom_left, s_data.screen_config[s_data.data_subpage].field_bottom_left.type, GTextAlignmentCenter);
+  config_field_set_text(s_data.screenData_layer.field_bottom_right, s_data.screen_config[s_data.data_subpage].field_bottom_right.type, GTextAlignmentCenter);
   if (config_screen == CONFIG_SCREEN_DISABLED) {
     config_field_set_text(s_data.topbar_layer.field_center_layer, s_data.screen_config[s_data.data_subpage].field_topbar_center.type, GTextAlignmentCenter);
   }
@@ -303,8 +303,8 @@ void config_start() {
   config_field = CONFIG_FIELD_SCREEN_TOP;
   config_screen = s_data.data_subpage == SUBPAGE_B ? CONFIG_SCREEN_B : CONFIG_SCREEN_A;
   cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_top;
-  screen_speed_update_config(false);
-  cur_fieldlayer = &s_data.screenSpeed_layer.field_top;
+  screen_data_update_config(false);
+  cur_fieldlayer = &s_data.screenData_layer.field_top;
   layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), true);
   layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), true);
   text_layer_set_text(s_data.topbar_layer.field_center_layer.data_layer, field_get_title(cur_fieldconfig->type));
@@ -341,11 +341,11 @@ void config_change_field() {
     config_field = CONFIG_FIELD_SCREEN__MIN;
   }
   switch (config_field) {
-    case CONFIG_FIELD_SCREEN_TOP:           cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_top;          cur_fieldlayer = &s_data.screenSpeed_layer.field_top; break;
-    case CONFIG_FIELD_SCREEN_TOP2:          cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_top2;         cur_fieldlayer = &s_data.screenSpeed_layer.field_top2; break;
+    case CONFIG_FIELD_SCREEN_TOP:           cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_top;          cur_fieldlayer = &s_data.screenData_layer.field_top; break;
+    case CONFIG_FIELD_SCREEN_TOP2:          cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_top2;         cur_fieldlayer = &s_data.screenData_layer.field_top2; break;
     case CONFIG_FIELD_SCREEN_TOP_BAR:       cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_topbar_center;         cur_fieldlayer = &s_data.topbar_layer.field_center_layer; break;
-    case CONFIG_FIELD_SCREEN_BOTTOM_LEFT:   cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_bottom_left;  cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_left; break;
-    case CONFIG_FIELD_SCREEN_BOTTOM_RIGHT:  cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_bottom_right; cur_fieldlayer = &s_data.screenSpeed_layer.field_bottom_right; break;
+    case CONFIG_FIELD_SCREEN_BOTTOM_LEFT:   cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_bottom_left;  cur_fieldlayer = &s_data.screenData_layer.field_bottom_left; break;
+    case CONFIG_FIELD_SCREEN_BOTTOM_RIGHT:  cur_fieldconfig = &s_data.screen_config[s_data.data_subpage].field_bottom_right; cur_fieldlayer = &s_data.screenData_layer.field_bottom_right; break;
   }
 
   config_change_visibility(cur_fieldlayer, true);
@@ -422,7 +422,7 @@ void config_change_type(uint8_t direction) {
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: type %d", cur_fieldconfig->type_index, cur_fieldconfig->type);
   
   //todo
-  screen_speed_update_config(false);
+  screen_data_update_config(false);
   text_layer_set_text(s_data.topbar_layer.field_center_layer.data_layer, field_get_title(cur_fieldconfig->type));
   layer_mark_dirty(s_data.topbar_layer.layer);
   //LOG_DEBUG("config_change_type newtype=%d [index:%d]", cur_fieldconfig->type, cur_fieldconfig->type_index);

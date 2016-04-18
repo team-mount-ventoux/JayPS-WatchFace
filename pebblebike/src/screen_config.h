@@ -48,7 +48,7 @@ void config_load();
 void config_save();
 void config_affect_type(FieldConfig *field, uint8_t type);
 void config_field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment force_alignement);
-void screen_speed_update_config(bool change_page);
+void screen_data_update_config(bool change_page);
 void screen_altitude_update_config();
 
 

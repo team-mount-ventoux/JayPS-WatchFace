@@ -38,7 +38,7 @@ static void health_handler(HealthEventType event, void *context) {
 
   //todo add function to mark current page dirty
   if (s_data.data_subpage != SUBPAGE_UNDEF) {
-    layer_mark_dirty(s_data.page_speed);
+    layer_mark_dirty(s_data.page_data);
   }
 }
 

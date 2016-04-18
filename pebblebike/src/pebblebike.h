@@ -55,7 +55,7 @@ enum {
 };
 
 enum {
-  PAGE_SPEED = 0,
+  PAGE_DATA = 0,
   PAGE_HEARTRATE = 1,
   PAGE_ALTITUDE = 2,
   PAGE_LIVE_TRACKING = 3,
@@ -165,12 +165,12 @@ typedef struct ScreenLayer {
 typedef struct AppData {
   Window *window;
 
-  Layer *page_speed;
+  Layer *page_data;
   MenuLayer *page_live_tracking;
   Layer *page_map;
 
   TopBarLayer topbar_layer;
-  ScreenLayer screenSpeed_layer;
+  ScreenLayer screenData_layer;
 
   ScreenConfig screen_config[2];
 
@@ -264,7 +264,7 @@ extern AppData s_data;
 extern GPSData s_gpsdata;
 extern LiveData s_live;
 extern bool title_instead_of_units;
-extern GColor bg_color_speed_main;
+extern GColor bg_color_data_main;
 
 void change_units(uint8_t units, bool first_time);
 void change_state(uint8_t state);

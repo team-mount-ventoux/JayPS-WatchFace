@@ -11,7 +11,7 @@ Layer *bearing_layer;
 // 4 Bytes/point
 // to compute correct values, use DEMO mode, cycle through all screens including menu
 #if PBL_PLATFORM_APLITE
-  ///@todo(jay) remove scrren_map for aplite (or just live?), or merge screenA ("speed") and screenB ("altitude")
+  ///@todo(jay) remove scrren_map for aplite (or just live?)
   #define NUM_POINTS 1
 #else
   #define NUM_POINTS 1500

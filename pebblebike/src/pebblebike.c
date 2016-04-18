@@ -14,7 +14,7 @@
 #include "buttons.h"
 #include "menu.h"
 #include "screens.h"
-#include "screen_speed.h"
+#include "screen_data.h"
 #ifdef ENABLE_FUNCTION_LIVE
   #include "screen_live.h"
 #endif
@@ -33,7 +33,7 @@ GPSData s_gpsdata;
 LiveData s_live;
 #endif
 bool title_instead_of_units = true;
-GColor bg_color_speed_main;
+GColor bg_color_data_main;
 int nbchange_state=0;
 
 void change_units(uint8_t units, bool first_time) {
@@ -100,11 +100,11 @@ void change_units(uint8_t units, bool first_time) {
   }
 
   if (!first_time) {
-    //todo(custom) screen_speed_dirty
-    layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_top.unit_layer));
-    layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_top2.unit_layer));
-    layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_bottom_left.unit_layer));
-    layer_mark_dirty(text_layer_get_layer(s_data.screenSpeed_layer.field_bottom_right.unit_layer));
+    //todo(custom) screen_data_dirty
+    layer_mark_dirty(text_layer_get_layer(s_data.screenData_layer.field_top.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenData_layer.field_top2.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenData_layer.field_bottom_left.unit_layer));
+    layer_mark_dirty(text_layer_get_layer(s_data.screenData_layer.field_bottom_right.unit_layer));
   }
   if (s_data.data_subpage != SUBPAGE_UNDEF) {
     strncpy(s_data.unitsSpeedOrHeartRate, s_data.unitsSpeed, 8);
@@ -157,7 +157,7 @@ static void init(void) {
 #endif
   heartrate_init();
   s_gpsdata.heartrate = 255; // no data at startup
-  bg_color_speed_main = BG_COLOR_SPEED_MAIN;
+  bg_color_data_main = BG_COLOR_DATA_MAIN;
 #ifdef ENABLE_DEBUG_FIELDS_SIZE
   strcpy(s_data.speed, "188.8");
   strcpy(s_data.distance, "88.8");
@@ -224,7 +224,7 @@ static void init(void) {
 #endif
   topbar_layer_init(s_data.window);
 
-  screen_speed_layer_init(s_data.window);
+  screen_data_layer_init(s_data.window);
   //screen_altitude_layer_init(s_data.window);
 #ifdef ENABLE_FUNCTION_LIVE
   screen_live_layer_init(s_data.window);
@@ -248,7 +248,7 @@ static void init(void) {
   
   communication_init();
 
-  screen_speed_update_config(true);
+  screen_data_update_config(true);
   //screen_altitude_update_config();
   graph_init();
   
@@ -269,7 +269,7 @@ static void deinit(void) {
 
 #if APP_DEINIT
   topbar_layer_deinit();
-  screen_speed_deinit();
+  screen_data_deinit();
   graph_deinit();
   //screen_altitude_layer_deinit();
 #ifdef ENABLE_FUNCTION_LIVE
