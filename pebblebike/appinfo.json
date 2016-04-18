@@ -91,7 +91,12 @@
         "type": "raw",
         "name": "LOCALE_SPANISH",
         "file": "locale_spanish.bin"
-      } 
+      },
+      {
+        "type": "raw",
+        "name": "LOCALE_GERMAN",
+        "file": "locale_german.bin"
+      }
     ]
   },
   "targetPlatforms": [

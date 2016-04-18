@@ -155,7 +155,7 @@ void init_settings_window()
   }
   // Header
   menu_sections[s++] = (SimpleMenuSection) {
-    .title = "Heart rate zones",
+    .title = _("Heart rate zones"),
     .items = menu_section_heartzones_items,
     .num_items = ARRAY_LENGTH(menu_section_heartzones_items)
   };

@@ -35,11 +35,11 @@ void heartrate_init() {
   heartrate_zones_color[4] = GColorWindsorTan; //GColorOrange;
   heartrate_zones_color[5] = GColorDarkCandyAppleRed;
 #endif
-  strcpy(heartrate_zones_name[1], "Very Light");
-  strcpy(heartrate_zones_name[2], "Light");
-  strcpy(heartrate_zones_name[3], "Moderate");
-  strcpy(heartrate_zones_name[4], "Hard");
-  strcpy(heartrate_zones_name[5], "Maximum");
+  strcpy(heartrate_zones_name[1], _("Very Light"));
+  strcpy(heartrate_zones_name[2], _("Light"));
+  strcpy(heartrate_zones_name[3], _("Moderate"));
+  strcpy(heartrate_zones_name[4], _("Hard"));
+  strcpy(heartrate_zones_name[5], _("Maximum"));
 }
 void heartrate_new_data(uint8_t heartrate) {
   if (s_gpsdata.heartrate == 0 || s_gpsdata.heartrate == 255) {

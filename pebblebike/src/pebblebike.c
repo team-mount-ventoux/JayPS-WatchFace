@@ -150,6 +150,11 @@ void bt_callback(bool connected) {
 }
 
 static void init(void) {
+  config_load();
+
+#ifdef ENABLE_LOCALIZE
+  locale_init();
+#endif
   heartrate_init();
   s_gpsdata.heartrate = 255; // no data at startup
   bg_color_speed_main = BG_COLOR_SPEED_MAIN;
@@ -176,8 +181,8 @@ static void init(void) {
   strcpy(s_data.accuracy, "4");
   strcpy(s_data.steps, "7548");
   strcpy(s_data.elapsedtime, "1:15:28");
-  strcpy(s_data.heartrate, "147");
-  s_gpsdata.heartrate = 147;
+  strcpy(s_data.heartrate, "154");
+  s_gpsdata.heartrate = 154;
   heartrate_new_data(s_gpsdata.heartrate);
   s_data.live = 1;
   s_data.state = STATE_START;
@@ -199,12 +204,6 @@ static void init(void) {
   //strcpy(s_data.lat, "-");
   //strcpy(s_data.lon, "-");
   //strcpy(s_data.nbascent, "-");
-
-  config_load();
-
-#ifdef ENABLE_LOCALIZE
-  locale_init();
-#endif
 
   s_data.phone_battery_level = -1;
 

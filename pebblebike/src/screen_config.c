@@ -265,7 +265,7 @@ void config_init() {
   // Detect system locale
   const char* locale_str = i18n_get_system_locale();
 #endif
-  if (strncmp(locale_str, "fr", 2) == 0 || strncmp(locale_str, "es", 2) == 0) {
+  if (strncmp(locale_str, "fr", 2) == 0 || strncmp(locale_str, "es", 2) == 0 || strncmp(locale_str, "de", 2) == 0) {
     // sort config_order by title
     // the algo is not optimised (O(n²)) but it should be a problem because CONFIG_NB_FIELD_ORDER is low
     uint8_t tmp;
