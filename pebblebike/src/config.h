@@ -4,15 +4,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define PRODUCTION
-#define VERSION_PEBBLE 289
-#define VERSION_TEXT "Version 2.5.0-alpha10"
+#define VERSION_PEBBLE 290
+#define VERSION_TEXT "Version 2.5.0-beta1"
 #define APP_COMPANY "N Jackson & JayPS"
 
 ////////////////////////////////////////////////////////////////////////////////
 // uncomment to enable specific functions (note: will be disable for PRODUCTION)
 ////////////////////////////////////////////////////////////////////////////////
 #define ENABLE_LOGS
-//#define ENABLE_LOGS_DEBUG
+#define ENABLE_LOGS_DEBUG
 //#define ENABLE_DEBUG
 //#define ENABLE_ROTATION
 //#define ENABLE_DEBUG_COLOR
