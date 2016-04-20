@@ -52,12 +52,14 @@ void heartrate_new_data(uint8_t heartrate) {
 
   uint16_t delta_duration = time_prev != 0 ? time(NULL) - time_prev : 0;
   if (zone != zone_prev) {
-    if (heartrate_zones_notification_mode != HR_ZONE_NOTIFICATION_DISABLE && zone_time_ini > 0 && time(NULL) - zone_time_ini > 30) {
-      LOG_INFO("mode=%d zone=%d", heartrate_zones_notification_mode, zone);
-      if (heartrate_zones_notification_mode != HR_ZONE_NOTIFICATION_VIBRATE_ENTERING_MAXIMUM_ZONE || zone == 5) {
-        vibes_short_pulse();
-        LOG_INFO("vibes_short_pulse");
-      }
+    LOG_INFO("mode=%d zone=%d", heartrate_zones_notification_mode, zone);
+    if (
+      (heartrate_zones_notification_mode == HR_ZONE_NOTIFICATION_VIBRATE_AT_EVERY_ZONE_CHANGE && zone_time_ini > 0 && time(NULL) - zone_time_ini > 30)
+    ||
+      (heartrate_zones_notification_mode == HR_ZONE_NOTIFICATION_VIBRATE_ENTERING_MAXIMUM_ZONE && zone == 5)
+    ) {
+      vibes_short_pulse();
+      LOG_INFO("vibes_short_pulse");
     }
     heartrate_zones_duration[zone_prev] += delta_duration;
     zone_prev = zone;

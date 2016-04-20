@@ -436,13 +436,9 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           break;
 
         case MSG_HR_MAX:
-          heartrate_max = tuple->value->uint8;
-          LOG_INFO("heartrate_max=%d", heartrate_max);
-          break;
-
-        case MSG_HR_ZONE_NOTIFICATION_MODE:
-          heartrate_zones_notification_mode = tuple->value->uint8;
-          LOG_INFO("heartrate_zones_notification_mode=%d", heartrate_zones_notification_mode);
+          heartrate_max = tuple->value->data[0];
+          heartrate_zones_notification_mode = tuple->value->data[1];
+          LOG_INFO("heartrate_max=%d mode=%d", heartrate_max, heartrate_zones_notification_mode);
           break;
 
         }
