@@ -406,9 +406,11 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
               if (s_data.data_subpage != SUBPAGE_UNDEF) {
                   layer_mark_dirty(s_data.page_data);
               }
+#ifdef ENABLE_FUNCTION_LIVE
               if (s_data.page_number == PAGE_LIVE_TRACKING) {
                   layer_mark_dirty((Layer *) s_data.page_live_tracking);
               }
+#endif
             }
             break;
         case MSG_SENSOR_TEMPERATURE:

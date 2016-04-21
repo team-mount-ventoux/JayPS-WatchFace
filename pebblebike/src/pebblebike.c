@@ -267,7 +267,7 @@ static void deinit(void) {
   tick_timer_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
 
-#if APP_DEINIT
+#ifdef ENABLE_APP_DEINIT
   topbar_layer_deinit();
   screen_data_deinit();
   graph_deinit();

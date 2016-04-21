@@ -12,7 +12,7 @@ Layer *bearing_layer;
 // to compute correct values, use DEMO mode, cycle through all screens including menu
 #if PBL_PLATFORM_APLITE
   ///@todo(jay) remove scrren_map for aplite (or just live?)
-  #define NUM_POINTS 1
+  #define NUM_POINTS 500
 #else
   #define NUM_POINTS 1500
 #endif

@@ -119,7 +119,8 @@ void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* color
       int height = (graph->points[i] - min) * coeff100 / 100;
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: pts=%d height=%d", i, graph->points[i], height);
       for (int j = 0; j <= (int) (height / GRAPH_BLOCK_SIZE); j++) {
-        GColor color = PBL_IF_COLOR_ELSE(GColorWhite, GColorBlack);
+#ifdef PBL_COLOR
+        GColor color = GColorWhite;
         for (int k = 0; k < nb_colors; k++) {
           if (stacked) {
             if ((j * GRAPH_BLOCK_SIZE * 100 / coeff100) + min >= colors[k].min) {
@@ -133,7 +134,9 @@ void graph_draw(GContext* ctx, GRect bounds, GraphData* graph, GraphRange* color
         }
         //LOG_INFO("color=%x", color.argb);
         graphics_context_set_fill_color(ctx, color);
-
+#else
+        graphics_context_set_fill_color(ctx, GColorBlack);
+#endif
         int height2 = j < (int) (height / GRAPH_BLOCK_SIZE) ? GRAPH_BLOCK_SIZE : height % GRAPH_BLOCK_SIZE;
         graphics_fill_rect(ctx, GRect(bounds.origin.x + i * GRAPH_BLOCK_SIZE, bounds.origin.y + bounds.size.h - j * GRAPH_BLOCK_SIZE, GRAPH_BLOCK_SIZE - 1, -(height2-1)), 0, GCornerNone);
       }

@@ -51,11 +51,12 @@ void handle_topbutton_longclick(ClickRecognizerRef recognizer, void *context) {
 }
 void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
   button_click();
-  if (s_data.page_number == PAGE_LIVE_TRACKING) {
 #ifdef ENABLE_FUNCTION_LIVE
+  if (s_data.page_number == PAGE_LIVE_TRACKING) {
     screen_live_menu(true);
+  } else
 #endif
-  } else if (config_screen != CONFIG_SCREEN_DISABLED) {
+  if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_type(CONFIG_CHANGE_TYPE_PREVIOUS);
   } else {
     if (s_data.state == STATE_STOP) {
@@ -76,15 +77,13 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
     if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
       s_data.page_number++;
     }
+#ifdef ENABLE_FUNCTION_LIVE
     if (s_data.page_number == PAGE_LIVE_TRACKING) {
-#ifdef PBL_PLATFORM_APLITE
-      s_data.page_number++;
-#else
       if (s_data.live == 0) {
         s_data.page_number++;
       }
-#endif
     }
+#endif
     if (s_data.page_number >= NUMBER_OF_PAGES) {
       s_data.page_number = PAGE_DATA;
     }
@@ -97,13 +96,14 @@ void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
     } else {
       config_field_set_text(s_data.topbar_layer.field_center_layer, FIELD_TIME, GTextAlignmentCenter);
     }
-
+#ifdef ENABLE_FUNCTION_LIVE
     if (prev_page_number == PAGE_LIVE_TRACKING) {
       buttons_update();
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
     } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
       action_bar_set_menu_up_down_buttons();
     }
+#endif
     if (prev_page_number == PAGE_MAP) {
       action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
     } else if (s_data.page_number == PAGE_MAP) {
@@ -119,11 +119,13 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   button_click();
   if (s_data.page_number == PAGE_MAP) {
     screen_map_zoom_out(2);
-  } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
+  } else
 #ifdef ENABLE_FUNCTION_LIVE
+  if (s_data.page_number == PAGE_LIVE_TRACKING) {
     screen_live_menu(false);
+  } else
 #endif
-  } else if (config_screen != CONFIG_SCREEN_DISABLED) {
+  if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_type(CONFIG_CHANGE_TYPE_NEXT);
   } else {
     menu_show();
@@ -188,10 +190,12 @@ void click_config_provider(void *context) {
 }
 
 void buttons_update() {
+#ifdef ENABLE_FUNCTION_LIVE
   if (s_data.page_number == PAGE_LIVE_TRACKING) {
     // MenuLayer
     return;
   }
+#endif
   if(s_data.state == STATE_STOP) {
     action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, start_button);
   } else if(s_data.state == STATE_START) {

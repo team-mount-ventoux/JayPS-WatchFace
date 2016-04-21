@@ -45,9 +45,13 @@
 #endif
 
 #ifndef PBL_PLATFORM_APLITE
-  // save memory on APLITE (1050 bytes)
+  // save memory on APLITE
+  // function live 1050 bytes
   #define ENABLE_FUNCTION_LIVE
+ // Heart zones in menu > 740 bytes
   #define ENABLE_MENU_HEART_ZONES
+  // don't deinit objects in deinit -- save at least 700 bytes
+  #define ENABLE_APP_DEINIT
 #endif
 
 #ifdef ENABLE_LOGS

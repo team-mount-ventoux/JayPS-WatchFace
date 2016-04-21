@@ -114,11 +114,15 @@ const char *field_get_text(uint8_t field) {
     case FIELD_AVGSPEED: return s_data.avgspeed; break;
     case FIELD_DISTANCE: return s_data.distance; break;
     case FIELD_ALTITUDE:
+#ifdef PBL_COLOR
     case FIELD_ALTITUDE_DATA_AND_GRAPH:
+#endif
       return s_data.altitude; break;
     case FIELD_ASCENT: return s_data.ascent; break;
     case FIELD_SPEED:
+#ifdef PBL_COLOR
     case FIELD_SPEED_DATA_AND_GRAPH:
+#endif
       return s_data.speed; break;
     case FIELD_BEARING: return s_data.bearing; break;
     case FIELD_DURATION: return s_data.elapsedtime; break;
@@ -126,13 +130,17 @@ const char *field_get_text(uint8_t field) {
     //case FIELD_LAT: return s_data.lat; break;
     //case FIELD_LON: return s_data.lon; break;
     case FIELD_ASCENTRATE:
+#ifdef PBL_COLOR
     case FIELD_ASCENTRATE_DATA_AND_GRAPH:
+#endif
       return s_data.ascentrate; break;
     //case FIELD_NBASCENT: return s_data.nbascent; break;
     case FIELD_SLOPE: return s_data.slope; break;
     case FIELD_ACCURACY: return s_data.accuracy; break;
     case FIELD_HEARTRATE:
+#ifdef PBL_COLOR
     case FIELD_HEARTRATE_DATA_AND_GRAPH:
+#endif
       return s_data.heartrate; break;
     case FIELD_CADENCE: return s_data.cadence; break;
     case FIELD_TEMPERATURE: return s_data.temperature; break;
@@ -155,11 +163,15 @@ const char *field_get_units(uint8_t field) {
     case FIELD_AVGSPEED: return s_data.unitsSpeed; break;
     case FIELD_DISTANCE: return s_data.unitsDistance; break;
     case FIELD_ALTITUDE:
+#ifdef PBL_COLOR
     case FIELD_ALTITUDE_DATA_AND_GRAPH:
+#endif
       return s_data.unitsAltitude; break;
     case FIELD_ASCENT: return s_data.unitsAltitude; break;
     case FIELD_SPEED:
+#ifdef PBL_COLOR
     case FIELD_SPEED_DATA_AND_GRAPH:
+#endif
       return s_data.unitsSpeed; break;
     case FIELD_BEARING: return "°"; break;
     case FIELD_DURATION: return "s"; break;
@@ -167,13 +179,17 @@ const char *field_get_units(uint8_t field) {
     //case FIELD_LAT: return ""; break;
     //case FIELD_LON: return ""; break;
     case FIELD_ASCENTRATE:
-    case FIELD_ASCENTRATE_DATA_AND_GRAPH:
-      return s_data.unitsAscentRate; break;
+#ifdef PBL_COLOR
+      case FIELD_ASCENTRATE_DATA_AND_GRAPH:
+#endif
+        return s_data.unitsAscentRate; break;
     //case FIELD_NBASCENT: return ""; break;
     case FIELD_SLOPE: return "%"; break;
     case FIELD_ACCURACY: return "m"; break;
     case FIELD_HEARTRATE:
+#ifdef PBL_COLOR
     case FIELD_HEARTRATE_DATA_AND_GRAPH:
+#endif
       if (s_gpsdata.heartrate > 0 && s_gpsdata.heartrate != 255) {
         return heartrate_zone;
       } else {

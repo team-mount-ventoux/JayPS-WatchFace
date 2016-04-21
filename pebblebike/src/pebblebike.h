@@ -59,8 +59,10 @@ enum {
   PAGE_DATA = 0,
   PAGE_HEARTRATE = 1,
   PAGE_ALTITUDE = 2,
-  PAGE_LIVE_TRACKING = 3,
-  PAGE_MAP = 4,
+#ifdef ENABLE_FUNCTION_LIVE
+  PAGE_LIVE_TRACKING,
+#endif
+  PAGE_MAP,
 };
 enum {
   SUBPAGE_A = 0,
@@ -73,13 +75,10 @@ enum {
   PERSIST_VERSION = 0x2,
 };
 
-#define NUMBER_OF_PAGES 5
-
-#ifdef PBL_PLATFORM_APLITE
-// don't deinit objects in deinit -- save at least 700 bytes
-#define APP_DEINIT false
+#ifdef ENABLE_FUNCTION_LIVE
+  #define NUMBER_OF_PAGES 5
 #else
-#define APP_DEINIT true
+  #define NUMBER_OF_PAGES 4
 #endif
 
 #define SPEED_UNIT_IMPERIAL "mph"
@@ -121,13 +120,21 @@ enum {
   FIELD_STEPS,
   FIELD_STEPS_CADENCE,
 #endif
+#ifdef PBL_COLOR
   FIELD_ALTITUDE_DATA_AND_GRAPH,
+#endif
   FIELD_ALTITUDE_GRAPH_ONLY,
+#ifdef PBL_COLOR
   FIELD_ASCENTRATE_DATA_AND_GRAPH,
+#endif
   FIELD_ASCENTRATE_GRAPH_ONLY,
+#ifdef PBL_COLOR
   FIELD_HEARTRATE_DATA_AND_GRAPH,
+#endif
   FIELD_HEARTRATE_GRAPH_ONLY,
+#ifdef PBL_COLOR
   FIELD_SPEED_DATA_AND_GRAPH,
+#endif
   FIELD_SPEED_GRAPH_ONLY,
   FIELD__UNUSED,
 };
