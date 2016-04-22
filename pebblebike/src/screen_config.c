@@ -238,6 +238,7 @@ void config_field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment 
 }
 void screen_data_update_config(bool change_page) {
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
+    config_field_set_text(s_data.topbar_layer.field_center_layer, FIELD_TIME, GTextAlignmentCenter);
     return;
   }
   if (change_page) {
