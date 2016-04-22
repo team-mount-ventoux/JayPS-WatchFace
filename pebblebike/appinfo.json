@@ -100,9 +100,7 @@
     ]
   },
   "targetPlatforms": [
-    "aplite",
-    "basalt",
-    "chalk"
+    "aplite"
   ],
   "sdkVersion": "3",
   "capabilities": [ "health" ]
