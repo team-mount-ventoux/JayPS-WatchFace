@@ -57,6 +57,7 @@
 #ifdef ENABLE_LOGS
   #define LOG_ENTER() APP_LOG(APP_LOG_LEVEL_DEBUG, "Enter %s", __FUNCTION__)
   #define LOG_EXIT() APP_LOG(APP_LOG_LEVEL_DEBUG, "Exit %s", __FUNCTION__)
+  #define LOG_ERROR(args...) APP_LOG(APP_LOG_LEVEL_ERROR, args);
   #define LOG_INFO(args...) APP_LOG(APP_LOG_LEVEL_INFO, args);
   #ifdef ENABLE_LOGS_DEBUG
     #define LOG_DEBUG(args...) APP_LOG(APP_LOG_LEVEL_DEBUG, args);
@@ -66,6 +67,7 @@
 #else
   #define LOG_ENTER()
   #define LOG_EXIT()
+  #define LOG_ERROR(...)
   #define LOG_INFO(...)
   #define LOG_DEBUG(...)
 #endif
