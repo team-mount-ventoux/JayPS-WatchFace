@@ -3,8 +3,8 @@
   "shortName": "Ventoo",
   "longName": "Ventoo 2.5.0",
   "companyName": "N Jackson & JayPS",
-  "versionCode": 291,
-  "versionLabel": "2.50",
+  "versionCode": 292,
+  "versionLabel": "2.51",
   "watchapp": {
     "watchface": false
   },
