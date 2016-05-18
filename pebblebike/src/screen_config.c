@@ -266,7 +266,7 @@ void config_change_visibility(FieldLayer* field_layer, bool hidden) {
     layer_set_hidden(text_layer_get_layer(field_layer->data_layer), hidden);
   }
   if (field_layer->unit_layer != NULL) {
-    layer_set_hidden(text_layer_get_layer(field_layer->unit_layer), hidden);  
+    layer_set_hidden(text_layer_get_layer(field_layer->unit_layer), hidden);
   }
 }
 static void config_timer_callback(void *data) {
@@ -307,6 +307,14 @@ void config_init() {
     }
     #endif
   }
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top, config.screenA_top_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top2, config.screenA_top2_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_left, config.screenA_bottom_left_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_right, config.screenA_bottom_right_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_B].field_top, config.screenB_top_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_B].field_top2, config.screenB_top2_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_B].field_bottom_left, config.screenB_bottom_left_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_B].field_bottom_right, config.screenB_bottom_right_type);
 }
 void config_start() {
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
@@ -437,7 +445,7 @@ void config_change_type(uint8_t direction) {
     cur_fieldconfig->type = config_order[cur_fieldconfig->type_index];
   }
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d: type %d", cur_fieldconfig->type_index, cur_fieldconfig->type);
-  
+
   //todo
   screen_data_update_config(false);
   text_layer_set_text(s_data.topbar_layer.field_center_layer.data_layer, field_get_title(cur_fieldconfig->type));
@@ -490,12 +498,12 @@ void config_save() {
   config.screenA_top2_type          = s_data.screen_config[SUBPAGE_A].field_top2.type;
   config.screenA_bottom_left_type   = s_data.screen_config[SUBPAGE_A].field_bottom_left.type;
   config.screenA_bottom_right_type  = s_data.screen_config[SUBPAGE_A].field_bottom_right.type;
-  config.screenA_topbar_center_type = s_data.screen_config[SUBPAGE_A].field_topbar_center.type;;
+  config.screenA_topbar_center_type = s_data.screen_config[SUBPAGE_A].field_topbar_center.type;
   config.screenB_top_type           = s_data.screen_config[SUBPAGE_B].field_top.type;
   config.screenB_top2_type          = s_data.screen_config[SUBPAGE_B].field_top2.type;
   config.screenB_bottom_left_type   = s_data.screen_config[SUBPAGE_B].field_bottom_left.type;
   config.screenB_bottom_right_type  = s_data.screen_config[SUBPAGE_B].field_bottom_right.type;
-  config.screenB_topbar_center_type = s_data.screen_config[SUBPAGE_B].field_topbar_center.type;;
+  config.screenB_topbar_center_type = s_data.screen_config[SUBPAGE_B].field_topbar_center.type;
   persist_write_data(PERSIST_CONFIG_KEY, &config, sizeof(config));
   persist_write_int(PERSIST_VERSION, VERSION_PEBBLE);
 }

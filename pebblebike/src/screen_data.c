@@ -133,10 +133,6 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 }
 void screen_data_layer_init(Window* window) {
   config_init();
-  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top, config.screenA_top_type);
-  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top2, config.screenA_top2_type);
-  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_left, config.screenA_bottom_left_type);
-  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_right, config.screenA_bottom_right_type);
 
   s_data.page_data = layer_create(PAGE_GRECT);
   layer_add_child(window_get_root_layer(window), s_data.page_data);
