@@ -311,10 +311,12 @@ void config_init() {
   config_affect_type(&s_data.screen_config[SUBPAGE_A].field_top2, config.screenA_top2_type);
   config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_left, config.screenA_bottom_left_type);
   config_affect_type(&s_data.screen_config[SUBPAGE_A].field_bottom_right, config.screenA_bottom_right_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_A].field_topbar_center, config.screenA_topbar_center_type);
   config_affect_type(&s_data.screen_config[SUBPAGE_B].field_top, config.screenB_top_type);
   config_affect_type(&s_data.screen_config[SUBPAGE_B].field_top2, config.screenB_top2_type);
   config_affect_type(&s_data.screen_config[SUBPAGE_B].field_bottom_left, config.screenB_bottom_left_type);
   config_affect_type(&s_data.screen_config[SUBPAGE_B].field_bottom_right, config.screenB_bottom_right_type);
+  config_affect_type(&s_data.screen_config[SUBPAGE_B].field_topbar_center, config.screenB_topbar_center_type);
 }
 void config_start() {
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
