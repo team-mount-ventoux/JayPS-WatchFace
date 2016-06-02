@@ -9,19 +9,6 @@
 
 Layer *line_layer;
 
-#if ROTATION
-enum {
-  ROTATION_DISABLED,
-  ROTATION_MIN,
-  ROTATION_SPEED = ROTATION_MIN,
-  ROTATION_HEARTRATE,
-  ROTATION_ALTITUDE,
-  ROTATION_MAX,
-};
-int rotation = ROTATION_DISABLED;
-static AppTimer *rotation_timer;
-#endif
-
 #ifdef PBL_ROUND
   #define PAGE_DATA_TOP_H SCREEN_H / 2 - TOPBAR_HEIGHT + 10
   #define PAGE_DATA_TOP_OFFSET_Y TOPBAR_HEIGHT
@@ -194,38 +181,4 @@ void screen_data_deinit() {
   layer_destroy(line_layer);
   layer_destroy(s_data.page_data);
 }
-
-#if ROTATION
-static void rotation_timer_callback(void *data) {
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "rotation_timer");
-  rotation_timer = app_timer_register(2000, rotation_timer_callback, NULL);
-  rotation++;
-  if (rotation == ROTATION_HEARTRATE && s_gpsdata.heartrate == 255) {
-    rotation++;
-  }
-  if (rotation == ROTATION_MAX) {
-    rotation = ROTATION_MIN;
-  }
-   if (rotation == ROTATION_MIN) {
-     s_data.screen_config[SUBPAGE_A].field_top.type = FIELD_SPEED;
-     s_data.screen_config[SUBPAGE_A].field_bottom_left.type = FIELD_DISTANCE;
-     s_data.screen_config[SUBPAGE_A].field_bottom_right.type = FIELD_AVGSPEED;
-  } else {
-    s_data.screen_config[SUBPAGE_A].field_top.type = FIELD_ALTITUDE;
-    s_data.screen_config[SUBPAGE_A].field_bottom_left.type = FIELD_ASCENT;
-    s_data.screen_config[SUBPAGE_A].field_bottom_right.type = FIELD_DISTANCE;
-  }
-  screen_data_update_config(true);
-  update_screens();
-}
-void screen_data_start_rotation() {
-  if (rotation_timer == NULL) {
-    rotation_timer = app_timer_register(500, rotation_timer_callback, NULL);
-  } else {
-    app_timer_cancel(rotation_timer);
-    rotation_timer = NULL;
-    rotation = ROTATION_DISABLED;
-  }
-}
-#endif
 

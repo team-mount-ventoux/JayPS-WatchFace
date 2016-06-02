@@ -21,7 +21,9 @@ GBitmap *next_button;
 GBitmap *menu_up_button;
 GBitmap *menu_down_button;
 static AppTimer *button_timer;
-
+#ifdef ENABLE_ROTATION
+  static AppTimer *rotation_timer;
+#endif
 static void button_timer_callback(void *data) {
   button_timer = NULL;
   layer_set_hidden(action_bar_layer_get_layer(action_bar), true);
@@ -66,55 +68,81 @@ void handle_topbutton_click(ClickRecognizerRef recognizer, void *context) {
     }
   }
 }
+void next_page(bool rotation) {
+  uint8_t prev_page_number = s_data.page_number;
+  s_data.page_number++;
+
+  if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
+    s_data.page_number++;
+  }
+#ifdef ENABLE_FUNCTION_LIVE
+  if (s_data.page_number == PAGE_LIVE_TRACKING) {
+    if (s_data.live == 0) {
+      s_data.page_number++;
+    }
+  }
+#endif
+  if (s_data.page_number >= NUMBER_OF_PAGES) {
+    s_data.page_number = PAGE_DATA;
+  }
+#ifdef ENABLE_ROTATION
+  if (rotation && s_data.page_number > PAGE_ALTITUDE) {
+    s_data.page_number = PAGE_DATA;
+  }
+#endif
+  s_data.data_subpage = SUBPAGE_UNDEF;
+  if (s_data.page_number == PAGE_DATA || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
+    s_data.data_subpage = s_data.page_number == PAGE_ALTITUDE ? SUBPAGE_B : SUBPAGE_A;
+    title_instead_of_units = true;
+    screen_data_update_config(true);
+  } else {
+    config_field_set_text(s_data.topbar_layer.field_center_layer, FIELD_TIME, GTextAlignmentCenter);
+  }
+#ifdef ENABLE_FUNCTION_LIVE
+  if (prev_page_number == PAGE_LIVE_TRACKING) {
+    buttons_update();
+    action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
+  } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
+    action_bar_set_menu_up_down_buttons();
+  }
+#endif
+  if (prev_page_number == PAGE_MAP) {
+    action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
+  } else if (s_data.page_number == PAGE_MAP) {
+    action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
+  }
+
+  update_screens();
+  LOG_DEBUG("page:%d sp:%d", s_data.page_number, s_data.data_subpage);
+}
+#ifdef ENABLE_ROTATION
+static void rotation_timer_callback(void *data) {
+  if (s_data.page_number <= PAGE_ALTITUDE) {
+    next_page(true);
+  }
+  rotation_timer = app_timer_register(5000, rotation_timer_callback, NULL);
+}
+#endif
 void handle_selectbutton_click(ClickRecognizerRef recognizer, void *context) {
   button_click();
   if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_field();
   } else {
-    uint8_t prev_page_number = s_data.page_number;
-    s_data.page_number++;
-
-    if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
-      s_data.page_number++;
-    }
-#ifdef ENABLE_FUNCTION_LIVE
-    if (s_data.page_number == PAGE_LIVE_TRACKING) {
-      if (s_data.live == 0) {
-        s_data.page_number++;
-      }
-    }
-#endif
-    if (s_data.page_number >= NUMBER_OF_PAGES) {
-      s_data.page_number = PAGE_DATA;
-    }
-
-    s_data.data_subpage = SUBPAGE_UNDEF;
-    if (s_data.page_number == PAGE_DATA || s_data.page_number == PAGE_HEARTRATE || s_data.page_number == PAGE_ALTITUDE) {
-      s_data.data_subpage = s_data.page_number == PAGE_ALTITUDE ? SUBPAGE_B : SUBPAGE_A;
-      title_instead_of_units = true;
-      screen_data_update_config(true);
-    } else {
-      config_field_set_text(s_data.topbar_layer.field_center_layer, FIELD_TIME, GTextAlignmentCenter);
-    }
-#ifdef ENABLE_FUNCTION_LIVE
-    if (prev_page_number == PAGE_LIVE_TRACKING) {
-      buttons_update();
-      action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
-    } else if (s_data.page_number == PAGE_LIVE_TRACKING) {
-      action_bar_set_menu_up_down_buttons();
-    }
-#endif
-    if (prev_page_number == PAGE_MAP) {
-      action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
-    } else if (s_data.page_number == PAGE_MAP) {
-      action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
-    }
-
-    update_screens();
+    next_page(false);
   }
-  LOG_DEBUG("page:%d sp:%d", s_data.page_number, s_data.data_subpage);
 }
-
+void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context) {
+  button_click();
+#ifdef ENABLE_ROTATION
+  vibes_short_pulse();
+  if (rotation_timer == NULL) {
+    rotation_timer = app_timer_register(5000, rotation_timer_callback, NULL);
+  } else {
+    app_timer_cancel(rotation_timer);
+    rotation_timer = NULL;
+  }
+#endif
+}
 void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   button_click();
   if (s_data.page_number == PAGE_MAP) {
@@ -134,12 +162,6 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
 //  s_gpsdata.heartrate += 8;
 //  snprintf(s_data.heartrate, 5, "%d", s_gpsdata.heartrate);
 //  screen_data_update_config(true);
-#endif
-}
-void handle_selectbutton_longclick(ClickRecognizerRef recognizer, void *context) {
-  button_click();
-#if ROTATION
-  screen_data_start_rotation();
 #endif
 }
 void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context) {
@@ -224,6 +246,11 @@ void buttons_deinit() {
   if (button_timer) {
     app_timer_cancel(button_timer);
   }
+#ifdef ENABLE_ROTATION
+  if (rotation_timer) {
+    app_timer_cancel(rotation_timer);
+  }
+#endif
   gbitmap_destroy(start_button);
   gbitmap_destroy(stop_button);
   //gbitmap_destroy(reset_button);

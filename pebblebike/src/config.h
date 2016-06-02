@@ -4,8 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define PRODUCTION
-#define VERSION_PEBBLE 291
-#define VERSION_TEXT "Version 2.5.0"
+#define VERSION_PEBBLE 300
+#define VERSION_TEXT "Version 2.6.0-alpha1"
 #define APP_COMPANY "N Jackson & JayPS"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -14,11 +14,10 @@
 #define ENABLE_LOGS
 #define ENABLE_LOGS_DEBUG
 //#define ENABLE_DEBUG
-//#define ENABLE_ROTATION
 //#define ENABLE_DEBUG_COLOR
 //#define ENABLE_DEBUG_FIELDS_SIZE
 //#define ENABLE_LOCALIZE_FORCE "es"
-//#define ENABLE_DEMO
+#define ENABLE_DEMO
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef PRODUCTION
@@ -26,7 +25,6 @@
   #undef ENABLE_LOGS
   #undef ENABLE_LOGS_DEBUG
   #undef ENABLE_DEBUG
-  #undef ENABLE_ROTATION
   #undef ENABLE_DEBUG_COLOR
   #undef ENABLE_DEBUG_FIELDS_SIZE
   #undef ENABLE_LOCALIZE_FORCE
@@ -52,6 +50,7 @@
   #define ENABLE_MENU_HEART_ZONES
   // don't deinit objects in deinit -- save at least 700 bytes
   #define ENABLE_APP_DEINIT
+  #define ENABLE_ROTATION
 #endif
 
 #ifdef ENABLE_LOGS
