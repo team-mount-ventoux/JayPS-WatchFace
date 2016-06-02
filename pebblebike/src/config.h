@@ -71,4 +71,10 @@
   #define LOG_DEBUG(...)
 #endif
 
+#ifdef ENABLE_DEMO
+  #define PB_IF_DEMO_ELSE(if_true, if_false) (if_true)
+#else
+  #define PB_IF_DEMO_ELSE(if_true, if_false) (if_false)
+#endif
+
 #endif // CONFIG_H
