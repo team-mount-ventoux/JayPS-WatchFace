@@ -1,10 +1,10 @@
 {
   "uuid": "5DD35873-3BB6-44D6-8255-0E61BC3B97F5",
   "shortName": "Ventoo",
-  "longName": "Ventoo 2.6.0",
+  "longName": "Ventoo 2.7.1-beta1",
   "companyName": "N Jackson & JayPS",
-  "versionCode": 303,
-  "versionLabel": "2.60",
+  "versionCode": 305,
+  "versionLabel": "2.71",
   "watchapp": {
     "watchface": false
   },
@@ -96,6 +96,11 @@
         "type": "raw",
         "name": "LOCALE_GERMAN",
         "file": "locale_german.bin"
+      },
+      {
+        "type": "raw",
+        "name": "LOCALE_ITALIAN",
+        "file": "locale_italian.bin"
       }
     ]
   },
