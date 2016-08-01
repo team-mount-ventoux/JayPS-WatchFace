@@ -23,6 +23,11 @@ Layer *line_layer;
 #define PAGE_DATA_TOP_DATA_H PAGE_DATA_MIDDLE_DATA_H - PAGE_DATA_MAIN_H / 2
 #define PAGE_DATA_BOTTOM_DATA_H PAGE_DATA_MIDDLE_DATA_H + PAGE_DATA_MAIN_H / 2
 
+#define NAVIGATION_COMPASS_RADIUS 15
+#define NAVIGATION_COMPASS_PADDING 3
+#define NAVIGATION_COMPASS_CENTER GPoint(NAVIGATION_COMPASS_RADIUS + NAVIGATION_COMPASS_PADDING, PAGE_DATA_TOP_DATA_H - NAVIGATION_COMPASS_RADIUS - NAVIGATION_COMPASS_PADDING)
+#define NAVIGATION_COMPASS_RECT GRect(NAVIGATION_COMPASS_PADDING, PAGE_DATA_TOP_DATA_H - 2 * NAVIGATION_COMPASS_RADIUS - NAVIGATION_COMPASS_PADDING, 2 * NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS)
+
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
   graphics_context_set_stroke_color(ctx, COLOR_LINES);
@@ -35,6 +40,13 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_fill_color(ctx, COLOR_LINES_DATA_MAIN);
   graphics_fill_rect(ctx, GRect(0, PAGE_DATA_TOP_DATA_H, SCREEN_W, 2), 0, GCornerNone);
   graphics_fill_rect(ctx, GRect(0, PAGE_DATA_BOTTOM_DATA_H, SCREEN_W, 2), 0, GCornerNone);
+
+  graphics_context_set_stroke_width(ctx, 2);
+  graphics_draw_circle(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RADIUS);
+  graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(360 - s_gpsdata.bearing)));
+  graphics_context_set_stroke_color(ctx, GColorRed);
+  graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE((s_gpsdata.ascent + 360 - s_gpsdata.bearing) % 360)));
+
 #endif
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
     return;

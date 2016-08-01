@@ -348,7 +348,9 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             s_gpsdata.xpos = xpos;
             s_gpsdata.ypos = ypos;
 
-            s_gpsdata.bearing = 360 * tuple->value->data[BYTE_BEARING] / 256;
+            if (tuple->value->data[BYTE_BEARING] != 0) {
+              s_gpsdata.bearing = 360 * tuple->value->data[BYTE_BEARING] / 256;
+            }
             s_gpsdata.heartrate = tuple->value->data[BYTE_HEARTRATE];
             if (tuple->key >= MSG_LOCATION_DATA_V3) {
               s_gpsdata.cadence = tuple->value->data[BYTE_CADENCE];

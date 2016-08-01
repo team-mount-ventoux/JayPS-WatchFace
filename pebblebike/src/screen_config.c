@@ -486,10 +486,10 @@ void config_load() {
     config.screenA_bottom_right_type  = FIELD_AVGSPEED;
     config.screenA_topbar_center_type = FIELD_TIME;
     config.screenB_top_type           = FIELD_ALTITUDE;
-    config.screenB_top2_type          = FIELD_ASCENT;
-    config.screenB_bottom_left_type   = FIELD_ASCENTRATE;
-    config.screenB_bottom_right_type  = FIELD_SLOPE;
-    config.screenB_topbar_center_type = FIELD_TIME;
+    config.screenB_top2_type          = FIELD_ASCENTRATE; //FIELD_ASCENT;
+    config.screenB_bottom_left_type   = FIELD_ASCENT; //FIELD_ASCENTRATE;
+    config.screenB_bottom_right_type  = FIELD_BEARING; //FIELD_SLOPE;
+    config.screenB_topbar_center_type = FIELD_MAXSPEED; //FIELD_TIME;
   }
 #ifdef PBL_HEALTH
   health_init_if_needed();
