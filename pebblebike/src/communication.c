@@ -189,6 +189,31 @@ static void reset_data_timer_callback(void *data) {
   screen_reset_instant_data();
 }
 
+//int8_t getDataInt8(Tuple *tuple, uint8_t index) {
+//  if (tuple->value->data[index] >= 128) {
+//      return s_gpsdata.slope = -1 * (tuple->value->data[index] - 128);
+//  } else {
+//      return s_gpsdata.slope = tuple->value->data[index];
+//  }
+//}
+#define getDataInt8(var, tuple, index) \
+  if (tuple->value->data[index] >= 128) { \
+      var = -1 * (tuple->value->data[index] - 128); \
+  } else { \
+      var = tuple->value->data[index]; \
+  }
+
+int16_t getDataInt16(Tuple *tuple, uint8_t index) {
+  if (tuple->value->data[index + 1] >= 128) {
+      return -1 * (tuple->value->data[index] + 256 * (tuple->value->data[index + 1] - 128));
+  } else {
+    return tuple->value->data[index] + 256 * tuple->value->data[index + 1];
+  }
+}
+uint16_t getDataUInt16(Tuple *tuple, uint8_t index) {
+  return tuple->value->data[index] + 256 * tuple->value->data[index + 1];
+}
+
 void communication_in_received_callback(DictionaryIterator *iter, void *context) {
     Tuple *tuple = dict_read_first(iter);
 #define SIZE_OF_A_FRIEND 9
@@ -227,19 +252,23 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 
             for (int i = 0; i < s_live.nb; i++) {
 
-                if (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1] >= 128) {
-                    s_live.friends[i].xpos = -1 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 0] + 256 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1] - 128));
-                } else {
-                    s_live.friends[i].xpos = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 0] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1];
-                }
-                if (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3] >= 128) {
-                    s_live.friends[i].ypos = -1 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 2] + 256 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3] - 128));
-                } else {
-                    s_live.friends[i].ypos = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 2] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3];
-                }
-                s_live.friends[i].distance = (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 4] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 5]) * 10; // in m
+//                if (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1] >= 128) {
+//                    s_live.friends[i].xpos = -1 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 0] + 256 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1] - 128));
+//                } else {
+//                    s_live.friends[i].xpos = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 0] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 1];
+//                }
+                s_live.friends[i].xpos = getDataInt16(tuple, 1 + i * SIZE_OF_A_FRIEND + 0);
+//                if (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3] >= 128) {
+//                    s_live.friends[i].ypos = -1 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 2] + 256 * (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3] - 128));
+//                } else {
+//                    s_live.friends[i].ypos = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 2] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 3];
+//                }
+                s_live.friends[i].ypos = getDataInt16(tuple, 1 + i * SIZE_OF_A_FRIEND + 2);
+//                s_live.friends[i].distance = (tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 4] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 5]) * 10; // in m
+                s_live.friends[i].distance = getDataUInt16(tuple, 1 + i * SIZE_OF_A_FRIEND + 4) * 10; // in m
                 s_live.friends[i].bearing = 360 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 6] / 256;
-                s_live.friends[i].lastviewed = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 7] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 8]; // in seconds
+//                s_live.friends[i].lastviewed = tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 7] + 256 * tuple->value->data[1 + i * SIZE_OF_A_FRIEND + 8]; // in seconds
+                s_live.friends[i].lastviewed = getDataUInt16(tuple, 1 + i * SIZE_OF_A_FRIEND + 7); // in seconds
             }
             screen_live_menu_update();
             if (s_data.page_number == PAGE_MAP) {
@@ -277,9 +306,11 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             // }
 
             s_gpsdata.accuracy = tuple->value->data[1];
-            s_gpsdata.distance100 = (tuple->value->data[2] + 256 * tuple->value->data[3]); // in 0.01km or 0.01miles
+//            s_gpsdata.distance100 = (tuple->value->data[2] + 256 * tuple->value->data[3]); // in 0.01km or 0.01miles
+            s_gpsdata.distance100 = getDataUInt16(tuple, 2); // in 0.01km or 0.01miles
             time0 = s_gpsdata.time;
-            s_gpsdata.time = tuple->value->data[BYTE_TIME1] + 256 * tuple->value->data[BYTE_TIME2];
+//            s_gpsdata.time = tuple->value->data[BYTE_TIME1] + 256 * tuple->value->data[BYTE_TIME2];
+            s_gpsdata.time = getDataUInt16(tuple, BYTE_TIME1);
             if (s_gpsdata.time != 0) {
               if (s_gpsdata.units == UNITS_RUNNING_IMPERIAL || s_gpsdata.units == UNITS_RUNNING_METRIC) {
                 // pace: min per mile_or_km
@@ -295,43 +326,51 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 s_gpsdata.avgspeed100 = 0;
             }
             //APP_LOG(APP_LOG_LEVEL_DEBUG, "dist=%ld, time=%d, avg=%ld", s_gpsdata.distance100, s_gpsdata.time, s_gpsdata.avgspeed100);
-            s_gpsdata.speed100 = ((tuple->value->data[BYTE_SPEED1] + 256 * tuple->value->data[BYTE_SPEED2])) * 10;
+            //s_gpsdata.speed100 = ((tuple->value->data[BYTE_SPEED1] + 256 * tuple->value->data[BYTE_SPEED2])) * 10;
+            s_gpsdata.speed100 = getDataUInt16(tuple, BYTE_SPEED1) * 10;
+
             graph_add_data(&graph_speeds, s_gpsdata.speed100/10);
-            s_gpsdata.maxspeed100 = ((tuple->value->data[BYTE_MAXSPEED1] + 256 * tuple->value->data[BYTE_MAXSPEED2])) * 10;
-            s_gpsdata.altitude = tuple->value->data[6] + 256 * tuple->value->data[7];
+            //s_gpsdata.maxspeed100 = ((tuple->value->data[BYTE_MAXSPEED1] + 256 * tuple->value->data[BYTE_MAXSPEED2])) * 10;
+            s_gpsdata.maxspeed100 = getDataUInt16(tuple, BYTE_MAXSPEED1) * 10;
+//            s_gpsdata.altitude = tuple->value->data[6] + 256 * tuple->value->data[7];
+            s_gpsdata.altitude = getDataUInt16(tuple, 6);
             if (s_gpsdata.altitude != 0) {
               graph_add_data(&graph_altitudes, s_gpsdata.altitude);
             }
-            if (tuple->value->data[9] >= 128) {
-                s_gpsdata.ascent = -1 * (tuple->value->data[8] + 256 * (tuple->value->data[9] - 128));
-            } else {
-                s_gpsdata.ascent = tuple->value->data[8] + 256 * tuple->value->data[9];
-            }
-
-            if (tuple->value->data[11] >= 128) {
-                s_gpsdata.ascentrate = -1 * (tuple->value->data[10] + 256 * (tuple->value->data[11] - 128));
-            } else {
-                s_gpsdata.ascentrate = tuple->value->data[10] + 256 * tuple->value->data[11];
-            }
+//            if (tuple->value->data[9] >= 128) {
+//                s_gpsdata.ascent = -1 * (tuple->value->data[8] + 256 * (tuple->value->data[9] - 128));
+//            } else {
+//                s_gpsdata.ascent = tuple->value->data[8] + 256 * tuple->value->data[9];
+//            }
+            s_gpsdata.ascent = getDataInt16(tuple, 8);
+//            if (tuple->value->data[11] >= 128) {
+//                s_gpsdata.ascentrate = -1 * (tuple->value->data[10] + 256 * (tuple->value->data[11] - 128));
+//            } else {
+//                s_gpsdata.ascentrate = tuple->value->data[10] + 256 * tuple->value->data[11];
+//            }
+            s_gpsdata.ascentrate = getDataInt16(tuple, 10);
             graph_add_data(&graph_ascentrates, s_gpsdata.ascentrate);
-            if (tuple->value->data[BYTE_SLOPE] >= 128) {
-                s_gpsdata.slope = -1 * (tuple->value->data[BYTE_SLOPE] - 128);
-            } else {
-                s_gpsdata.slope = tuple->value->data[BYTE_SLOPE];
-            }
+//            if (tuple->value->data[BYTE_SLOPE] >= 128) {
+//                s_gpsdata.slope = -1 * (tuple->value->data[BYTE_SLOPE] - 128);
+//            } else {
+//                s_gpsdata.slope = tuple->value->data[BYTE_SLOPE];
+//            }
+            getDataInt8(s_gpsdata.slope, tuple, BYTE_SLOPE)
 
 
 
-            if (tuple->value->data[14] >= 128) {
-                xpos = -1 * (tuple->value->data[13] + 256 * (tuple->value->data[14] - 128));
-            } else {
-                xpos = tuple->value->data[13] + 256 * tuple->value->data[14];
-            }
-            if (tuple->value->data[16] >= 128) {
-                ypos = -1 * (tuple->value->data[15] + 256 * (tuple->value->data[16] - 128));
-            } else {
-                ypos = tuple->value->data[15] + 256 * tuple->value->data[16];
-            }
+//            if (tuple->value->data[14] >= 128) {
+//                xpos = -1 * (tuple->value->data[13] + 256 * (tuple->value->data[14] - 128));
+//            } else {
+//                xpos = tuple->value->data[13] + 256 * tuple->value->data[14];
+//            }
+            xpos = getDataInt16(tuple, 13);
+//            if (tuple->value->data[16] >= 128) {
+//                ypos = -1 * (tuple->value->data[15] + 256 * (tuple->value->data[16] - 128));
+//            } else {
+//                ypos = tuple->value->data[15] + 256 * tuple->value->data[16];
+//            }
+            ypos = getDataInt16(tuple, 15);
 
             if ((xpos == 0 && ypos == 0) || (time0 > s_gpsdata.time)) {
                 // ignore old values (can happen if gps is stopped/restarted)
