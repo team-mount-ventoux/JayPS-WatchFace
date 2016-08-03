@@ -92,15 +92,15 @@ const char *field_get_title(uint8_t field) {
 #endif
     case FIELD_ASCENTRATE_GRAPH_ONLY: return _("Ascent rate graph"); break;
     //case FIELD_NBASCENT: return "Nb ascent"; break;
-    case FIELD_SLOPE: return _("Slope"); break;
+    case FIELD_SLOPE: return "DTD"; break;///@todo(nav)
     case FIELD_ACCURACY: return _("Accuracy"); break;
     case FIELD_HEARTRATE: return _("Heartrate"); break;
 #ifdef PBL_COLOR
     case FIELD_HEARTRATE_DATA_AND_GRAPH: return _("Heartrate all"); break;
 #endif
     case FIELD_HEARTRATE_GRAPH_ONLY: return _("Heartrate graph"); break;
-    case FIELD_CADENCE: return _("Cadence"); break;
-    case FIELD_TEMPERATURE: return _("Temperature"); break;
+    case FIELD_CADENCE: return "Distance next"; break; ///@todo(nav)
+    case FIELD_TEMPERATURE: return "ETA"; break; ///@todo(nav)
     case FIELD_TIME: return _("Time"); break;
 #ifdef PBL_HEALTH
     case FIELD_STEPS: return _("Steps"); break;
@@ -184,7 +184,7 @@ const char *field_get_units(uint8_t field) {
 #endif
         return s_data.unitsAscentRate; break;
     //case FIELD_NBASCENT: return ""; break;
-    case FIELD_SLOPE: return "%"; break;
+    case FIELD_SLOPE: return "km"; break;///@todo(nav)
     case FIELD_ACCURACY: return "m"; break;
     case FIELD_HEARTRATE:
 #ifdef PBL_COLOR
@@ -196,8 +196,8 @@ const char *field_get_units(uint8_t field) {
         return HEART_RATE_UNIT;
       }
       break;
-    case FIELD_CADENCE: return "rpm"; break;
-    case FIELD_TEMPERATURE: return s_data.unitsTemperature; break;
+    case FIELD_CADENCE: return "m"; break;///@todo(nav)
+    case FIELD_TEMPERATURE: return "s"; break;///@todo(nav)
     case FIELD_TIME: return ""; break;
 #ifdef PBL_HEALTH
     case FIELD_STEPS: return _("steps"); break;
@@ -485,11 +485,12 @@ void config_load() {
     config.screenA_bottom_left_type   = FIELD_DISTANCE;
     config.screenA_bottom_right_type  = FIELD_AVGSPEED;
     config.screenA_topbar_center_type = FIELD_TIME;
-    config.screenB_top_type           = FIELD_ALTITUDE;
-    config.screenB_top2_type          = FIELD_ASCENTRATE; //FIELD_ASCENT;
-    config.screenB_bottom_left_type   = FIELD_ASCENT; //FIELD_ASCENTRATE;
-    config.screenB_bottom_right_type  = FIELD_BEARING; //FIELD_SLOPE;
-    config.screenB_topbar_center_type = FIELD_MAXSPEED; //FIELD_TIME;
+    ///@todo(nav)
+    config.screenB_top_type           = FIELD_NAV_NEXT_DISTANCE; // FIELD_ALTITUDE;
+    config.screenB_top2_type          = FIELD_NAV_NEXT_ERROR; //FIELD_ASCENT;
+    config.screenB_bottom_left_type   = FIELD_NAV_DISTANCE_TO_DESTINATION; // FIELD_ASCENTRATE;
+    config.screenB_bottom_right_type  = FIELD_NAV_ESTIMATED_TIME_OF_ARRIVAL; //FIELD_SLOPE;
+    config.screenB_topbar_center_type = FIELD_NAV_NEXT_INDEX; //FIELD_TIME;
   }
 #ifdef PBL_HEALTH
   health_init_if_needed();

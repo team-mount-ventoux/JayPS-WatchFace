@@ -37,6 +37,15 @@ enum {
   BYTE_CADENCE = 23,
 };
 
+enum {
+  NAV_BYTE_DISTANCE1 = 0,
+  NAV_BYTE_DISTANCE2 = 1,
+  NAV_BYTE_DTD1 = 2,
+  NAV_BYTE_DTD2 = 3,
+  NAV_BYTE_BEARING = 4,
+  NAV_BYTE_ERROR = 5,
+};
+
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
 static AppTimer *reset_data_timer;
@@ -359,7 +368,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
             snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
             snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
-            snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
+            ///@todo(nav) snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
             snprintf(s_data.bearing,    sizeof(s_data.bearing),    "%d",   s_gpsdata.bearing);
             if (s_gpsdata.heartrate != 255) {
               snprintf(s_data.heartrate,  sizeof(s_data.heartrate),  "%d",   s_gpsdata.heartrate);
@@ -370,11 +379,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             } else {
               strcpy(s_data.heartrate, "-");
             }
-            if (s_gpsdata.cadence != 255) {
-              snprintf(s_data.cadence,  sizeof(s_data.cadence),  "%d",   s_gpsdata.cadence);
-            } else {
-              strcpy(s_data.cadence, "-");
-            }            
+///@todo(nav)
+//            if (s_gpsdata.cadence != 255) {
+//              snprintf(s_data.cadence,  sizeof(s_data.cadence),  "%d",   s_gpsdata.cadence);
+//            } else {
+//              strcpy(s_data.cadence, "-");
+//            }
             if (s_gpsdata.time / 3600 > 0) {
               snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%d:%.2d:%.2d", s_gpsdata.time / 3600, (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
             } else {
@@ -409,7 +419,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             break;
         case MSG_SENSOR_TEMPERATURE:
             s_gpsdata.temperature10 = tuple->value->int16;
-            snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d.%d", s_gpsdata.temperature10 / 10, s_gpsdata.temperature10 % 10);
+            ///@todo(nav) snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d.%d", s_gpsdata.temperature10 / 10, s_gpsdata.temperature10 % 10);
             break;
 
         case STATE_CHANGED:
@@ -435,6 +445,19 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           GET_DATA(heartrate_max, 0);
           GET_DATA(heartrate_zones_notification_mode, 1);
           LOG_INFO("heartrate_max=%d mode=%d", heartrate_max, heartrate_zones_notification_mode);
+          break;
+
+        case MSG_NAVIGATION:
+          GET_DATA_UINT16(s_gpsdata.nav_next_distance1000, NAV_BYTE_DISTANCE1);
+          GET_DATA_UINT16(s_gpsdata.nav_distance_to_destination100, NAV_BYTE_DTD1);
+          GET_DATA(s_gpsdata.nav_bearing, NAV_BYTE_BEARING) * 360 / 256;
+          GET_DATA(s_gpsdata.nav_error100, NAV_BYTE_ERROR);
+          uint32_t ttd = s_gpsdata.avgspeed100 > 0 ? 3600 * s_gpsdata.nav_distance_to_destination100 / s_gpsdata.avgspeed100 : 0;
+          LOG_INFO("MSG_NAVIGATION nextd:%d dtd:%d bearing:%d err:%d", s_gpsdata.nav_next_distance1000, s_gpsdata.nav_distance_to_destination100, s_gpsdata.nav_bearing, s_gpsdata.nav_error100);
+          LOG_INFO("MSG_NAVIGATION ttd:%ld time:%d dist:%ld avg:%ld", ttd, s_gpsdata.time, s_gpsdata.distance100, s_gpsdata.avgspeed100);
+          snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
+          snprintf(s_data.slope,   sizeof(s_data.slope),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
+          snprintf(s_data.temperature,sizeof(s_data.temperature),"%ld:%.2ld", (ttd / 60) % 60, ttd % 60);
           break;
 
         }

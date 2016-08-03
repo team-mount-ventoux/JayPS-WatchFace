@@ -28,6 +28,7 @@ enum {
   MSG_SENSOR_TEMPERATURE = 0x27,
   MSG_CONFIG = 0x28,
   MSG_HR_MAX = 0x29,
+  MSG_NAVIGATION = 0x30,
 };
 
 enum {
@@ -139,6 +140,11 @@ enum {
   FIELD__UNUSED,
 };
 
+#define FIELD_NAV_NEXT_ERROR FIELD_ASCENTRATE
+#define FIELD_NAV_NEXT_DISTANCE FIELD_CADENCE
+#define FIELD_NAV_NEXT_INDEX FIELD_MAXSPEED
+#define FIELD_NAV_DISTANCE_TO_DESTINATION FIELD_SLOPE
+#define FIELD_NAV_ESTIMATED_TIME_OF_ARRIVAL FIELD_TEMPERATURE
 typedef struct FieldConfig {
   uint8_t type;
   ///todo remove type_index?
@@ -242,6 +248,11 @@ typedef struct GPSData {
   uint8_t heartrate;
   uint8_t cadence;
   int16_t temperature10;
+
+  uint16_t nav_next_distance1000;
+  uint16_t nav_distance_to_destination100;
+  uint16_t nav_bearing;
+  uint16_t nav_error100;
 } GPSData;
 
 //////////////
