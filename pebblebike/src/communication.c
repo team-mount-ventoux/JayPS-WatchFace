@@ -44,6 +44,10 @@ enum {
   NAV_BYTE_DTD2 = 3,
   NAV_BYTE_BEARING = 4,
   NAV_BYTE_ERROR = 5,
+  NAV_BYTE_POINTS_XPOS1 = 6,
+  NAV_BYTE_POINTS_XPOS2 = 7,
+  NAV_BYTE_POINTS_YPOS1 = 8,
+  NAV_BYTE_POINTS_YPOS2 = 9,
 };
 
 int nb_sync_error_callback = 0;
@@ -458,6 +462,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
           snprintf(s_data.slope,   sizeof(s_data.slope),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
           snprintf(s_data.temperature,sizeof(s_data.temperature),"%ld:%.2ld", (ttd / 60) % 60, ttd % 60);
+
+          for (uint8_t i = 0; i < NAV_NB_POINTS; i++) {
+            GET_DATA_INT16(s_gpsdata.nav_xpos[i], NAV_BYTE_POINTS_XPOS1 + i * 4);
+            GET_DATA_INT16(s_gpsdata.nav_ypos[i], NAV_BYTE_POINTS_YPOS1 + i * 4);
+            //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
+          }
           break;
 
         }

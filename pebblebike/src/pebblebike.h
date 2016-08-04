@@ -82,6 +82,8 @@ enum {
   #define NUMBER_OF_PAGES 4
 #endif
 
+#define NAV_NB_POINTS 20
+
 #define SPEED_UNIT_IMPERIAL "mph"
 #define SPEED_UNIT_METRIC "km/h"
 #define SPEED_UNIT_NAUTICAL "kn"
@@ -253,6 +255,9 @@ typedef struct GPSData {
   uint16_t nav_distance_to_destination100;
   uint16_t nav_bearing;
   uint16_t nav_error1000;
+
+  int16_t nav_xpos[NAV_NB_POINTS];
+  int16_t nav_ypos[NAV_NB_POINTS];
 } GPSData;
 
 //////////////

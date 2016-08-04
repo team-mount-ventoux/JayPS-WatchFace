@@ -153,25 +153,24 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
     GPoint p0, p1;
 
-    if (nb_points < 2) {
-        return;
+    if (nb_points >= 2) {
+      for (int i = 0; i < ((nb_points > NUM_POINTS ? NUM_POINTS : nb_points) - 1); i++) {
+          p0 = pts[(NUM_POINTS+cur_point-i) % NUM_POINTS];
+          p1 = pts[(NUM_POINTS+cur_point-i-1) % NUM_POINTS];
+
+          p0.x = (XINI + (p0.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+          p0.y = (YINI - (p0.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+          p1.x = (XINI + (p1.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+          p1.y = (YINI - (p1.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+
+          graphics_draw_line(
+              ctx,
+              p0,
+              p1
+          );
+      }
     }
 
-    for (int i = 0; i < ((nb_points > NUM_POINTS ? NUM_POINTS : nb_points) - 1); i++) {
-        p0 = pts[(NUM_POINTS+cur_point-i) % NUM_POINTS];
-        p1 = pts[(NUM_POINTS+cur_point-i-1) % NUM_POINTS];
-
-        p0.x = (XINI + (p0.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
-        p0.y = (YINI - (p0.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
-        p1.x = (XINI + (p1.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
-        p1.y = (YINI - (p1.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
-
-        graphics_draw_line(
-            ctx,
-            p0,
-            p1
-        );
-    }
 #ifdef ENABLE_FUNCTION_LIVE
     for (int i = 0; i < s_live.nb; i++) {
         p0.x = (XINI + (s_live.friends[i].xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
@@ -196,6 +195,25 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
         }
     }
 #endif
+
+    if (s_gpsdata.nav_distance_to_destination100 > 0) {
+      graphics_context_set_stroke_color(ctx, GColorRed);
+      graphics_context_set_stroke_width(ctx, 2);
+
+      for (uint8_t i = 0; i < NAV_NB_POINTS - 1; i++) {
+        //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
+        p0.x = (XINI + (s_gpsdata.nav_xpos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+        p0.y = (YINI - (s_gpsdata.nav_ypos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+        p1.x = (XINI + (s_gpsdata.nav_xpos[i+1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+        p1.y = (YINI - (s_gpsdata.nav_ypos[i+1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+
+        graphics_draw_line(
+            ctx,
+            p0,
+            p1
+        );
+      }
+    }
 }
 void bearing_layer_update_callback(Layer *me, GContext *ctx) {
   int x, y;
