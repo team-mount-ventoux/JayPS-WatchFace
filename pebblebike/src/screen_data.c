@@ -45,19 +45,19 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 //#endif
 
 //#ifndef PBL_PLATFORM_APLITE
-//  s_gpsdata.ascent = 270;
-//  s_gpsdata.nav_bearing = 320;
-  int direction = s_gpsdata.ascent - s_gpsdata.nav_bearing;
+//  s_gpsdata.nav_bearing = 270;
+//  s_gpsdata.bearing = 320;
+  int direction = (s_gpsdata.nav_bearing - s_gpsdata.bearing + 360) % 360;
 
   graphics_draw_circle(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RADIUS);
-  graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(360 - s_gpsdata.nav_bearing)));
-  if (abs(direction) < 45) {
+  graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(360 - s_gpsdata.bearing)));
+  if (direction < 45 || direction > 315) {
     graphics_context_set_stroke_color(ctx, GColorGreen);
   } else {
     graphics_context_set_stroke_color(ctx, GColorRed);
   }
   graphics_context_set_stroke_width(ctx, 7);
-  graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE((direction + 360) % 360)));
+  graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(direction)));
 #endif
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
     return;
