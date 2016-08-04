@@ -451,9 +451,9 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           GET_DATA_UINT16(s_gpsdata.nav_next_distance1000, NAV_BYTE_DISTANCE1);
           GET_DATA_UINT16(s_gpsdata.nav_distance_to_destination100, NAV_BYTE_DTD1);
           GET_DATA(s_gpsdata.nav_bearing, NAV_BYTE_BEARING) * 360 / 256;
-          GET_DATA(s_gpsdata.nav_error100, NAV_BYTE_ERROR);
+          GET_DATA(s_gpsdata.nav_error1000, NAV_BYTE_ERROR) * 10;
           uint32_t ttd = s_gpsdata.avgspeed100 > 0 ? 3600 * s_gpsdata.nav_distance_to_destination100 / s_gpsdata.avgspeed100 : 0;
-          LOG_INFO("MSG_NAVIGATION nextd:%d dtd:%d bearing:%d err:%d", s_gpsdata.nav_next_distance1000, s_gpsdata.nav_distance_to_destination100, s_gpsdata.nav_bearing, s_gpsdata.nav_error100);
+          LOG_INFO("MSG_NAVIGATION nextd:%d dtd:%d bearing:%d err:%d", s_gpsdata.nav_next_distance1000, s_gpsdata.nav_distance_to_destination100, s_gpsdata.nav_bearing, s_gpsdata.nav_error1000);
           LOG_INFO("MSG_NAVIGATION ttd:%ld time:%d dist:%ld avg:%ld", ttd, s_gpsdata.time, s_gpsdata.distance100, s_gpsdata.avgspeed100);
           snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
           snprintf(s_data.slope,   sizeof(s_data.slope),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);

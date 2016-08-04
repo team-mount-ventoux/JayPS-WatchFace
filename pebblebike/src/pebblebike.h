@@ -252,7 +252,7 @@ typedef struct GPSData {
   uint16_t nav_next_distance1000;
   uint16_t nav_distance_to_destination100;
   uint16_t nav_bearing;
-  uint16_t nav_error100;
+  uint16_t nav_error1000;
 } GPSData;
 
 //////////////
