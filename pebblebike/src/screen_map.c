@@ -55,35 +55,34 @@ void screen_map_zoom_in(int factor) {
 }
 
 
-
-
+// in 10m
+#define SCREEN_MAP_MIN_DIST 5
 void screen_map_update_location() {
 
-    if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < 5*5) {
-        // distance with previous position < 4*10 (m)
+    if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < SCREEN_MAP_MIN_DIST*SCREEN_MAP_MIN_DIST) {
+        // distance with previous position < SCREEN_MAP_MIN_DIST*10 (m)
         /*snprintf(s_data.debug2, sizeof(s_data.debug2),
           "#11 nbpoints:%u\npos : %ld|%ld\nposprev : %ld|%ld\n",
           nb_points,
           s_gpsdata.xpos, s_gpsdata.ypos,
           xposprev, yposprev
         );*/
-        return;
+    } else {
+      // add new point
+      xposprev = s_gpsdata.xpos;
+      yposprev = s_gpsdata.ypos;
+
+      cur_point = nb_points % NUM_POINTS;
+      nb_points++;
     }
-    //vibes_short_pulse();
-    xposprev = s_gpsdata.xpos;
-    yposprev = s_gpsdata.ypos;
 
-    cur_point = nb_points % NUM_POINTS;
-    nb_points++;
-
+    // update cur point or add new one
     pts[cur_point] = GPoint(s_gpsdata.xpos, s_gpsdata.ypos);
-
 
     if (s_data.page_number == PAGE_MAP) {
         // refresh displayed map only if current page is PAGE_MAP
       screen_map_update_map(false);
     }
-
 }
 
 void screen_map_update_map(bool force_recenter) {
