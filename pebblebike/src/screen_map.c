@@ -11,7 +11,7 @@ Layer *bearing_layer;
 // 4 Bytes/point
 // to compute correct values, use DEMO mode, cycle through all screens including menu
 #if PBL_PLATFORM_APLITE
-  #define NUM_POINTS 500
+  #define NUM_POINTS 100
 #else
   #define NUM_POINTS 1500
 #endif
@@ -196,10 +196,16 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 #endif
 
     if (s_gpsdata.nav_distance_to_destination100 > 0) {
+#ifdef ENABLE_NAVIGATION_FULL
       graphics_context_set_stroke_color(ctx, GColorRed);
+#endif
       graphics_context_set_stroke_width(ctx, 2);
 
       for (uint8_t i = 0; i < NAV_NB_POINTS - 1; i++) {
+        if (i > 0 && s_gpsdata.nav_xpos[i] == 0 && s_gpsdata.nav_ypos[i] == 0) {
+          // last point
+          break;
+        }
         //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
         p0.x = (XINI + (s_gpsdata.nav_xpos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
         p0.y = (YINI - (s_gpsdata.nav_ypos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;

@@ -42,26 +42,33 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_fill_color(ctx, COLOR_LINES_DATA_MAIN);
   graphics_fill_rect(ctx, GRect(0, PAGE_DATA_TOP_DATA_H, SCREEN_W, 2), 0, GCornerNone);
   graphics_fill_rect(ctx, GRect(0, PAGE_DATA_BOTTOM_DATA_H, SCREEN_W, 2), 0, GCornerNone);
-//#endif
+#endif
 
-//#ifndef PBL_PLATFORM_APLITE
+#ifdef ENABLE_NAVIGATION
+  if (s_gpsdata.nav_distance_to_destination100 > 0) {
 //  s_gpsdata.nav_bearing = 270;
 //  s_gpsdata.bearing = 320;
-  int direction = (s_gpsdata.nav_bearing - s_gpsdata.bearing + 360) % 360;
 
-  graphics_draw_circle(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RADIUS);
-  graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(360 - s_gpsdata.bearing)));
-  if (direction < 45 || direction > 315) {
-    if (s_gpsdata.nav_error1000 >= 20) {
-       graphics_context_set_stroke_color(ctx, GColorOrange);
+    int direction = (s_gpsdata.nav_bearing - s_gpsdata.bearing + 360) % 360;
+
+#ifdef ENABLE_NAVIGATION_FULL
+    // compass
+    graphics_draw_circle(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RADIUS);
+    graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(360 - s_gpsdata.bearing)));
+
+    if (direction < 45 || direction > 315) {
+      if (s_gpsdata.nav_error1000 >= 20) {
+         graphics_context_set_stroke_color(ctx, GColorOrange);
+      } else {
+        graphics_context_set_stroke_color(ctx, GColorGreen);
+      }
     } else {
-      graphics_context_set_stroke_color(ctx, GColorGreen);
+      graphics_context_set_stroke_color(ctx, GColorRed);
     }
-  } else {
-    graphics_context_set_stroke_color(ctx, GColorRed);
+#endif
+    graphics_context_set_stroke_width(ctx, 7);
+    graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(direction)));
   }
-  graphics_context_set_stroke_width(ctx, 7);
-  graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(direction)));
 #endif
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
     return;

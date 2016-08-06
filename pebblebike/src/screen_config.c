@@ -100,7 +100,7 @@ const char *field_get_title(uint8_t field) {
 #endif
     case FIELD_HEARTRATE_GRAPH_ONLY: return _("Heartrate graph"); break;
     case FIELD_CADENCE: return "Distance next"; break; ///@todo(nav)
-    case FIELD_TEMPERATURE: return "ETA"; break; ///@todo(nav)
+    case FIELD_TEMPERATURE: return "TTD"; break; ///@todo(nav)
     case FIELD_TIME: return _("Time"); break;
 #ifdef PBL_HEALTH
     case FIELD_STEPS: return _("Steps"); break;
@@ -489,7 +489,7 @@ void config_load() {
     config.screenB_top_type           = FIELD_NAV_NEXT_DISTANCE; // FIELD_ALTITUDE;
     config.screenB_top2_type          = FIELD_NAV_NEXT_ERROR; //FIELD_ASCENT;
     config.screenB_bottom_left_type   = FIELD_NAV_DISTANCE_TO_DESTINATION; // FIELD_ASCENTRATE;
-    config.screenB_bottom_right_type  = FIELD_NAV_ESTIMATED_TIME_OF_ARRIVAL; //FIELD_SLOPE;
+    config.screenB_bottom_right_type  = FIELD_NAV_ESTIMATED_TIME_TO_DESTINATION; //FIELD_SLOPE;
     config.screenB_topbar_center_type = FIELD_NAV_NEXT_INDEX; //FIELD_TIME;
   }
 #ifdef PBL_HEALTH

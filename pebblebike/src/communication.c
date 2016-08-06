@@ -461,7 +461,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           LOG_INFO("MSG_NAVIGATION ttd:%ld time:%d dist:%ld avg:%ld", ttd, s_gpsdata.time, s_gpsdata.distance100, s_gpsdata.avgspeed100);
           snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
           snprintf(s_data.slope,   sizeof(s_data.slope),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
-          snprintf(s_data.temperature,sizeof(s_data.temperature),"%ld:%.2ld", (ttd / 60) % 60, ttd % 60);
+          snprintf(s_data.temperature,sizeof(s_data.temperature),"%ld:%.2ld", ttd / 3600, (ttd / 60) % 60);
 
           for (uint8_t i = 0; i < NAV_NB_POINTS; i++) {
             GET_DATA_INT16(s_gpsdata.nav_xpos[i], NAV_BYTE_POINTS_XPOS1 + i * 4);
