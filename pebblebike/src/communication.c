@@ -233,6 +233,11 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
     //char friend[100];
     //int8_t live_max_name = -1;
     uint16_t time0;
+#ifdef ENABLE_NAVIGATION_FULL
+    static uint16_t avg5_time = 0;
+    static int32_t avg5_distance100 = 0;
+    static int32_t avg5_avgspeed100 = 0;
+#endif
     int16_t xpos = 0, ypos = 0;
 
     while (tuple) {
@@ -320,6 +325,14 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                 } else {
                   s_gpsdata.avgspeed100 = 3600 * s_gpsdata.distance100 / s_gpsdata.time; // 0.01km/h or 0.01mph
                 }
+#ifdef ENABLE_NAVIGATION_FULL
+              if ((avg5_time == 0 && s_gpsdata.time > 0)|| s_gpsdata.time > avg5_time + 2 * 30) {
+                LOG_INFO("avg5 time:%d>%d dist:%ld>%ld", avg5_time, s_gpsdata.time, avg5_distance100, s_gpsdata.distance100);
+                avg5_avgspeed100 = 3600 * (s_gpsdata.distance100 - avg5_distance100) / (s_gpsdata.time - avg5_time); // 0.01km/h or 0.01mph
+                avg5_distance100 = s_gpsdata.distance100;
+                avg5_time = s_gpsdata.time;
+              }
+#endif
             } else {
                 s_gpsdata.avgspeed100 = 0;
             }
@@ -458,6 +471,11 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           GET_DATA(s_gpsdata.nav_bearing, NAV_BYTE_BEARING) * 360 / 256;
           GET_DATA(s_gpsdata.nav_error1000, NAV_BYTE_ERROR) * 10;
           uint32_t ttd = s_gpsdata.avgspeed100 > 0 ? 3600 * s_gpsdata.nav_distance_to_destination100 / s_gpsdata.avgspeed100 : 0;
+#ifdef ENABLE_NAVIGATION_FULL
+          if (avg5_avgspeed100 > 0) {
+            ttd = 3600 * s_gpsdata.nav_distance_to_destination100 / avg5_avgspeed100;
+          }
+#endif
           LOG_INFO("MSG_NAVIGATION nextd:%d dtd:%d bearing:%d err:%d", s_gpsdata.nav_next_distance1000, s_gpsdata.nav_distance_to_destination100, s_gpsdata.nav_bearing, s_gpsdata.nav_error1000);
           LOG_INFO("MSG_NAVIGATION ttd:%ld time:%d dist:%ld avg:%ld", ttd, s_gpsdata.time, s_gpsdata.distance100, s_gpsdata.avgspeed100);
           ///@todo(nav)
