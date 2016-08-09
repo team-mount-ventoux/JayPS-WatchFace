@@ -215,8 +215,11 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 #endif
     graphics_context_set_stroke_width(ctx, 2);
 
-      for (uint8_t i = 0; i < NAV_NB_POINTS - 1; i++) {
-        if (i > 0 && s_gpsdata.nav_xpos[i] == 0 && s_gpsdata.nav_ypos[i] == 0) {
+    uint8_t not_zero = false;
+    for (uint8_t i = 0; i < NAV_NB_POINTS - 1; i++) {
+      //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
+      if (s_gpsdata.nav_xpos[i+1] == 0 && s_gpsdata.nav_ypos[i+1] == 0) {
+        if (not_zero) {
           // last point
           break;
         }
