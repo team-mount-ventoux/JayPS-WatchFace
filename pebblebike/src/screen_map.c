@@ -248,7 +248,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
     ///@todo(nav)
     graphics_context_set_text_color(ctx, GColorBlack);
-    graphics_draw_text(ctx, s_data.cadence, fonts_get_system_font(FONT_KEY_GOTHIC_14), NAVIGATION_DISTANCE_RECT, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
+    graphics_draw_text(ctx, s_data.cadence, fonts_get_system_font(FONT_KEY_GOTHIC_18), NAVIGATION_DISTANCE_RECT, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
 
     nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT);
   }

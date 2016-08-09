@@ -8,6 +8,7 @@
 #include "screen_config.h"
 #include "graph.h"
 #include "heartrate.h"
+#include "navigation.h"
 #include "screen_data.h"
 
 enum {
@@ -469,6 +470,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             GET_DATA_INT16(s_gpsdata.nav_ypos[i], NAV_BYTE_POINTS_YPOS1 + i * 4);
             //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
           }
+          nav_add_data();
           break;
 
         }
