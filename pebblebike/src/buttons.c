@@ -86,7 +86,7 @@ void next_page(bool rotation) {
     s_data.page_number = PAGE_DATA;
   }
 #ifdef ENABLE_ROTATION
-  if (rotation && s_data.page_number > PAGE_ALTITUDE) {
+  if (rotation && s_gpsdata.nav_distance_to_destination100 == 0 && s_data.page_number > PAGE_ALTITUDE) {
     s_data.page_number = PAGE_DATA;
   }
 #endif
@@ -117,7 +117,7 @@ void next_page(bool rotation) {
 }
 #ifdef ENABLE_ROTATION
 static void rotation_timer_callback(void *data) {
-  if (s_data.page_number <= PAGE_ALTITUDE && config_screen == CONFIG_SCREEN_DISABLED) {
+  if ((s_data.page_number <= PAGE_ALTITUDE || s_gpsdata.nav_distance_to_destination100 > 0) && config_screen == CONFIG_SCREEN_DISABLED) {
     next_page(true);
     // restore title_instead_of_units false in 1s
     button_timer = app_timer_register(1000, button_timer_callback, NULL);
