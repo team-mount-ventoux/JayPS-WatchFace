@@ -234,7 +234,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
     //int8_t live_max_name = -1;
     uint16_t time0;
 #ifdef ENABLE_NAVIGATION_FULL
-    static uint16_t avg5_time = 0;
+    static uint16_t avg5_time = -10000;
     static int32_t avg5_distance100 = 0;
     static int32_t avg5_avgspeed100 = 0;
 #endif
@@ -326,9 +326,11 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                   s_gpsdata.avgspeed100 = 3600 * s_gpsdata.distance100 / s_gpsdata.time; // 0.01km/h or 0.01mph
                 }
 #ifdef ENABLE_NAVIGATION_FULL
-              if ((avg5_time == 0 && s_gpsdata.time > 0)|| s_gpsdata.time > avg5_time + 2 * 30) {
-                LOG_INFO("avg5 time:%d>%d dist:%ld>%ld", avg5_time, s_gpsdata.time, avg5_distance100, s_gpsdata.distance100);
-                avg5_avgspeed100 = 3600 * (s_gpsdata.distance100 - avg5_distance100) / (s_gpsdata.time - avg5_time); // 0.01km/h or 0.01mph
+              if (s_gpsdata.time > avg5_time + 2 * 30) {
+                if (avg5_time > 0) {
+                  LOG_INFO("avg5 time:%d>%d dist:%ld>%ld", avg5_time, s_gpsdata.time, avg5_distance100, s_gpsdata.distance100);
+                  avg5_avgspeed100 = 3600 * (s_gpsdata.distance100 - avg5_distance100) / (s_gpsdata.time - avg5_time); // 0.01km/h or 0.01mph
+                }
                 avg5_distance100 = s_gpsdata.distance100;
                 avg5_time = s_gpsdata.time;
               }
@@ -482,6 +484,18 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
           snprintf(s_data.slope,   sizeof(s_data.slope),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
           snprintf(s_data.temperature,sizeof(s_data.temperature),"%ld:%.2ld", ttd / 3600, (ttd / 60) % 60);
+          LOG_INFO("ttd:%s", s_data.temperature);
+
+          char *time_format;
+          if (clock_is_24h_style()) {
+            time_format = "%R";
+          } else {
+            time_format = "%I:%M";
+          }
+          time_t t = time(NULL);
+          t += ttd;
+          strftime(s_data.temperature, sizeof(s_data.temperature), time_format, localtime(&t));
+          LOG_INFO("eta:%s", s_data.temperature);
 
           for (uint8_t i = 0; i < NAV_NB_POINTS; i++) {
             GET_DATA_INT16(s_gpsdata.nav_xpos[i], NAV_BYTE_POINTS_XPOS1 + i * 4);
