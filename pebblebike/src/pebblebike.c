@@ -186,6 +186,12 @@ static void init(void) {
   heartrate_new_data(s_gpsdata.heartrate);
   s_data.live = 1;
   s_data.state = STATE_START;
+
+  s_gpsdata.nav_distance_to_destination100 = 12100;
+  s_gpsdata.nav_next_distance1000 = 1345;
+  ///@todo(nav)
+  snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
+
 #else
   strcpy(s_data.speed, "0.0");
   strcpy(s_data.distance, "-");

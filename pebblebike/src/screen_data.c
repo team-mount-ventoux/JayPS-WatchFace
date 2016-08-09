@@ -5,6 +5,7 @@
 #include "screen_config.h"
 #include "graph.h"
 #include "heartrate.h"
+#include "navigation.h"
 #include "screen_data.h"
 
 Layer *line_layer;
@@ -45,30 +46,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 #endif
 
 #ifdef ENABLE_NAVIGATION
-  if (s_gpsdata.nav_distance_to_destination100 > 0) {
-//  s_gpsdata.nav_bearing = 270;
-//  s_gpsdata.bearing = 320;
-
-    int direction = (s_gpsdata.nav_bearing - s_gpsdata.bearing + 360) % 360;
-
-#ifdef ENABLE_NAVIGATION_FULL
-    // compass
-    graphics_draw_circle(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RADIUS);
-    graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(360 - s_gpsdata.bearing)));
-
-    if (direction < 45 || direction > 315) {
-      if (s_gpsdata.nav_error1000 >= 20) {
-         graphics_context_set_stroke_color(ctx, GColorOrange);
-      } else {
-        graphics_context_set_stroke_color(ctx, GColorGreen);
-      }
-    } else {
-      graphics_context_set_stroke_color(ctx, GColorRed);
-    }
-#endif
-    graphics_context_set_stroke_width(ctx, 7);
-    graphics_draw_line(ctx, NAVIGATION_COMPASS_CENTER, gpoint_from_polar(NAVIGATION_COMPASS_RECT, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(direction)));
-  }
+  nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT);
 #endif
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
     return;

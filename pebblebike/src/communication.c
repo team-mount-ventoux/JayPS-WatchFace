@@ -459,6 +459,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           uint32_t ttd = s_gpsdata.avgspeed100 > 0 ? 3600 * s_gpsdata.nav_distance_to_destination100 / s_gpsdata.avgspeed100 : 0;
           LOG_INFO("MSG_NAVIGATION nextd:%d dtd:%d bearing:%d err:%d", s_gpsdata.nav_next_distance1000, s_gpsdata.nav_distance_to_destination100, s_gpsdata.nav_bearing, s_gpsdata.nav_error1000);
           LOG_INFO("MSG_NAVIGATION ttd:%ld time:%d dist:%ld avg:%ld", ttd, s_gpsdata.time, s_gpsdata.distance100, s_gpsdata.avgspeed100);
+          ///@todo(nav)
           snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
           snprintf(s_data.slope,   sizeof(s_data.slope),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
           snprintf(s_data.temperature,sizeof(s_data.temperature),"%ld:%.2ld", ttd / 3600, (ttd / 60) % 60);
