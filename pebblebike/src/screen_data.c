@@ -46,7 +46,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 #endif
 
 #ifdef ENABLE_NAVIGATION
-  nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT);
+  nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT, false);
 #endif
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
     return;
