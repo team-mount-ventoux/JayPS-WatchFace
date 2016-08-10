@@ -234,7 +234,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
     //int8_t live_max_name = -1;
     uint16_t time0;
 #ifdef ENABLE_NAVIGATION_FULL
-    static uint16_t avg5_time = -10000;
+    static int32_t avg5_time = -10000;
     static int32_t avg5_distance100 = 0;
     static int32_t avg5_avgspeed100 = 0;
 #endif
