@@ -45,7 +45,7 @@ GPath *bearing_gpath;
 #define NAVIGATION_COMPASS_CENTER_Y (NAVIGATION_COMPASS_RADIUS + NAVIGATION_COMPASS_PADDING - pathFrame.origin.y)
 #define NAVIGATION_COMPASS_CENTER GPoint(NAVIGATION_COMPASS_CENTER_X, NAVIGATION_COMPASS_CENTER_Y)
 #define NAVIGATION_COMPASS_RECT GRect(NAVIGATION_COMPASS_PADDING - pathFrame.origin.x, NAVIGATION_COMPASS_PADDING - pathFrame.origin.y, 2 * NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS)
-#define NAVIGATION_DISTANCE_RECT_W 30
+#define NAVIGATION_DISTANCE_RECT_W 50
 #define NAVIGATION_DISTANCE_RECT_H 18
 #define NAVIGATION_DISTANCE_RECT GRect(SCREEN_W - pathFrame.origin.x - NAVIGATION_DISTANCE_RECT_W, - pathFrame.origin.y, NAVIGATION_DISTANCE_RECT_W, NAVIGATION_DISTANCE_RECT_H)
 
@@ -159,9 +159,61 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
     (void)me;
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "path_layer_update_callback");
 
-    graphics_context_set_stroke_color(ctx, COLOR_MAP);
-
     GPoint p0, p1;
+
+#ifdef ENABLE_NAVIGATION
+  if (s_gpsdata.nav_distance_to_destination100 > 0) {
+
+    graphics_context_set_stroke_width(ctx, 2);
+
+    uint8_t not_zero = false;
+    for (uint8_t i = 0; i < NAV_NB_POINTS - 1; i++) {
+      //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
+      if (s_gpsdata.nav_xpos[i+1] == 0 && s_gpsdata.nav_ypos[i+1] == 0) {
+        if (not_zero) {
+          // last point
+          break;
+        }
+      } else {
+        not_zero = true;
+      }
+#ifdef ENABLE_NAVIGATION_FULL
+      if (i < 3) {
+        // previous points
+        graphics_context_set_stroke_color(ctx, GColorLightGray);
+      } else if (i == 3) {
+        // cur point
+        int direction = (s_gpsdata.nav_bearing - s_gpsdata.bearing + 360) % 360;
+        if (direction > 180) {
+          direction = 360 - direction;
+        }
+        if (s_gpsdata.nav_error1000 >= 20) {
+          graphics_context_set_stroke_color(ctx, GColorOrange);
+        } else if (direction < 45) {
+          graphics_context_set_stroke_color(ctx, GColorGreen);
+        } else {
+          graphics_context_set_stroke_color(ctx, GColorRed);
+        }
+      } else {
+        // future points
+        graphics_context_set_stroke_color(ctx, GColorBlue);
+      }
+#endif
+      p0.x = (XINI + (s_gpsdata.nav_xpos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+      p0.y = (YINI - (s_gpsdata.nav_ypos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+      p1.x = (XINI + (s_gpsdata.nav_xpos[i+1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+      p1.y = (YINI - (s_gpsdata.nav_ypos[i+1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+
+      graphics_draw_line(
+          ctx,
+          p0,
+          p1
+      );
+    }
+  }
+#endif
+    graphics_context_set_stroke_width(ctx, 1);
+    graphics_context_set_stroke_color(ctx, COLOR_MAP);
 
     if (nb_points >= 2) {
       for (int i = 0; i < ((nb_points > NUM_POINTS ? NUM_POINTS : nb_points) - 1); i++) {
@@ -209,34 +261,6 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
 #ifdef ENABLE_NAVIGATION
   if (s_gpsdata.nav_distance_to_destination100 > 0) {
-
-#ifdef ENABLE_NAVIGATION_FULL
-    graphics_context_set_stroke_color(ctx, GColorRed);
-#endif
-    graphics_context_set_stroke_width(ctx, 2);
-
-    uint8_t not_zero = false;
-    for (uint8_t i = 0; i < NAV_NB_POINTS - 1; i++) {
-      //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
-      if (s_gpsdata.nav_xpos[i+1] == 0 && s_gpsdata.nav_ypos[i+1] == 0) {
-        if (not_zero) {
-          // last point
-          break;
-        }
-      } else {
-        not_zero = true;
-      }
-      p0.x = (XINI + (s_gpsdata.nav_xpos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
-      p0.y = (YINI - (s_gpsdata.nav_ypos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
-      p1.x = (XINI + (s_gpsdata.nav_xpos[i+1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
-      p1.y = (YINI - (s_gpsdata.nav_ypos[i+1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
-
-      graphics_draw_line(
-          ctx,
-          p0,
-          p1
-      );
-    }
     graphics_context_set_stroke_width(ctx, 1);
     graphics_context_set_stroke_color(ctx, GColorBlack);
 
@@ -248,7 +272,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
     ///@todo(nav)
     graphics_context_set_text_color(ctx, GColorBlack);
-    graphics_draw_text(ctx, s_data.cadence, fonts_get_system_font(FONT_KEY_GOTHIC_18), NAVIGATION_DISTANCE_RECT, GTextOverflowModeFill, GTextAlignmentCenter, NULL);
+    graphics_draw_text(ctx, s_data.cadence, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), NAVIGATION_DISTANCE_RECT, GTextOverflowModeFill, GTextAlignmentRight, NULL);
 
     nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT, true);
   }

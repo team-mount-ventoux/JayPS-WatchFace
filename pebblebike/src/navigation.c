@@ -23,7 +23,7 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
     } else {
       graphics_context_set_stroke_color(ctx, GColorRed);
     }
-    graphics_context_set_stroke_width(ctx, small ? 3 : 7);
+    graphics_context_set_stroke_width(ctx, small ? 5 : 7);
     graphics_draw_line(ctx, center, gpoint_from_polar(box, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(direction)));
 #else
     if (small) {
