@@ -61,7 +61,14 @@ void communication_init() {
 #ifdef ENABLE_DEBUG
   app_message_register_inbox_dropped(communication_in_dropped_callback);
 #endif
-  app_message_open(/* size_inbound */ 124, /* size_outbound */ 256);
+  app_message_open(
+      // size_inbound MSG_LOCATION_DATA_V3:24 bytes, MSG_NAVIGATION:90 bytes + few "small" keys (MSG_HR_MAX: 2 bytes, MSG_BATTERY_LEVEL: 1 int)
+      200,
+
+      // size_outbound
+      // biggest message is send_version, with MSG_VERSION_PEBBLE(int) and MSG_CONFIG (10 bytes)
+      50
+  );
 }
 void communication_deinit() {
   if (reset_data_timer) {
