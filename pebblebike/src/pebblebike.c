@@ -158,6 +158,13 @@ static void init(void) {
   heartrate_init();
   s_gpsdata.heartrate = 255; // no data at startup
   bg_color_data_main = BG_COLOR_DATA_MAIN;
+
+#ifdef ENABLE_NAVIGATION_FULL
+  for (uint8_t i = 0; i < NAV_NB_POINTS_STORAGE - 1; i++) {
+    s_gpsdata.nav_xpos[i] = s_gpsdata.nav_ypos[i] = INT16_MAX;
+  }
+#endif
+
 #ifdef ENABLE_DEBUG_FIELDS_SIZE
   strcpy(s_data.speed, "188.8");
   strcpy(s_data.distance, "88.8");
@@ -192,7 +199,6 @@ static void init(void) {
   s_gpsdata.nav_error1000 = 55;
   ///@todo(nav)
   snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
-
 #else
   strcpy(s_data.speed, "0.0");
   strcpy(s_data.distance, "-");

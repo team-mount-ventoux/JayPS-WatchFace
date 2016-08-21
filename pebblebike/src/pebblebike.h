@@ -28,7 +28,7 @@ enum {
   MSG_SENSOR_TEMPERATURE = 0x27,
   MSG_CONFIG = 0x28,
   MSG_HR_MAX = 0x29,
-  MSG_NAVIGATION = 0x30,
+  MSG_NAVIGATION = 0x31,
 };
 
 enum {
@@ -83,6 +83,14 @@ enum {
 #endif
 
 #define NAV_NB_POINTS 20
+#define NB_POINTS_PER_PAGE 5
+#ifdef ENABLE_NAVIGATION_FULL
+  // 5 * 256
+  //#define NAV_NB_POINTS_STORAGE 1280
+#define NAV_NB_POINTS_STORAGE 200
+#else
+  #define NAV_NB_POINTS_STORAGE NAV_NB_POINTS
+#endif
 
 #define SPEED_UNIT_IMPERIAL "mph"
 #define SPEED_UNIT_METRIC "km/h"
@@ -228,6 +236,8 @@ typedef struct AppData {
 
   int32_t android_version;
   int32_t phone_battery_level;
+
+  uint8_t nav_notification;
 } AppData;
 
 typedef struct GPSData {
@@ -255,9 +265,13 @@ typedef struct GPSData {
   uint16_t nav_distance_to_destination100;
   uint16_t nav_bearing;
   uint16_t nav_error1000;
+  uint8_t nav_nb_pages;
+  //uint8_t nav_page_number;
+  uint16_t nav_next_index;
+  uint16_t nav_first_index_in_storage;
 
-  int16_t nav_xpos[NAV_NB_POINTS];
-  int16_t nav_ypos[NAV_NB_POINTS];
+  int16_t nav_xpos[NAV_NB_POINTS_STORAGE];
+  int16_t nav_ypos[NAV_NB_POINTS_STORAGE];
 } GPSData;
 
 //////////////

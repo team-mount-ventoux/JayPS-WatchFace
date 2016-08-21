@@ -49,6 +49,30 @@ GPath *bearing_gpath;
 #define NAVIGATION_DISTANCE_RECT_H 18
 #define NAVIGATION_DISTANCE_RECT GRect(SCREEN_W - pathFrame.origin.x - NAVIGATION_DISTANCE_RECT_W, - pathFrame.origin.y, NAVIGATION_DISTANCE_RECT_W, NAVIGATION_DISTANCE_RECT_H)
 
+#ifdef ENABLE_MAP_SKIP_POINT_OUTSIDE
+  #define MAP_DRAW_LINE(p0, p1) \
+  if (p0.x + pathFrame.origin.x < 0 && p1.x + pathFrame.origin.x < 0) { \
+    /* LOG_DEBUG("x<0 o:%d", pathFrame.origin.x); */ \
+    continue; \
+  } \
+  if (p0.x + pathFrame.origin.x > SCREEN_W && p1.x + pathFrame.origin.x > SCREEN_W) { \
+    /* LOG_DEBUG("x>W o:%d", pathFrame.origin.x); */ \
+    continue; \
+  } \
+  if (p0.y + pathFrame.origin.y < 0 && p1.y + pathFrame.origin.y < 0) { \
+    /* LOG_DEBUG("y<0 o:%d", pathFrame.origin.y); */ \
+    continue; \
+  } \
+  if (p0.y + pathFrame.origin.y > SCREEN_H && p1.y + pathFrame.origin.y > SCREEN_H) { \
+    /* LOG_DEBUG("y>H o:%d", pathFrame.origin.y); */ \
+    continue; \
+  } \
+  graphics_draw_line(ctx, p0, p1);
+#else
+  #define MAP_DRAW_LINE(p0, p1) graphics_draw_line(ctx, p0, p1);
+#endif
+
+
 
 void screen_map_zoom_out(int factor) {
     map_scale = map_scale * factor;
@@ -166,22 +190,21 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
     graphics_context_set_stroke_width(ctx, 2);
 
-    uint8_t not_zero = false;
-    for (uint8_t i = 0; i < NAV_NB_POINTS - 1; i++) {
-      //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
-      if (s_gpsdata.nav_xpos[i+1] == 0 && s_gpsdata.nav_ypos[i+1] == 0) {
-        if (not_zero) {
-          // last point
-          break;
-        }
-      } else {
-        not_zero = true;
+    for (uint8_t i = 1; i < NAV_NB_POINTS_STORAGE - 1; i++) {
+      if (s_gpsdata.nav_xpos[i] == INT16_MAX) {
+        //LOG_DEBUG("%d: skip point", i);
+        continue;
       }
+      if (s_gpsdata.nav_xpos[i-1] == INT16_MAX) {
+        //LOG_DEBUG("%d: skip point-1", i);
+        continue;
+      }
+      //LOG_DEBUG("%d: xpos:%d ypos:%d %s", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i], s_gpsdata.nav_first_index_in_storage + i == s_gpsdata.nav_next_index ? "NEXT" : "");
 #ifdef ENABLE_NAVIGATION_FULL
-      if (i < 3) {
+      if (s_gpsdata.nav_first_index_in_storage + i < s_gpsdata.nav_next_index) {
         // previous points
         graphics_context_set_stroke_color(ctx, GColorLightGray);
-      } else if (i == 3) {
+      } else if (s_gpsdata.nav_first_index_in_storage + i == s_gpsdata.nav_next_index) {
         // cur point
         int direction = (s_gpsdata.nav_bearing - s_gpsdata.bearing + 360) % 360;
         if (direction > 180) {
@@ -199,16 +222,12 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
         graphics_context_set_stroke_color(ctx, GColorBlue);
       }
 #endif
-      p0.x = (XINI + (s_gpsdata.nav_xpos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
-      p0.y = (YINI - (s_gpsdata.nav_ypos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
-      p1.x = (XINI + (s_gpsdata.nav_xpos[i+1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
-      p1.y = (YINI - (s_gpsdata.nav_ypos[i+1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+      p0.x = (XINI + (s_gpsdata.nav_xpos[i-1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+      p0.y = (YINI - (s_gpsdata.nav_ypos[i-1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+      p1.x = (XINI + (s_gpsdata.nav_xpos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+      p1.y = (YINI - (s_gpsdata.nav_ypos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
 
-      graphics_draw_line(
-          ctx,
-          p0,
-          p1
-      );
+      MAP_DRAW_LINE(p0, p1);
     }
   }
 #endif
@@ -225,11 +244,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
           p1.x = (XINI + (p1.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
           p1.y = (YINI - (p1.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
 
-          graphics_draw_line(
-              ctx,
-              p0,
-              p1
-          );
+          MAP_DRAW_LINE(p0, p1);
       }
     }
 

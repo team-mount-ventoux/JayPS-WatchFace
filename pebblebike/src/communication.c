@@ -45,11 +45,16 @@ enum {
   NAV_BYTE_DTD2 = 3,
   NAV_BYTE_BEARING = 4,
   NAV_BYTE_ERROR = 5,
-  NAV_BYTE_POINTS_XPOS1 = 6,
-  NAV_BYTE_POINTS_XPOS2 = 7,
-  NAV_BYTE_POINTS_YPOS1 = 8,
-  NAV_BYTE_POINTS_YPOS2 = 9,
+  NAV_BYTE_NB_PAGES = 6,
+  NAV_BYTE_PAGE_NUMBER = 7,
+  NAV_BYTE_NEXT_INDEX1 = 8,
+  NAV_BYTE_NEXT_INDEX2 = 9,
+  NAV_BYTE_SETTINGS = NAV_BYTE_NEXT_INDEX2,
+  NAV_BYTES_POINTS = 10,
 };
+
+// 1 bit
+#define NAV_POS_NOTIFICATION 7
 
 int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
@@ -487,6 +492,20 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 #endif
           LOG_INFO("MSG_NAVIGATION nextd:%d dtd:%d bearing:%d err:%d", s_gpsdata.nav_next_distance1000, s_gpsdata.nav_distance_to_destination100, s_gpsdata.nav_bearing, s_gpsdata.nav_error1000);
           LOG_INFO("MSG_NAVIGATION ttd:%ld time:%d dist:%ld avg:%ld", ttd, s_gpsdata.time, s_gpsdata.distance100, s_gpsdata.avgspeed100);
+
+          s_data.nav_notification = (tuple->value->data[NAV_BYTE_SETTINGS] & (1 << NAV_POS_NOTIFICATION)) >> NAV_POS_NOTIFICATION;
+          tuple->value->data[NAV_BYTE_SETTINGS] &= 0b01111111;
+          //LOG_INFO("NAV_BYTE_SETTINGS:%d", tuple->value->data[NAV_BYTE_SETTINGS]);
+
+          int8_t nav_page_number;
+          GET_DATA(s_gpsdata.nav_nb_pages, NAV_BYTE_NB_PAGES);
+          GET_DATA(nav_page_number, NAV_BYTE_PAGE_NUMBER);
+          GET_DATA_UINT16(s_gpsdata.nav_next_index, NAV_BYTE_NEXT_INDEX1);
+
+          int curPageNumber = (int) (s_gpsdata.nav_next_index / NB_POINTS_PER_PAGE);
+          int firstIndex = nav_page_number * NB_POINTS_PER_PAGE;
+          LOG_DEBUG("i:%d (p:%d) pages:%d/%d firstIndex:%d notif:%d", s_gpsdata.nav_next_index, curPageNumber, nav_page_number, s_gpsdata.nav_nb_pages, firstIndex, s_data.nav_notification);
+
           ///@todo(nav)
           snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
           snprintf(s_data.slope,   sizeof(s_data.slope),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
@@ -505,9 +524,21 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           LOG_INFO("eta:%s", s_data.temperature);
 
           for (uint8_t i = 0; i < NAV_NB_POINTS; i++) {
-            GET_DATA_INT16(s_gpsdata.nav_xpos[i], NAV_BYTE_POINTS_XPOS1 + i * 4);
-            GET_DATA_INT16(s_gpsdata.nav_ypos[i], NAV_BYTE_POINTS_YPOS1 + i * 4);
-            //LOG_INFO("%d: xpos:%d ypos:%d", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i]);
+#ifdef ENABLE_NAVIGATION_FULL
+            // store all points
+            s_gpsdata.nav_first_index_in_storage = 0;
+            if (i + firstIndex < NAV_NB_POINTS_STORAGE) {
+              GET_DATA_INT16(s_gpsdata.nav_xpos[i + firstIndex], NAV_BYTES_POINTS + i * 4);
+              GET_DATA_INT16(s_gpsdata.nav_ypos[i + firstIndex], NAV_BYTES_POINTS + 2 + i * 4);
+              LOG_DEBUG("%d[%d]: xpos:%d ypos:%d %s", i, i+firstIndex, s_gpsdata.nav_xpos[i + firstIndex], s_gpsdata.nav_ypos[i + firstIndex], i+firstIndex == s_gpsdata.nav_next_index ? " NEXT" : "");
+            }
+#else
+            // store only 4 current pages
+            s_gpsdata.nav_first_index_in_storage = firstIndex;
+            GET_DATA_INT16(s_gpsdata.nav_xpos[i], NAV_BYTES_POINTS + i * 4);
+            GET_DATA_INT16(s_gpsdata.nav_ypos[i], NAV_BYTES_POINTS + 2 + i * 4);
+            LOG_DEBUG("%d[%d]: xpos:%d ypos:%d %s", i, i+firstIndex, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i], i+firstIndex == s_gpsdata.nav_next_index ? " NEXT" : "");
+#endif
           }
           nav_add_data();
           break;
