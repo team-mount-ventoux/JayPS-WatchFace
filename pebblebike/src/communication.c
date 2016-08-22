@@ -338,7 +338,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
                   s_gpsdata.avgspeed100 = 3600 * s_gpsdata.distance100 / s_gpsdata.time; // 0.01km/h or 0.01mph
                 }
 #ifdef ENABLE_NAVIGATION_FULL
-              if (s_gpsdata.time > avg5_time + 2 * 30) {
+              if (s_gpsdata.time > avg5_time + 2 * 60) {
                 if (avg5_time > 0) {
                   LOG_INFO("avg5 time:%ld>%d dist:%ld>%ld", avg5_time, s_gpsdata.time, avg5_distance100, s_gpsdata.distance100);
                   avg5_avgspeed100 = 3600 * (s_gpsdata.distance100 - avg5_distance100) / (s_gpsdata.time - avg5_time); // 0.01km/h or 0.01mph

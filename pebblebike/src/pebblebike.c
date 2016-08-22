@@ -160,7 +160,7 @@ static void init(void) {
   bg_color_data_main = BG_COLOR_DATA_MAIN;
 
 #ifdef ENABLE_NAVIGATION_FULL
-  for (uint8_t i = 0; i < NAV_NB_POINTS_STORAGE - 1; i++) {
+  for (uint16_t i = 0; i < NAV_NB_POINTS_STORAGE - 1; i++) {
     s_gpsdata.nav_xpos[i] = s_gpsdata.nav_ypos[i] = INT16_MAX;
   }
 #endif

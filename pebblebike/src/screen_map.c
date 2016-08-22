@@ -190,7 +190,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
     graphics_context_set_stroke_width(ctx, 2);
 
-    for (uint8_t i = 1; i < NAV_NB_POINTS_STORAGE - 1; i++) {
+    for (uint16_t i = 1; i < NAV_NB_POINTS_STORAGE - 1; i++) {
       if (s_gpsdata.nav_xpos[i] == INT16_MAX) {
         //LOG_DEBUG("%d: skip point", i);
         continue;
