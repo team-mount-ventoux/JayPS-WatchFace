@@ -400,7 +400,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             snprintf(s_data.altitude,   sizeof(s_data.altitude),   "%u",   s_gpsdata.altitude);
             snprintf(s_data.ascent,     sizeof(s_data.ascent),     "%d",   s_gpsdata.ascent);
             snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
-            ///@todo(nav) snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
+            snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
             snprintf(s_data.bearing,    sizeof(s_data.bearing),    "%d",   s_gpsdata.bearing);
             if (s_gpsdata.heartrate != 255) {
               snprintf(s_data.heartrate,  sizeof(s_data.heartrate),  "%d",   s_gpsdata.heartrate);
@@ -411,12 +411,12 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             } else {
               strcpy(s_data.heartrate, "-");
             }
-///@todo(nav)
-//            if (s_gpsdata.cadence != 255) {
-//              snprintf(s_data.cadence,  sizeof(s_data.cadence),  "%d",   s_gpsdata.cadence);
-//            } else {
-//              strcpy(s_data.cadence, "-");
-//            }
+
+            if (s_gpsdata.cadence != 255) {
+              snprintf(s_data.cadence,  sizeof(s_data.cadence),  "%d",   s_gpsdata.cadence);
+            } else {
+              strcpy(s_data.cadence, "-");
+           }
             if (s_gpsdata.time / 3600 > 0) {
               snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%d:%.2d:%.2d", s_gpsdata.time / 3600, (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
             } else {
@@ -501,16 +501,17 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           GET_DATA(s_gpsdata.nav_nb_pages, NAV_BYTE_NB_PAGES);
           GET_DATA(nav_page_number, NAV_BYTE_PAGE_NUMBER);
           GET_DATA_UINT16(s_gpsdata.nav_next_index, NAV_BYTE_NEXT_INDEX1);
+          ///@todo(nav) restore temperature
+          snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d", s_gpsdata.nav_next_index);
 
           int curPageNumber = (int) (s_gpsdata.nav_next_index / NB_POINTS_PER_PAGE);
           int firstIndex = nav_page_number * NB_POINTS_PER_PAGE;
           LOG_DEBUG("i:%d (p:%d) pages:%d/%d firstIndex:%d notif:%d", s_gpsdata.nav_next_index, curPageNumber, nav_page_number, s_gpsdata.nav_nb_pages, firstIndex, s_data.nav_notification);
 
-          ///@todo(nav)
-          snprintf(s_data.cadence,   sizeof(s_data.cadence),   "%d",   s_gpsdata.nav_next_distance1000);
-          snprintf(s_data.slope,   sizeof(s_data.slope),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
-          snprintf(s_data.temperature,sizeof(s_data.temperature),"%ld:%.2ld", ttd / 3600, (ttd / 60) % 60);
-          LOG_INFO("ttd:%s", s_data.temperature);
+          snprintf(s_data.nav_next_distance,   sizeof(s_data.nav_next_distance),   "%d",   s_gpsdata.nav_next_distance1000);
+          snprintf(s_data.nav_distance_to_destination,   sizeof(s_data.nav_distance_to_destination),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
+          snprintf(s_data.nav_ttd,sizeof(s_data.nav_ttd),"%ld:%.2ld", ttd / 3600, (ttd / 60) % 60);
+          LOG_INFO("ttd:%s", s_data.nav_ttd);
 
           char *time_format;
           if (clock_is_24h_style()) {
@@ -520,8 +521,8 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           }
           time_t t = time(NULL);
           t += ttd;
-          strftime(s_data.temperature, sizeof(s_data.temperature), time_format, localtime(&t));
-          LOG_INFO("eta:%s", s_data.temperature);
+          strftime(s_data.nav_eta, sizeof(s_data.nav_eta), time_format, localtime(&t));
+          LOG_INFO("eta:%s", s_data.nav_eta);
 
           for (uint8_t i = 0; i < NAV_NB_POINTS; i++) {
 #ifdef ENABLE_NAVIGATION_FULL

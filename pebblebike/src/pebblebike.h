@@ -146,14 +146,14 @@ enum {
   FIELD_SPEED_DATA_AND_GRAPH,
 #endif
   FIELD_SPEED_GRAPH_ONLY,
+  FIELD_NAV_ESTIMATED_TIME_ARRIVAL,
+  FIELD_NAV_DISTANCE_NEXT,
+  FIELD_NAV_DISTANCE_TO_DESTINATION,
+  FIELD_NAV_TIME_TO_DESTINATION,
   FIELD__UNUSED,
 };
 
-#define FIELD_NAV_NEXT_ERROR FIELD_ASCENTRATE
-#define FIELD_NAV_NEXT_DISTANCE FIELD_CADENCE
-#define FIELD_NAV_NEXT_INDEX FIELD_MAXSPEED
-#define FIELD_NAV_DISTANCE_TO_DESTINATION FIELD_SLOPE
-#define FIELD_NAV_ESTIMATED_TIME_TO_DESTINATION FIELD_TEMPERATURE
+#define FIELD_NAV_NEXT_INDEX FIELD_TEMPERATURE
 typedef struct FieldConfig {
   uint8_t type;
   ///todo remove type_index?
@@ -219,6 +219,11 @@ typedef struct AppData {
   char temperature[7];
   char steps[7];
   char steps_cadence[7];
+
+  char nav_next_distance[6];
+  char nav_distance_to_destination[6];
+  char nav_ttd[6];  // xx:xx, \0 terminated
+  char nav_eta[6];  // xx:xx, \0 terminated
 
   char unitsSpeedOrHeartRate[8];
   char unitsSpeed[8];
