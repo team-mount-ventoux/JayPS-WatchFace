@@ -212,6 +212,10 @@ static void init(void) {
   strcpy(s_data.maxspeed, "-");
   strcpy(s_data.heartrate, "-");
   strcpy(s_data.cadence, "-");
+  strcpy(s_data.nav_next_distance, "-");
+  strcpy(s_data.nav_distance_to_destination, "-");
+  strcpy(s_data.nav_ttd, "-");
+  strcpy(s_data.nav_eta, "-");
 #endif
   //strcpy(s_data.lat, "-");
   //strcpy(s_data.lon, "-");

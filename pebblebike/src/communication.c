@@ -451,7 +451,10 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             break;
         case MSG_SENSOR_TEMPERATURE:
             s_gpsdata.temperature10 = tuple->value->int16;
-            ///@todo(nav) snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d.%d", s_gpsdata.temperature10 / 10, s_gpsdata.temperature10 % 10);
+#ifdef PRODUCTION
+            ///@todo(nav)
+            snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d.%d", s_gpsdata.temperature10 / 10, s_gpsdata.temperature10 % 10);
+#endif
             break;
 
         case STATE_CHANGED:
@@ -501,9 +504,10 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           GET_DATA(s_gpsdata.nav_nb_pages, NAV_BYTE_NB_PAGES);
           GET_DATA(nav_page_number, NAV_BYTE_PAGE_NUMBER);
           GET_DATA_UINT16(s_gpsdata.nav_next_index, NAV_BYTE_NEXT_INDEX1);
+#ifndef PRODUCTION
           ///@todo(nav) restore temperature
           snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d", s_gpsdata.nav_next_index);
-
+#endif
           int curPageNumber = (int) (s_gpsdata.nav_next_index / NB_POINTS_PER_PAGE);
           int firstIndex = nav_page_number * NB_POINTS_PER_PAGE;
           LOG_DEBUG("i:%d (p:%d) pages:%d/%d firstIndex:%d notif:%d", s_gpsdata.nav_next_index, curPageNumber, nav_page_number, s_gpsdata.nav_nb_pages, firstIndex, s_data.nav_notification);
