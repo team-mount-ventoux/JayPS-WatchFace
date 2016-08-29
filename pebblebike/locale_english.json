@@ -10,6 +10,7 @@
   "138414433": "Altitude", 
   "1443060008": "Ascent rate all", 
   "1450354002": "Start OruxMaps", 
+  "1527007019": "Nav:Dist to dest", 
   "1554539094": "Moderate", 
   "1636703383": "Heartrate graph", 
   "1685990800": "Distance", 
@@ -28,6 +29,7 @@
   "2089610356": "Time", 
   "2090230763": "Duration", 
   "2124830134": "Actions", 
+  "2125469542": "Nav:Time to dest", 
   "2137748111": "Ascent rate", 
   "214883776": "About", 
   "21798909": "Start GPS", 
@@ -40,6 +42,7 @@
   "236866164": "Steps", 
   "274815636": "steps", 
   "315408040": "Cadence", 
+  "327710305": "Nav:Dist next point", 
   "364279496": "OruxMaps Integration", 
   "369047523": "Maximum", 
   "392390335": "distance, time, ascent...", 
@@ -57,5 +60,6 @@
   "730642579": "Temperature", 
   "748940304": "Accuracy", 
   "776075783": "Configure screen", 
+  "899961860": "Nav:Time Arrival", 
   "935397588": "Avg speed"
 }

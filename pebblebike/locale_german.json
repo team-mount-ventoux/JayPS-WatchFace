@@ -10,6 +10,7 @@
   "138414433": "Höhe", 
   "1443060008": "Aufstieggeschwindigkeit gesamt", 
   "1450354002": "Starte OruxMaps",
+  "1527007019": "Nav:Entf. Ziel",
   "1554539094": "Mittel", 
   "1636703383": "Herzfrequenz  Grafik", 
   "1685990800": "Entfernung", 
@@ -28,6 +29,7 @@
   "2089610356": "Zeit", 
   "2090230763": "Dauer", 
   "2124830134": "Aktionen", 
+  "2125469542": "Nav:Wegzeit",
   "2137748111": "Aufstieggeschwindigkeit", 
   "214883776": "Über", 
   "21798909": "Starte GPS", 
@@ -40,6 +42,7 @@
   "236866164": "Schritte", 
   "274815636": "Schritte", 
   "315408040": "Rhythmus", 
+  "327710305": "Nav:Entf. n. Pkt.",
   "364279496": "OruxMaps Einbindung", 
   "369047523": "Sehr hoch", 
   "392390335": "Entfernung, Zeit, Anstieg...", 
@@ -57,5 +60,6 @@
   "730642579": "Temperatur ", 
   "748940304": "Genauigkeit", 
   "776075783": "Anzeige konfigurieren", 
+  "899961860": "Nav:Ank. Zeit", 
   "935397588": "Durchschnittsgeschwindigkeit"
 }

@@ -10,6 +10,7 @@
   "138414433": "Altitudine", 
   "1443060008": "Ritmo di salita tutto",
   "1450354002": "Avvia OruxMaps", 
+  "1527007019": "Nav:Dist destinazione", 
   "1554539094": "Moderato", 
   "1636703383": "Cardio grafico", 
   "1685990800": "Distanza", 
@@ -28,6 +29,7 @@
   "2089610356": "Orario",
   "2090230763": "Durata", 
   "2124830134": "Azioni", 
+  "2125469542": "Nav:Tempo alla dest",
   "2137748111": "Ritmo di salita",
   "214883776": "Info",
   "21798909": "Avvia GPS", 
@@ -40,6 +42,7 @@
   "236866164": "Passi",
   "274815636": "passi",
   "315408040": "Cadenza", 
+  "327710305": "Nav:Dist prox punto",
   "364279496": "Integrazione OruxMaps", 
   "369047523": "Massimo", 
   "392390335": "distanza, tempo, salita...", 
@@ -57,5 +60,6 @@
   "730642579": "Temperatura", 
   "748940304": "Precisione", 
   "776075783": "Configura schermo", 
+  "899961860": "Nav:Ora di arrivo", 
   "935397588": "Velocità media"
 }

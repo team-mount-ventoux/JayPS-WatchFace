@@ -88,11 +88,10 @@ const char *field_get_title(uint8_t field) {
     case FIELD_BEARING: return _("Bearing"); break;
     case FIELD_DURATION: return _("Duration"); break;
     case FIELD_MAXSPEED: return _("Max speed"); break;
-    ///@todo(nav) add trads
-    case FIELD_NAV_ESTIMATED_TIME_ARRIVAL:  return "Nav:Time Arrival"; break;
-    case FIELD_NAV_DISTANCE_NEXT:           return "Nav:Dist next point"; break;
-    case FIELD_NAV_DISTANCE_TO_DESTINATION: return "Nav:Dist destination"; break;
-    case FIELD_NAV_TIME_TO_DESTINATION:     return "Nav:TimeToDest"; break;
+    case FIELD_NAV_ESTIMATED_TIME_ARRIVAL:  return _("Nav:Time Arrival"); break;
+    case FIELD_NAV_DISTANCE_NEXT:           return _("Nav:Dist next point"); break;
+    case FIELD_NAV_DISTANCE_TO_DESTINATION: return _("Nav:Dist to dest"); break;
+    case FIELD_NAV_TIME_TO_DESTINATION:     return _("Nav:Time to dest"); break;
     //case FIELD_LAT: return "Lat"; break;
     //case FIELD_LON: return "Lon"; break;
     case FIELD_ASCENTRATE: return _("Ascent rate"); break;
