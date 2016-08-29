@@ -40,14 +40,16 @@ const GPathInfo BEARING_PATH_POINTS = {
 GPath *bearing_gpath;
 
 #define NAVIGATION_COMPASS_RADIUS 15
-#define NAVIGATION_COMPASS_PADDING 3
-#define NAVIGATION_COMPASS_CENTER_X (NAVIGATION_COMPASS_RADIUS + NAVIGATION_COMPASS_PADDING - pathFrame.origin.x)
-#define NAVIGATION_COMPASS_CENTER_Y (NAVIGATION_COMPASS_RADIUS + NAVIGATION_COMPASS_PADDING - pathFrame.origin.y)
+#define NAVIGATION_COMPASS_PADDING_X PBL_IF_ROUND_ELSE(23,3)
+#define NAVIGATION_COMPASS_PADDING_Y 3
+#define NAVIGATION_COMPASS_CENTER_X (NAVIGATION_COMPASS_RADIUS + NAVIGATION_COMPASS_PADDING_X - pathFrame.origin.x)
+#define NAVIGATION_COMPASS_CENTER_Y (NAVIGATION_COMPASS_RADIUS + NAVIGATION_COMPASS_PADDING_Y - pathFrame.origin.y)
 #define NAVIGATION_COMPASS_CENTER GPoint(NAVIGATION_COMPASS_CENTER_X, NAVIGATION_COMPASS_CENTER_Y)
-#define NAVIGATION_COMPASS_RECT GRect(NAVIGATION_COMPASS_PADDING - pathFrame.origin.x, NAVIGATION_COMPASS_PADDING - pathFrame.origin.y, 2 * NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS)
+#define NAVIGATION_COMPASS_RECT GRect(NAVIGATION_COMPASS_PADDING_X - pathFrame.origin.x, NAVIGATION_COMPASS_PADDING_X - pathFrame.origin.y, 2 * NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS)
 #define NAVIGATION_DISTANCE_RECT_W 50
 #define NAVIGATION_DISTANCE_RECT_H 18
-#define NAVIGATION_DISTANCE_RECT GRect(SCREEN_W - pathFrame.origin.x - NAVIGATION_DISTANCE_RECT_W, - pathFrame.origin.y, NAVIGATION_DISTANCE_RECT_W, NAVIGATION_DISTANCE_RECT_H)
+#define NAVIGATION_DISTANCE_RECT GRect(SCREEN_W - pathFrame.origin.x - NAVIGATION_COMPASS_PADDING_X - NAVIGATION_DISTANCE_RECT_W, - pathFrame.origin.y, NAVIGATION_DISTANCE_RECT_W, NAVIGATION_DISTANCE_RECT_H)
+#define NAVIGATION_DISTANCE_TEXT GRect(SCREEN_W - pathFrame.origin.x - NAVIGATION_COMPASS_PADDING_X - NAVIGATION_DISTANCE_RECT_W, - pathFrame.origin.y - 8, NAVIGATION_DISTANCE_RECT_W, NAVIGATION_DISTANCE_RECT_H)
 
 #ifdef ENABLE_MAP_SKIP_POINT_OUTSIDE
   #define MAP_DRAW_LINE(p0, p1) \
@@ -210,7 +212,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
         if (direction > 180) {
           direction = 360 - direction;
         }
-        if (s_gpsdata.nav_error1000 >= 20) {
+        if (s_gpsdata.nav_error1000 >= 50) {
           graphics_context_set_stroke_color(ctx, GColorOrange);
         } else if (direction < 45) {
           graphics_context_set_stroke_color(ctx, GColorGreen);
@@ -286,7 +288,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 #endif
 
     graphics_context_set_text_color(ctx, GColorBlack);
-    graphics_draw_text(ctx, s_data.nav_next_distance, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), NAVIGATION_DISTANCE_RECT, GTextOverflowModeFill, GTextAlignmentRight, NULL);
+    graphics_draw_text(ctx, s_data.nav_next_distance, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), NAVIGATION_DISTANCE_TEXT, GTextOverflowModeFill, GTextAlignmentRight, NULL);
 
     nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT, true);
   }
