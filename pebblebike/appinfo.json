@@ -1,10 +1,10 @@
 {
   "uuid": "5DD35873-3BB6-44D6-8255-0E61BC3B97F5",
   "shortName": "Ventoo",
-  "longName": "Ventoo 2.6.0",
+  "longName": "Ventoo 2.8.0-beta1",
   "companyName": "N Jackson & JayPS",
-  "versionCode": 303,
-  "versionLabel": "2.60",
+  "versionCode": 314,
+  "versionLabel": "2.80",
   "watchapp": {
     "watchface": false
   },
@@ -19,7 +19,8 @@
       {
         "type": "font",
         "name": "FONT_ROBOTO_BOLD_62",
-        "file": "fonts/Roboto-Bold.ttf"
+        "file": "fonts/Roboto-Bold.ttf",
+        "characterRegex": "[0-9.:-]"
       },
       {
         "menuIcon": true,
@@ -73,15 +74,15 @@
         "file": "images/bluetooth.png"
       },
        {
-        "type": "png", 
-        "name": "MASK", 
+        "type": "png",
+        "name": "MASK",
         "file": "images/mask_2x2blue.png"
       },
       {
         "type": "raw",
         "name": "LOCALE_ENGLISH",
         "file": "locale_english.bin"
-      }, 
+      },
       {
         "type": "raw",
         "name": "LOCALE_FRENCH",
@@ -96,6 +97,16 @@
         "type": "raw",
         "name": "LOCALE_GERMAN",
         "file": "locale_german.bin"
+      },
+      {
+        "type": "raw",
+        "name": "LOCALE_ITALIAN",
+        "file": "locale_italian.bin"
+      },
+      {
+        "type": "raw",
+        "name": "LOCALE_JAPANESE",
+        "file": "locale_japanese.bin"
       }
     ]
   },

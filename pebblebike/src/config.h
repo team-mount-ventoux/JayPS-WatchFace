@@ -4,8 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define PRODUCTION
-#define VERSION_PEBBLE 303
-#define VERSION_TEXT "Version 2.6.0"
+#define VERSION_PEBBLE 314
+#define VERSION_TEXT "Version 2.8.0-beta1"
 #define APP_COMPANY "N Jackson & JayPS"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@
 //#define ENABLE_DEBUG
 //#define ENABLE_DEBUG_COLOR
 //#define ENABLE_DEBUG_FIELDS_SIZE
-//#define ENABLE_LOCALIZE_FORCE "es"
-#define ENABLE_DEMO
+//#define ENABLE_LOCALIZE_FORCE "it"
+//#define ENABLE_DEMO
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef PRODUCTION
@@ -35,6 +35,7 @@
 // force functions, even in PRODUCTION
 #define ENABLE_ORUXMAPS
 #define ENABLE_LOCALIZE
+#define ENABLE_NAVIGATION
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,6 +52,8 @@
   // don't deinit objects in deinit -- save at least 700 bytes
   #define ENABLE_APP_DEINIT
   #define ENABLE_ROTATION
+  #define ENABLE_NAVIGATION_FULL
+  #define ENABLE_MAP_SKIP_POINT_OUTSIDE
 #endif
 
 #ifdef ENABLE_LOGS

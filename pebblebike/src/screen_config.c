@@ -21,7 +21,7 @@ static AppTimer *config_timer;
 uint8_t config_screen = CONFIG_SCREEN_DISABLED;
 uint8_t config_field = CONFIG_FIELD_SCREEN__MIN;
 
-#define CONFIG_NB_FIELD_ORDER 26
+#define CONFIG_NB_FIELD_ORDER 30
 uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     FIELD_ACCURACY,
     FIELD_ALTITUDE,
@@ -49,6 +49,10 @@ uint8_t config_order[CONFIG_NB_FIELD_ORDER] = {
     //FIELD_LON,
     FIELD_MAXSPEED,
     //FIELD_NBASCENT,
+    FIELD_NAV_ESTIMATED_TIME_ARRIVAL,
+    FIELD_NAV_DISTANCE_NEXT,
+    FIELD_NAV_DISTANCE_TO_DESTINATION,
+    FIELD_NAV_TIME_TO_DESTINATION,
     FIELD_SLOPE,
     FIELD_SPEED,
     FIELD_SPEED_GRAPH_ONLY,
@@ -84,6 +88,10 @@ const char *field_get_title(uint8_t field) {
     case FIELD_BEARING: return _("Bearing"); break;
     case FIELD_DURATION: return _("Duration"); break;
     case FIELD_MAXSPEED: return _("Max speed"); break;
+    case FIELD_NAV_ESTIMATED_TIME_ARRIVAL:  return _("Nav:Time Arrival"); break;
+    case FIELD_NAV_DISTANCE_NEXT:           return _("Nav:Dist next point"); break;
+    case FIELD_NAV_DISTANCE_TO_DESTINATION: return _("Nav:Dist to dest"); break;
+    case FIELD_NAV_TIME_TO_DESTINATION:     return _("Nav:Time to dest"); break;
     //case FIELD_LAT: return "Lat"; break;
     //case FIELD_LON: return "Lon"; break;
     case FIELD_ASCENTRATE: return _("Ascent rate"); break;
@@ -100,7 +108,12 @@ const char *field_get_title(uint8_t field) {
 #endif
     case FIELD_HEARTRATE_GRAPH_ONLY: return _("Heartrate graph"); break;
     case FIELD_CADENCE: return _("Cadence"); break;
+#ifdef PRODUCTION
     case FIELD_TEMPERATURE: return _("Temperature"); break;
+#else
+    ///@todo(nav)
+    case FIELD_TEMPERATURE: return "Nav: index"; break;
+#endif
     case FIELD_TIME: return _("Time"); break;
 #ifdef PBL_HEALTH
     case FIELD_STEPS: return _("Steps"); break;
@@ -129,6 +142,10 @@ const char *field_get_text(uint8_t field) {
     case FIELD_MAXSPEED: return s_data.maxspeed; break;
     //case FIELD_LAT: return s_data.lat; break;
     //case FIELD_LON: return s_data.lon; break;
+    case FIELD_NAV_ESTIMATED_TIME_ARRIVAL:  return s_data.nav_eta; break;
+    case FIELD_NAV_DISTANCE_NEXT:           return s_data.nav_next_distance; break;
+    case FIELD_NAV_DISTANCE_TO_DESTINATION: return s_data.nav_distance_to_destination; break;
+    case FIELD_NAV_TIME_TO_DESTINATION:     return s_data.nav_ttd; break;
     case FIELD_ASCENTRATE:
 #ifdef PBL_COLOR
     case FIELD_ASCENTRATE_DATA_AND_GRAPH:
@@ -178,6 +195,11 @@ const char *field_get_units(uint8_t field) {
     case FIELD_MAXSPEED: return s_data.unitsSpeed; break;
     //case FIELD_LAT: return ""; break;
     //case FIELD_LON: return ""; break;
+    case FIELD_NAV_ESTIMATED_TIME_ARRIVAL: return ""; break;
+    ///@todo(nav) imperial units
+    case FIELD_NAV_DISTANCE_NEXT: return "m"; break;
+    case FIELD_NAV_DISTANCE_TO_DESTINATION: return "km"; break;
+    case FIELD_NAV_TIME_TO_DESTINATION: return ""; break;
     case FIELD_ASCENTRATE:
 #ifdef PBL_COLOR
       case FIELD_ASCENTRATE_DATA_AND_GRAPH:
@@ -485,11 +507,16 @@ void config_load() {
     config.screenA_bottom_left_type   = FIELD_DISTANCE;
     config.screenA_bottom_right_type  = FIELD_AVGSPEED;
     config.screenA_topbar_center_type = FIELD_TIME;
-    config.screenB_top_type           = FIELD_ALTITUDE;
-    config.screenB_top2_type          = FIELD_ASCENT;
-    config.screenB_bottom_left_type   = FIELD_ASCENTRATE;
-    config.screenB_bottom_right_type  = FIELD_SLOPE;
+    ///@todo(nav) restore screenB initial fields
+    config.screenB_top_type           = FIELD_NAV_DISTANCE_NEXT; // FIELD_ALTITUDE;
+    config.screenB_top2_type          = FIELD_NAV_ESTIMATED_TIME_ARRIVAL; //FIELD_ASCENT;
+    config.screenB_bottom_left_type   = FIELD_NAV_DISTANCE_TO_DESTINATION; // FIELD_ASCENTRATE;
+    config.screenB_bottom_right_type  = FIELD_NAV_TIME_TO_DESTINATION; //FIELD_SLOPE;
+#ifdef PRODUCTION
     config.screenB_topbar_center_type = FIELD_TIME;
+#else
+    config.screenB_topbar_center_type = FIELD_NAV_NEXT_INDEX;
+#endif
   }
 #ifdef PBL_HEALTH
   health_init_if_needed();

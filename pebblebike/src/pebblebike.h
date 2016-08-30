@@ -28,6 +28,7 @@ enum {
   MSG_SENSOR_TEMPERATURE = 0x27,
   MSG_CONFIG = 0x28,
   MSG_HR_MAX = 0x29,
+  MSG_NAVIGATION = 0x31,
 };
 
 enum {
@@ -79,6 +80,15 @@ enum {
   #define NUMBER_OF_PAGES 5
 #else
   #define NUMBER_OF_PAGES 4
+#endif
+
+#define NAV_NB_POINTS 20
+#define NB_POINTS_PER_PAGE 5
+#ifdef ENABLE_NAVIGATION_FULL
+  // 5 * 256
+  #define NAV_NB_POINTS_STORAGE 1280
+#else
+  #define NAV_NB_POINTS_STORAGE NAV_NB_POINTS
 #endif
 
 #define SPEED_UNIT_IMPERIAL "mph"
@@ -136,9 +146,14 @@ enum {
   FIELD_SPEED_DATA_AND_GRAPH,
 #endif
   FIELD_SPEED_GRAPH_ONLY,
+  FIELD_NAV_ESTIMATED_TIME_ARRIVAL,
+  FIELD_NAV_DISTANCE_NEXT,
+  FIELD_NAV_DISTANCE_TO_DESTINATION,
+  FIELD_NAV_TIME_TO_DESTINATION,
   FIELD__UNUSED,
 };
 
+#define FIELD_NAV_NEXT_INDEX FIELD_TEMPERATURE
 typedef struct FieldConfig {
   uint8_t type;
   ///todo remove type_index?
@@ -205,6 +220,11 @@ typedef struct AppData {
   char steps[7];
   char steps_cadence[7];
 
+  char nav_next_distance[6];
+  char nav_distance_to_destination[6];
+  char nav_ttd[6];  // xx:xx, \0 terminated
+  char nav_eta[6];  // xx:xx, \0 terminated
+
   char unitsSpeedOrHeartRate[8];
   char unitsSpeed[8];
   char unitsDistance[8];
@@ -220,6 +240,8 @@ typedef struct AppData {
 
   int32_t android_version;
   int32_t phone_battery_level;
+
+  uint8_t nav_notification;
 } AppData;
 
 typedef struct GPSData {
@@ -242,6 +264,18 @@ typedef struct GPSData {
   uint8_t heartrate;
   uint8_t cadence;
   int16_t temperature10;
+
+  uint16_t nav_next_distance1000;
+  uint16_t nav_distance_to_destination100;
+  uint16_t nav_bearing;
+  uint16_t nav_error1000;
+  uint8_t nav_nb_pages;
+  //uint8_t nav_page_number;
+  uint16_t nav_next_index;
+  uint16_t nav_first_index_in_storage;
+
+  int16_t nav_xpos[NAV_NB_POINTS_STORAGE];
+  int16_t nav_ypos[NAV_NB_POINTS_STORAGE];
 } GPSData;
 
 //////////////

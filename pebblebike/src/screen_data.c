@@ -5,6 +5,7 @@
 #include "screen_config.h"
 #include "graph.h"
 #include "heartrate.h"
+#include "navigation.h"
 #include "screen_data.h"
 
 Layer *line_layer;
@@ -23,6 +24,13 @@ Layer *line_layer;
 #define PAGE_DATA_TOP_DATA_H PAGE_DATA_MIDDLE_DATA_H - PAGE_DATA_MAIN_H / 2
 #define PAGE_DATA_BOTTOM_DATA_H PAGE_DATA_MIDDLE_DATA_H + PAGE_DATA_MAIN_H / 2
 
+#define NAVIGATION_COMPASS_RADIUS (SCREEN_W/2-5)
+#define NAVIGATION_COMPASS_PADDING 3
+#define NAVIGATION_COMPASS_CENTER_X SCREEN_W/2
+#define NAVIGATION_COMPASS_CENTER_Y (PBL_IF_ROUND_ELSE(PAGE_SCREEN_CENTER_H, (SCREEN_H-TOPBAR_HEIGHT)/2-6))
+#define NAVIGATION_COMPASS_CENTER GPoint(NAVIGATION_COMPASS_CENTER_X, NAVIGATION_COMPASS_CENTER_Y)
+#define NAVIGATION_COMPASS_RECT GRect(NAVIGATION_COMPASS_CENTER_X-NAVIGATION_COMPASS_RADIUS, NAVIGATION_COMPASS_CENTER_Y-NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS)
+
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
   graphics_context_set_stroke_color(ctx, COLOR_LINES);
@@ -35,6 +43,10 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_fill_color(ctx, COLOR_LINES_DATA_MAIN);
   graphics_fill_rect(ctx, GRect(0, PAGE_DATA_TOP_DATA_H, SCREEN_W, 2), 0, GCornerNone);
   graphics_fill_rect(ctx, GRect(0, PAGE_DATA_BOTTOM_DATA_H, SCREEN_W, 2), 0, GCornerNone);
+#endif
+
+#ifdef ENABLE_NAVIGATION
+  nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT, false);
 #endif
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
     return;

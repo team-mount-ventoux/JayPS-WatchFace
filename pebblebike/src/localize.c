@@ -1,6 +1,6 @@
 #include <pebble.h>
 #include "config.h"
-  
+
 DictionaryIterator s_locale_dict;
 
 
@@ -24,6 +24,12 @@ void locale_init(void) {
   } else if (strncmp(locale_str, "de", 2) == 0) {
     locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_GERMAN);
     locale_size = resource_size(locale_handle);
+  } else if (strncmp(locale_str, "it", 2) == 0) {
+    locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_ITALIAN);
+    locale_size = resource_size(locale_handle);
+  } else if (strncmp(locale_str, "ja", 2) == 0) {
+    locale_handle = resource_get_handle(RESOURCE_ID_LOCALE_JAPANESE);
+    locale_size = resource_size(locale_handle);
   }
 
   // Fallback to English for unlocalized languages (0 byte files)
@@ -34,7 +40,7 @@ void locale_init(void) {
 
   int resource_offset = 0;
   int locale_entries = 0;
-  resource_offset += resource_load_byte_range(locale_handle, resource_offset, 
+  resource_offset += resource_load_byte_range(locale_handle, resource_offset,
       (uint8_t*)&locale_entries, sizeof(locale_entries));
 
   struct locale {
@@ -64,7 +70,7 @@ void locale_init(void) {
   dict_write_end(&s_locale_dict);
 }
 
-char *locale_str(int hashval) { 
+char *locale_str(int hashval) {
   Tuple *tupl = dict_find(&s_locale_dict, hashval);
 
   if (tupl && tupl->value->cstring) {
