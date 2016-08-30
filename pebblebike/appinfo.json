@@ -108,7 +108,8 @@
   "targetPlatforms": [
     "aplite",
     "basalt",
-    "chalk"
+    "chalk",
+    "diorite"
   ],
   "sdkVersion": "3",
   "capabilities": [ "health" ]
