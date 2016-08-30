@@ -308,7 +308,15 @@ void bearing_layer_update_callback(Layer *me, GContext *ctx) {
     //graphics_context_set_fill_color(ctx, GColorBlack);
     //gpath_draw_filled(ctx, &bearing_gpath);
 
-    // Stroke the path:
+    // Fill the path:
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    gpath_draw_filled(ctx, bearing_gpath);
+
+    // Stroke the path with white border:
+    graphics_context_set_stroke_width(ctx, 3);
+    graphics_context_set_stroke_color(ctx, GColorWhite);
+    gpath_draw_outline(ctx, bearing_gpath);
+    graphics_context_set_stroke_width(ctx, 1);
     graphics_context_set_stroke_color(ctx, COLOR_MAP);
     gpath_draw_outline(ctx, bearing_gpath);
 }
@@ -370,4 +378,3 @@ void screen_map_layer_deinit() {
   gpath_destroy(bearing_gpath);
   layer_destroy(s_data.page_map);
 }
-

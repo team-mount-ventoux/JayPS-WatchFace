@@ -74,15 +74,15 @@
         "file": "images/bluetooth.png"
       },
        {
-        "type": "png", 
-        "name": "MASK", 
+        "type": "png",
+        "name": "MASK",
         "file": "images/mask_2x2blue.png"
       },
       {
         "type": "raw",
         "name": "LOCALE_ENGLISH",
         "file": "locale_english.bin"
-      }, 
+      },
       {
         "type": "raw",
         "name": "LOCALE_FRENCH",
@@ -102,6 +102,11 @@
         "type": "raw",
         "name": "LOCALE_ITALIAN",
         "file": "locale_italian.bin"
+      },
+      {
+        "type": "raw",
+        "name": "LOCALE_JAPANESE",
+        "file": "locale_japanese.bin"
       }
     ]
   },
