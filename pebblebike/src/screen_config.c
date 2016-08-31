@@ -196,9 +196,8 @@ const char *field_get_units(uint8_t field) {
     //case FIELD_LAT: return ""; break;
     //case FIELD_LON: return ""; break;
     case FIELD_NAV_ESTIMATED_TIME_ARRIVAL: return ""; break;
-    ///@todo(nav) imperial units
-    case FIELD_NAV_DISTANCE_NEXT: return "m"; break;
-    case FIELD_NAV_DISTANCE_TO_DESTINATION: return "km"; break;
+    case FIELD_NAV_DISTANCE_NEXT: return s_data.unitsAltitude; break;
+    case FIELD_NAV_DISTANCE_TO_DESTINATION: return s_data.unitsDistance; break;
     case FIELD_NAV_TIME_TO_DESTINATION: return ""; break;
     case FIELD_ASCENTRATE:
 #ifdef PBL_COLOR
