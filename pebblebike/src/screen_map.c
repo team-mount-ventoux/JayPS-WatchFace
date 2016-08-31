@@ -212,7 +212,8 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
         if (direction > 180) {
           direction = 360 - direction;
         }
-        if (s_gpsdata.nav_error1000 >= 50) {
+        // 2 * accuracy: 1 for gps (live) + 1 for gpx (recorded): same place, accuracy could have been similar
+        if (s_gpsdata.nav_error1000 - 2 * s_gpsdata.accuracy >= NAV_TRACK_ERROR_DIST_MIN) {
           graphics_context_set_stroke_color(ctx, GColorOrange);
         } else if (direction < 45) {
           graphics_context_set_stroke_color(ctx, GColorGreen);

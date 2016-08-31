@@ -6,7 +6,7 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
   if (s_gpsdata.nav_distance_to_destination100 > 0) {
 //  s_gpsdata.nav_bearing = 270;
 #ifdef ENABLE_NAVIGATION_FULL
-    if (s_gpsdata.nav_error1000 >= 50) {
+    if (s_gpsdata.nav_error1000 - 2 * s_gpsdata.accuracy >= NAV_TRACK_ERROR_DIST_MIN) {
       graphics_context_set_stroke_width(ctx, small ? 2 : 3);
       graphics_context_set_stroke_color(ctx, GColorOrange);
     }
