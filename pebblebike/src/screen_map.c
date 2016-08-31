@@ -188,7 +188,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
     GPoint p0, p1;
 
 #ifdef ENABLE_NAVIGATION
-  if (s_gpsdata.nav_distance_to_destination100 > 0) {
+  if (s_gpsdata.nav_nb_pages > 0) {
 
     graphics_context_set_stroke_width(ctx, 2);
 
@@ -278,7 +278,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
 
 #ifdef ENABLE_NAVIGATION
-  if (s_gpsdata.nav_distance_to_destination100 > 0) {
+  if (s_gpsdata.nav_nb_pages > 0) {
     graphics_context_set_stroke_width(ctx, 1);
     graphics_context_set_stroke_color(ctx, GColorBlack);
 
