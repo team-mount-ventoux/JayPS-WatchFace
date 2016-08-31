@@ -41,13 +41,13 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
 
 void nav_add_data() {
   static int16_t last_nav_bearing = -1;
-  if (last_nav_bearing > 0) {
+  if (last_nav_bearing >= 0) {
     int delta = (s_gpsdata.nav_bearing - last_nav_bearing + 360) % 360;
     if (delta > 180) {
       delta = 360 - delta;
     }
-    LOG_INFO("nav_add_data last_nav_bearing:%d nav_bearing:%d delta:%d", last_nav_bearing, s_gpsdata.nav_bearing, delta);
-    if (delta > 30) {
+    LOG_INFO("nav_add_data last_nav_bearing:%d nav_bearing:%d delta:%d notif:%d", last_nav_bearing, s_gpsdata.nav_bearing, delta, s_data.nav_notification);
+    if (delta > 30 && s_data.nav_notification) {
       vibes_short_pulse();
     }
   }
