@@ -60,6 +60,7 @@ int nb_sync_error_callback = 0;
 int nb_tuple_live = 0, nb_tuple_altitude = 0, nb_tuple_state = 0;
 static AppTimer *reset_data_timer;
 static AppTimer *version_data_timer;
+int nb_location_data_without_navigation = 0;
 
 void communication_init() {
   app_message_register_inbox_received(communication_in_received_callback);
@@ -299,6 +300,18 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         case MSG_LOCATION_DATA_V3:
             LOG_DEBUG("MSG_LOCATION_DATA %ld", tuple->key);
             nb_tuple_altitude++;
+
+            if (s_gpsdata.nav_nb_pages > 0) {
+              // navigation in progress
+              nb_location_data_without_navigation++;
+              if (nb_location_data_without_navigation > 10) {
+                // temporary disable navigation
+                // MSG_NAVIGATION should be sent at least every 5s if MSG_LOCATION_DATA is sent at a faster rate
+                // if MSG_LOCATION_DATA is sent every 0.5s, need a 10 factor
+                s_gpsdata.nav_nb_pages = 0;
+              }
+            }
+
             if (tuple->key == MSG_LOCATION_DATA) {
                 //APP_LOG(APP_LOG_LEVEL_DEBUG, "MSG_LOCATION_DATA");
                 change_units((tuple->value->data[BYTE_SETTINGS] & 0b00000001) >> 0, false);
@@ -483,6 +496,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           break;
 
         case MSG_NAVIGATION:
+          nb_location_data_without_navigation = 0;
           GET_DATA_UINT16(s_gpsdata.nav_next_distance1000, NAV_BYTE_DISTANCE1);
           GET_DATA_UINT16(s_gpsdata.nav_distance_to_destination100, NAV_BYTE_DTD1);
           GET_DATA(s_gpsdata.nav_bearing, NAV_BYTE_BEARING) * 360 / 256;
