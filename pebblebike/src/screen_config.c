@@ -111,7 +111,6 @@ const char *field_get_title(uint8_t field) {
 #ifdef PRODUCTION
     case FIELD_TEMPERATURE: return _("Temperature"); break;
 #else
-    ///@todo(nav)
     case FIELD_TEMPERATURE: return "Nav: index"; break;
 #endif
     case FIELD_TIME: return _("Time"); break;
@@ -506,11 +505,17 @@ void config_load() {
     config.screenA_bottom_left_type   = FIELD_DISTANCE;
     config.screenA_bottom_right_type  = FIELD_AVGSPEED;
     config.screenA_topbar_center_type = FIELD_TIME;
-    ///@todo(nav) restore screenB initial fields
-    config.screenB_top_type           = FIELD_NAV_DISTANCE_NEXT; // FIELD_ALTITUDE;
-    config.screenB_top2_type          = FIELD_NAV_ESTIMATED_TIME_ARRIVAL; //FIELD_ASCENT;
-    config.screenB_bottom_left_type   = FIELD_NAV_DISTANCE_TO_DESTINATION; // FIELD_ASCENTRATE;
-    config.screenB_bottom_right_type  = FIELD_NAV_TIME_TO_DESTINATION; //FIELD_SLOPE;
+#ifdef ENABLE_SCREENB_NAVIGATION
+    config.screenB_top_type           = FIELD_NAV_DISTANCE_NEXT;
+    config.screenB_top2_type          = FIELD_NAV_ESTIMATED_TIME_ARRIVAL;
+    config.screenB_bottom_left_type   = FIELD_NAV_DISTANCE_TO_DESTINATION;
+    config.screenB_bottom_right_type  = FIELD_NAV_TIME_TO_DESTINATION;
+#else
+    config.screenB_top_type           = FIELD_ALTITUDE;
+    config.screenB_top2_type          = FIELD_ASCENT;
+    config.screenB_bottom_left_type   = FIELD_ASCENTRATE;
+    config.screenB_bottom_right_type  = FIELD_SLOPE;
+#endif
 #ifdef PRODUCTION
     config.screenB_topbar_center_type = FIELD_TIME;
 #else

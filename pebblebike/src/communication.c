@@ -465,7 +465,6 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
         case MSG_SENSOR_TEMPERATURE:
             s_gpsdata.temperature10 = tuple->value->int16;
 #ifdef PRODUCTION
-            ///@todo(nav)
             snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d.%d", s_gpsdata.temperature10 / 10, s_gpsdata.temperature10 % 10);
 #endif
             break;
@@ -519,7 +518,6 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
           GET_DATA(nav_page_number, NAV_BYTE_PAGE_NUMBER);
           GET_DATA_UINT16(s_gpsdata.nav_next_index, NAV_BYTE_NEXT_INDEX1);
 #ifndef PRODUCTION
-          ///@todo(nav) restore temperature
           snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d", s_gpsdata.nav_next_index);
 #endif
           int curPageNumber = (int) (s_gpsdata.nav_next_index / NB_POINTS_PER_PAGE);

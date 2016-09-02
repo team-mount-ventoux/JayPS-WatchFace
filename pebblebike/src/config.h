@@ -18,6 +18,7 @@
 //#define ENABLE_DEBUG_FIELDS_SIZE
 //#define ENABLE_LOCALIZE_FORCE "it"
 //#define ENABLE_DEMO
+//#define ENABLE_SCREENB_NAVIGATION
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef PRODUCTION
