@@ -102,6 +102,11 @@
         "type": "raw",
         "name": "LOCALE_ITALIAN",
         "file": "locale_italian.bin"
+      },
+      {
+        "type": "raw",
+        "name": "LOCALE_DUTCH",
+        "file": "locale_dutch.bin"
       }
     ]
   },

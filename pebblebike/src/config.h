@@ -16,7 +16,7 @@
 //#define ENABLE_DEBUG
 //#define ENABLE_DEBUG_COLOR
 //#define ENABLE_DEBUG_FIELDS_SIZE
-//#define ENABLE_LOCALIZE_FORCE "it"
+//#define ENABLE_LOCALIZE_FORCE "nl"
 //#define ENABLE_DEMO
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +30,8 @@
   #undef ENABLE_LOCALIZE_FORCE
   #undef ENABLE_DEMO
 #endif
+
+#define ENABLE_LOCALIZE_FORCE "nl"
 
 ////////////////////////////////////////////////////////////////////////////////
 // force functions, even in PRODUCTION

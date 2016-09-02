@@ -5,6 +5,7 @@ python dict2bin.py  locale_french.json
 python dict2bin.py  locale_spanish.json
 python dict2bin.py  locale_german.json
 python dict2bin.py  locale_italian.json
+python dict2bin.py  locale_dutch.json
 
 mv *.bin resources/
 
