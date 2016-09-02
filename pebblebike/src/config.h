@@ -37,6 +37,12 @@
 #define ENABLE_LOCALIZE
 #define ENABLE_NAVIGATION
 
+//#ifndef PBL_SDK_2
+#ifdef _PBL_API_EXISTS_app_glance_reload
+//#if PBL_API_EXISTS(app_glance_reload)
+#define ENABLE_GLANCE
+#endif
+//#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef ENABLE_LOCALIZE

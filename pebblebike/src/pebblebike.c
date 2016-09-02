@@ -275,7 +275,36 @@ static void init(void) {
   
   send_version(true);
 }
+
+#ifdef ENABLE_GLANCE
+static void prv_update_app_glance(AppGlanceReloadSession *session, size_t limit, void *context) {
+  if (limit < 1) {
+    return;
+  }
+
+  char message[50];
+  snprintf(message, sizeof(message), "%s%s - %s%s", s_data.distance, s_data.unitsDistance, s_data.ascent, s_data.unitsAltitude);
+  const AppGlanceSlice entry = (AppGlanceSlice ) {
+    .layout = {
+        //.icon = RESOURCE_ID_MENU_ICON,
+        .subtitle_template_string = message
+    },
+    .expiration_time = APP_GLANCE_SLICE_NO_EXPIRATION
+  };
+
+  const AppGlanceResult result = app_glance_add_slice(session, entry);
+  if (result != APP_GLANCE_RESULT_SUCCESS) {
+    LOG_INFO("AppGlance Error: %d", result);
+  }
+}
+#endif
 static void deinit(void) {
+
+#ifdef ENABLE_GLANCE
+  if (s_gpsdata.distance100 > 0) {
+    app_glance_reload(prv_update_app_glance, NULL);
+  }
+#endif
 #ifdef PBL_HEALTH
   health_deinit();
 #endif
