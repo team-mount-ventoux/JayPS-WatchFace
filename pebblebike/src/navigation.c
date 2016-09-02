@@ -6,7 +6,7 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
   if (s_gpsdata.nav_nb_pages > 0) {
 //  s_gpsdata.nav_bearing = 270;
 #ifdef ENABLE_NAVIGATION_FULL
-    if (s_gpsdata.nav_error1000 - 2 * s_gpsdata.accuracy >= NAV_TRACK_ERROR_DIST_MIN) {
+    if (!nav_is_error_ok()) {
       graphics_context_set_stroke_width(ctx, small ? 2 : 3);
       graphics_context_set_stroke_color(ctx, GColorOrange);
     }
@@ -20,7 +20,7 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
     graphics_context_set_stroke_width(ctx, 1);
     graphics_draw_line(ctx, center, gpoint_from_polar(box, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(360 - s_gpsdata.bearing)));
 
-    if (direction < 45 || direction > 315) {
+    if (nav_is_bearing_ok()) {
       graphics_context_set_stroke_color(ctx, GColorGreen);
     } else {
       graphics_context_set_stroke_color(ctx, GColorRed);
@@ -40,16 +40,29 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
 }
 
 void nav_add_data() {
-  static int16_t last_nav_bearing = -1;
-  if (last_nav_bearing >= 0) {
-    int delta = (s_gpsdata.nav_bearing - last_nav_bearing + 360) % 360;
-    if (delta > 180) {
-      delta = 360 - delta;
-    }
-    LOG_INFO("nav_add_data last_nav_bearing:%d nav_bearing:%d delta:%d notif:%d", last_nav_bearing, s_gpsdata.nav_bearing, delta, s_data.nav_notification);
-    if (delta > 30 && s_data.nav_notification) {
+  static bool can_notify = false; // do not notify 1rst error
+
+  if (nav_is_error_ok() && nav_is_bearing_ok()) {
+    // everything ok, can do next notification
+    can_notify = true;
+  } else {
+    // !nav_is_error_ok() || !nav_is_bearing_ok()
+    if (s_data.nav_notification && can_notify) {
       vibes_short_pulse();
+      can_notify = false;
     }
   }
-  last_nav_bearing = s_gpsdata.nav_bearing;
+}
+
+bool nav_is_error_ok() {
+  // 2 * accuracy: 1 for gps (live) + 1 for gpx (recorded): same place, accuracy could have been similar
+  return s_gpsdata.nav_error1000 - 2 * s_gpsdata.accuracy < NAV_TRACK_ERROR_DIST_MIN;
+}
+
+bool nav_is_bearing_ok() {
+  int direction = (s_gpsdata.nav_bearing - s_gpsdata.bearing + 360) % 360;
+  if (direction > 180) {
+    direction = 360 - direction;
+  }
+  return direction < 45;
 }

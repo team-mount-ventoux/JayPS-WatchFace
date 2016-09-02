@@ -207,18 +207,12 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
         // previous points
         graphics_context_set_stroke_color(ctx, GColorLightGray);
       } else if (s_gpsdata.nav_first_index_in_storage + i == s_gpsdata.nav_next_index) {
-        // cur point
-        int direction = (s_gpsdata.nav_bearing - s_gpsdata.bearing + 360) % 360;
-        if (direction > 180) {
-          direction = 360 - direction;
-        }
-        // 2 * accuracy: 1 for gps (live) + 1 for gpx (recorded): same place, accuracy could have been similar
-        if (s_gpsdata.nav_error1000 - 2 * s_gpsdata.accuracy >= NAV_TRACK_ERROR_DIST_MIN) {
-          graphics_context_set_stroke_color(ctx, GColorOrange);
-        } else if (direction < 45) {
-          graphics_context_set_stroke_color(ctx, GColorGreen);
-        } else {
+        if (!nav_is_bearing_ok()) {
           graphics_context_set_stroke_color(ctx, GColorRed);
+        } else if (!nav_is_error_ok()) {
+          graphics_context_set_stroke_color(ctx, GColorOrange);
+        } else {
+          graphics_context_set_stroke_color(ctx, GColorGreen);
         }
       } else {
         // future points
