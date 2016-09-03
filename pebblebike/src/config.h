@@ -37,6 +37,7 @@
 #define ENABLE_ORUXMAPS
 #define ENABLE_LOCALIZE
 #define ENABLE_NAVIGATION
+#define ENABLE_MAP_SKIP_POINT_OUTSIDE
 
 //#ifndef PBL_SDK_2
 #ifdef _PBL_API_EXISTS_app_glance_reload
@@ -60,7 +61,7 @@
   #define ENABLE_APP_DEINIT
   #define ENABLE_ROTATION
   #define ENABLE_NAVIGATION_FULL
-  #define ENABLE_MAP_SKIP_POINT_OUTSIDE
+  //#define ENABLE_MAP_SKIP_POINT_OUTSIDE
 #endif
 
 #ifdef ENABLE_LOGS
