@@ -520,7 +520,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 #ifndef PRODUCTION
           snprintf(s_data.temperature,   sizeof(s_data.temperature),   "%d", s_gpsdata.nav_next_index);
 #endif
-          int curPageNumber = (int) (s_gpsdata.nav_next_index / NB_POINTS_PER_PAGE);
+          //int curPageNumber = (int) (s_gpsdata.nav_next_index / NB_POINTS_PER_PAGE);
           int firstIndex = nav_page_number * NB_POINTS_PER_PAGE;
           LOG_DEBUG("i:%d (p:%d) pages:%d/%d firstIndex:%d notif:%d", s_gpsdata.nav_next_index, curPageNumber, nav_page_number, s_gpsdata.nav_nb_pages, firstIndex, s_data.nav_notification);
 
