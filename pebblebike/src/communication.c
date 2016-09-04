@@ -522,7 +522,7 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
 #endif
           //int curPageNumber = (int) (s_gpsdata.nav_next_index / NB_POINTS_PER_PAGE);
           int firstIndex = nav_page_number * NB_POINTS_PER_PAGE;
-          LOG_DEBUG("i:%d (p:%d) pages:%d/%d firstIndex:%d notif:%d", s_gpsdata.nav_next_index, curPageNumber, nav_page_number, s_gpsdata.nav_nb_pages, firstIndex, s_data.nav_notification);
+          LOG_DEBUG("i:%d pages:%d/%d firstIndex:%d notif:%d", s_gpsdata.nav_next_index, nav_page_number, s_gpsdata.nav_nb_pages, firstIndex, s_data.nav_notification);
 
           snprintf(s_data.nav_next_distance,   sizeof(s_data.nav_next_distance),   "%d",   s_gpsdata.nav_next_distance1000);
           snprintf(s_data.nav_distance_to_destination,   sizeof(s_data.nav_distance_to_destination),   "%d.%d",   s_gpsdata.nav_distance_to_destination100 / 100, s_gpsdata.nav_distance_to_destination100 % 100 / 10);
