@@ -194,9 +194,10 @@ static void init(void) {
   s_data.live = 1;
   s_data.state = STATE_START;
 
+  s_gpsdata.nav_nb_pages = 20;
   s_gpsdata.nav_distance_to_destination100 = 12100;
-  s_gpsdata.nav_next_distance1000 = 1345;
-  s_gpsdata.nav_error1000 = 55;
+  s_gpsdata.nav_next_distance1000 = 234;
+  s_gpsdata.nav_error1000 = 12;
   snprintf(s_data.nav_next_distance,   sizeof(s_data.nav_next_distance),   "%d",   s_gpsdata.nav_next_distance1000);
 #else
   strcpy(s_data.speed, "0.0");

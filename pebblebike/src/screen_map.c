@@ -4,6 +4,7 @@
 #include "navigation.h"
 #include "screen_map.h"
 #include "screens.h"
+#include "demo.h"
 
 // map layer
 Layer *path_layer;
@@ -348,14 +349,9 @@ void screen_map_layer_init(Window* window) {
     s_gpsdata.ypos=0;
     s_gpsdata.nb_received=0;
 
-#ifdef ENABLE_DEMO
-    srand(0);
-    #define MIN(a, b) (a < b ? a : b)
-    for(int j = NUM_POINTS; j>0; j--) {
-      pts[NUM_POINTS-j] = GPoint(2*j, j*j/50 + 5 + rand()%2);
-      cur_point++;
-    }
-    nb_points = cur_point;
+    DEMO_INIT_TRACK();
+#ifdef ENABLE_NAVIGATION_FULL
+    DEMO_INIT_TRACK_NAV();
 #endif
 }
 void screen_map_layer_deinit() {
