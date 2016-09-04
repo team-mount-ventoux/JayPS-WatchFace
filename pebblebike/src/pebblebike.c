@@ -158,6 +158,13 @@ static void init(void) {
   heartrate_init();
   s_gpsdata.heartrate = 255; // no data at startup
   bg_color_data_main = BG_COLOR_DATA_MAIN;
+
+#ifdef ENABLE_NAVIGATION_FULL
+  for (uint16_t i = 0; i < NAV_NB_POINTS_STORAGE - 1; i++) {
+    s_gpsdata.nav_xpos[i] = s_gpsdata.nav_ypos[i] = INT16_MAX;
+  }
+#endif
+
 #ifdef ENABLE_DEBUG_FIELDS_SIZE
   strcpy(s_data.speed, "188.8");
   strcpy(s_data.distance, "88.8");
@@ -186,6 +193,11 @@ static void init(void) {
   heartrate_new_data(s_gpsdata.heartrate);
   s_data.live = 1;
   s_data.state = STATE_START;
+
+  s_gpsdata.nav_distance_to_destination100 = 12100;
+  s_gpsdata.nav_next_distance1000 = 1345;
+  s_gpsdata.nav_error1000 = 55;
+  snprintf(s_data.nav_next_distance,   sizeof(s_data.nav_next_distance),   "%d",   s_gpsdata.nav_next_distance1000);
 #else
   strcpy(s_data.speed, "0.0");
   strcpy(s_data.distance, "-");
@@ -200,6 +212,10 @@ static void init(void) {
   strcpy(s_data.maxspeed, "-");
   strcpy(s_data.heartrate, "-");
   strcpy(s_data.cadence, "-");
+  strcpy(s_data.nav_next_distance, "-");
+  strcpy(s_data.nav_distance_to_destination, "-");
+  strcpy(s_data.nav_ttd, "-");
+  strcpy(s_data.nav_eta, "-");
 #endif
   //strcpy(s_data.lat, "-");
   //strcpy(s_data.lon, "-");
@@ -259,7 +275,36 @@ static void init(void) {
   
   send_version(true);
 }
+
+#ifdef ENABLE_GLANCE
+static void prv_update_app_glance(AppGlanceReloadSession *session, size_t limit, void *context) {
+  if (limit < 1) {
+    return;
+  }
+
+  char message[50];
+  snprintf(message, sizeof(message), "%s%s - %s%s", s_data.distance, s_data.unitsDistance, s_data.ascent, s_data.unitsAltitude);
+  const AppGlanceSlice entry = (AppGlanceSlice ) {
+    .layout = {
+        //.icon = RESOURCE_ID_MENU_ICON,
+        .subtitle_template_string = message
+    },
+    .expiration_time = APP_GLANCE_SLICE_NO_EXPIRATION
+  };
+
+  const AppGlanceResult result = app_glance_add_slice(session, entry);
+  if (result != APP_GLANCE_RESULT_SUCCESS) {
+    LOG_INFO("AppGlance Error: %d", result);
+  }
+}
+#endif
 static void deinit(void) {
+
+#ifdef ENABLE_GLANCE
+  if (s_gpsdata.distance100 > 0) {
+    app_glance_reload(prv_update_app_glance, NULL);
+  }
+#endif
 #ifdef PBL_HEALTH
   health_deinit();
 #endif

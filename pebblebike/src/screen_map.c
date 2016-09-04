@@ -1,6 +1,7 @@
 #include "pebble.h"
 #include "config.h"
 #include "pebblebike.h"
+#include "navigation.h"
 #include "screen_map.h"
 #include "screens.h"
 
@@ -11,7 +12,7 @@ Layer *bearing_layer;
 // 4 Bytes/point
 // to compute correct values, use DEMO mode, cycle through all screens including menu
 #if PBL_PLATFORM_APLITE
-  #define NUM_POINTS 500
+  #define NUM_POINTS 100
 #else
   #define NUM_POINTS 1500
 #endif
@@ -38,6 +39,42 @@ const GPathInfo BEARING_PATH_POINTS = {
 
 GPath *bearing_gpath;
 
+#define NAVIGATION_COMPASS_RADIUS 15
+#define NAVIGATION_COMPASS_PADDING_X PBL_IF_ROUND_ELSE(23,3)
+#define NAVIGATION_COMPASS_PADDING_Y 3
+#define NAVIGATION_COMPASS_CENTER_X (NAVIGATION_COMPASS_RADIUS + NAVIGATION_COMPASS_PADDING_X - pathFrame.origin.x)
+#define NAVIGATION_COMPASS_CENTER_Y (NAVIGATION_COMPASS_RADIUS + NAVIGATION_COMPASS_PADDING_Y - pathFrame.origin.y)
+#define NAVIGATION_COMPASS_CENTER GPoint(NAVIGATION_COMPASS_CENTER_X, NAVIGATION_COMPASS_CENTER_Y)
+#define NAVIGATION_COMPASS_RECT GRect(NAVIGATION_COMPASS_PADDING_X - pathFrame.origin.x, NAVIGATION_COMPASS_PADDING_Y - pathFrame.origin.y, 2 * NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS)
+#define NAVIGATION_DISTANCE_RECT_W 50
+#define NAVIGATION_DISTANCE_RECT_H 18
+#define NAVIGATION_DISTANCE_RECT GRect(SCREEN_W - pathFrame.origin.x - NAVIGATION_COMPASS_PADDING_X - NAVIGATION_DISTANCE_RECT_W, - pathFrame.origin.y, NAVIGATION_DISTANCE_RECT_W, NAVIGATION_DISTANCE_RECT_H)
+#define NAVIGATION_DISTANCE_TEXT GRect(SCREEN_W - pathFrame.origin.x - NAVIGATION_COMPASS_PADDING_X - NAVIGATION_DISTANCE_RECT_W, - pathFrame.origin.y - 8, NAVIGATION_DISTANCE_RECT_W, NAVIGATION_DISTANCE_RECT_H)
+
+#ifdef ENABLE_MAP_SKIP_POINT_OUTSIDE
+  #define MAP_DRAW_LINE(p0, p1) \
+  if (p0.x + pathFrame.origin.x < 0 && p1.x + pathFrame.origin.x < 0) { \
+    /* LOG_DEBUG("x<0 o:%d", pathFrame.origin.x); */ \
+    continue; \
+  } \
+  if (p0.x + pathFrame.origin.x > SCREEN_W && p1.x + pathFrame.origin.x > SCREEN_W) { \
+    /* LOG_DEBUG("x>W o:%d", pathFrame.origin.x); */ \
+    continue; \
+  } \
+  if (p0.y + pathFrame.origin.y < 0 && p1.y + pathFrame.origin.y < 0) { \
+    /* LOG_DEBUG("y<0 o:%d", pathFrame.origin.y); */ \
+    continue; \
+  } \
+  if (p0.y + pathFrame.origin.y > SCREEN_H && p1.y + pathFrame.origin.y > SCREEN_H) { \
+    /* LOG_DEBUG("y>H o:%d", pathFrame.origin.y); */ \
+    continue; \
+  } \
+  graphics_draw_line(ctx, p0, p1);
+#else
+  #define MAP_DRAW_LINE(p0, p1) graphics_draw_line(ctx, p0, p1);
+#endif
+
+
 
 void screen_map_zoom_out(int factor) {
     map_scale = map_scale * factor;
@@ -55,35 +92,34 @@ void screen_map_zoom_in(int factor) {
 }
 
 
-
-
+// in 10m
+#define SCREEN_MAP_MIN_DIST 5
 void screen_map_update_location() {
 
-    if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < 5*5) {
-        // distance with previous position < 4*10 (m)
+    if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < SCREEN_MAP_MIN_DIST*SCREEN_MAP_MIN_DIST) {
+        // distance with previous position < SCREEN_MAP_MIN_DIST*10 (m)
         /*snprintf(s_data.debug2, sizeof(s_data.debug2),
           "#11 nbpoints:%u\npos : %ld|%ld\nposprev : %ld|%ld\n",
           nb_points,
           s_gpsdata.xpos, s_gpsdata.ypos,
           xposprev, yposprev
         );*/
-        return;
+    } else {
+      // add new point
+      xposprev = s_gpsdata.xpos;
+      yposprev = s_gpsdata.ypos;
+
+      cur_point = nb_points % NUM_POINTS;
+      nb_points++;
     }
-    //vibes_short_pulse();
-    xposprev = s_gpsdata.xpos;
-    yposprev = s_gpsdata.ypos;
 
-    cur_point = nb_points % NUM_POINTS;
-    nb_points++;
-
+    // update cur point or add new one
     pts[cur_point] = GPoint(s_gpsdata.xpos, s_gpsdata.ypos);
-
 
     if (s_data.page_number == PAGE_MAP) {
         // refresh displayed map only if current page is PAGE_MAP
       screen_map_update_map(false);
     }
-
 }
 
 void screen_map_update_map(bool force_recenter) {
@@ -149,29 +185,68 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
     (void)me;
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "path_layer_update_callback");
 
-    graphics_context_set_stroke_color(ctx, COLOR_MAP);
-
     GPoint p0, p1;
 
-    if (nb_points < 2) {
-        return;
+#ifdef ENABLE_NAVIGATION
+  if (s_gpsdata.nav_nb_pages > 0) {
+    #ifndef PBL_SDK_2
+    graphics_context_set_stroke_width(ctx, 2);
+    #endif
+    for (uint16_t i = 1; i < NAV_NB_POINTS_STORAGE - 1; i++) {
+      if (s_gpsdata.nav_xpos[i] == INT16_MAX) {
+        //LOG_DEBUG("%d: skip point", i);
+        continue;
+      }
+      if (s_gpsdata.nav_xpos[i-1] == INT16_MAX) {
+        //LOG_DEBUG("%d: skip point-1", i);
+        continue;
+      }
+      //LOG_DEBUG("%d: xpos:%d ypos:%d %s", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i], s_gpsdata.nav_first_index_in_storage + i == s_gpsdata.nav_next_index ? "NEXT" : "");
+#ifdef ENABLE_NAVIGATION_FULL
+      if (s_gpsdata.nav_first_index_in_storage + i < s_gpsdata.nav_next_index) {
+        // previous points
+        graphics_context_set_stroke_color(ctx, GColorLightGray);
+      } else if (s_gpsdata.nav_first_index_in_storage + i == s_gpsdata.nav_next_index) {
+        if (!nav_is_bearing_ok()) {
+          graphics_context_set_stroke_color(ctx, GColorRed);
+        } else if (!nav_is_error_ok()) {
+          graphics_context_set_stroke_color(ctx, GColorOrange);
+        } else {
+          graphics_context_set_stroke_color(ctx, GColorGreen);
+        }
+      } else {
+        // future points
+        graphics_context_set_stroke_color(ctx, GColorBlue);
+      }
+#endif
+      p0.x = (XINI + (s_gpsdata.nav_xpos[i-1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+      p0.y = (YINI - (s_gpsdata.nav_ypos[i-1] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+      p1.x = (XINI + (s_gpsdata.nav_xpos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+      p1.y = (YINI - (s_gpsdata.nav_ypos[i] * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+
+      MAP_DRAW_LINE(p0, p1);
+    }
+  }
+#endif
+    #ifndef PBL_SDK_2
+    graphics_context_set_stroke_width(ctx, 1);
+    #endif
+    graphics_context_set_stroke_color(ctx, COLOR_MAP);
+
+    if (nb_points >= 2) {
+      for (int i = 0; i < ((nb_points > NUM_POINTS ? NUM_POINTS : nb_points) - 1); i++) {
+          p0 = pts[(NUM_POINTS+cur_point-i) % NUM_POINTS];
+          p1 = pts[(NUM_POINTS+cur_point-i-1) % NUM_POINTS];
+
+          p0.x = (XINI + (p0.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+          p0.y = (YINI - (p0.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+          p1.x = (XINI + (p1.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
+          p1.y = (YINI - (p1.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
+
+          MAP_DRAW_LINE(p0, p1);
+      }
     }
 
-    for (int i = 0; i < ((nb_points > NUM_POINTS ? NUM_POINTS : nb_points) - 1); i++) {
-        p0 = pts[(NUM_POINTS+cur_point-i) % NUM_POINTS];
-        p1 = pts[(NUM_POINTS+cur_point-i-1) % NUM_POINTS];
-
-        p0.x = (XINI + (p0.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
-        p0.y = (YINI - (p0.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
-        p1.x = (XINI + (p1.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
-        p1.y = (YINI - (p1.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
-
-        graphics_draw_line(
-            ctx,
-            p0,
-            p1
-        );
-    }
 #ifdef ENABLE_FUNCTION_LIVE
     for (int i = 0; i < s_live.nb; i++) {
         p0.x = (XINI + (s_live.friends[i].xpos * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
@@ -195,6 +270,27 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 #endif
         }
     }
+#endif
+
+
+#ifdef ENABLE_NAVIGATION
+  if (s_gpsdata.nav_nb_pages > 0) {
+    #ifndef PBL_SDK_2
+    graphics_context_set_stroke_width(ctx, 1);
+    #endif
+    graphics_context_set_stroke_color(ctx, GColorBlack);
+
+#ifdef ENABLE_NAVIGATION_FULL
+    graphics_context_set_fill_color(ctx, GColorWhite);
+    graphics_fill_rect(ctx, NAVIGATION_DISTANCE_RECT, 0, GCornerNone);
+    //graphics_draw_rect(ctx, NAVIGATION_DISTANCE_RECT);
+#endif
+
+    graphics_context_set_text_color(ctx, GColorBlack);
+    graphics_draw_text(ctx, s_data.nav_next_distance, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), NAVIGATION_DISTANCE_TEXT, GTextOverflowModeFill, GTextAlignmentRight, NULL);
+
+    nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT, true);
+  }
 #endif
 }
 void bearing_layer_update_callback(Layer *me, GContext *ctx) {

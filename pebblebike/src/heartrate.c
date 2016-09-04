@@ -15,10 +15,14 @@ time_t time_prev = 0;
 uint8_t zone_prev = 0;
 time_t zone_time_ini = 0;
 
-uint8_t heartrate_max = 0;
+uint8_t heartrate_max = PB_IF_DEMO_ELSE(185, 0);
 HR_ZONE_NOTIFICATION_MODES heartrate_zones_notification_mode = 0;
 
-uint16_t heartrate_zones_duration[NB_HR_ZONES + 1] = { 0, 0, 0, 0, 0, 0 };
+#ifdef ENABLE_DEMO
+  uint16_t heartrate_zones_duration[NB_HR_ZONES + 1] = { 0, 350, 512, 2100, 344, 242 };
+#else
+  uint16_t heartrate_zones_duration[NB_HR_ZONES + 1] = { 0, 0, 0, 0, 0, 0 };
+#endif
 char heartrate_zones_name[NB_HR_ZONES + 1][15] = { "", "", "", "", "", ""};
 
 void heartrate_init() {

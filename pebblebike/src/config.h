@@ -4,8 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define PRODUCTION
-#define VERSION_PEBBLE 291
-#define VERSION_TEXT "Version 2.5.0"
+#define VERSION_PEBBLE 320
+#define VERSION_TEXT "Version 2.8.0"
 #define APP_COMPANY "N Jackson & JayPS"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -14,11 +14,11 @@
 #define ENABLE_LOGS
 #define ENABLE_LOGS_DEBUG
 //#define ENABLE_DEBUG
-//#define ENABLE_ROTATION
 //#define ENABLE_DEBUG_COLOR
 //#define ENABLE_DEBUG_FIELDS_SIZE
-//#define ENABLE_LOCALIZE_FORCE "es"
+//#define ENABLE_LOCALIZE_FORCE "it"
 //#define ENABLE_DEMO
+//#define ENABLE_SCREENB_NAVIGATION
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef PRODUCTION
@@ -26,7 +26,6 @@
   #undef ENABLE_LOGS
   #undef ENABLE_LOGS_DEBUG
   #undef ENABLE_DEBUG
-  #undef ENABLE_ROTATION
   #undef ENABLE_DEBUG_COLOR
   #undef ENABLE_DEBUG_FIELDS_SIZE
   #undef ENABLE_LOCALIZE_FORCE
@@ -37,7 +36,15 @@
 // force functions, even in PRODUCTION
 #define ENABLE_ORUXMAPS
 #define ENABLE_LOCALIZE
+#define ENABLE_NAVIGATION
+#define ENABLE_MAP_SKIP_POINT_OUTSIDE
 
+//#ifndef PBL_SDK_2
+#ifdef _PBL_API_EXISTS_app_glance_reload
+//#if PBL_API_EXISTS(app_glance_reload)
+#define ENABLE_GLANCE
+#endif
+//#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef ENABLE_LOCALIZE
@@ -52,6 +59,9 @@
   #define ENABLE_MENU_HEART_ZONES
   // don't deinit objects in deinit -- save at least 700 bytes
   #define ENABLE_APP_DEINIT
+  #define ENABLE_ROTATION
+  #define ENABLE_NAVIGATION_FULL
+  //#define ENABLE_MAP_SKIP_POINT_OUTSIDE
 #endif
 
 #ifdef ENABLE_LOGS
@@ -70,6 +80,12 @@
   #define LOG_ERROR(...)
   #define LOG_INFO(...)
   #define LOG_DEBUG(...)
+#endif
+
+#ifdef ENABLE_DEMO
+  #define PB_IF_DEMO_ELSE(if_true, if_false) (if_true)
+#else
+  #define PB_IF_DEMO_ELSE(if_true, if_false) (if_false)
 #endif
 
 #endif // CONFIG_H

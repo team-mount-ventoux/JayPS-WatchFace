@@ -5,22 +5,10 @@
 #include "screen_config.h"
 #include "graph.h"
 #include "heartrate.h"
+#include "navigation.h"
 #include "screen_data.h"
 
 Layer *line_layer;
-
-#if ROTATION
-enum {
-  ROTATION_DISABLED,
-  ROTATION_MIN,
-  ROTATION_SPEED = ROTATION_MIN,
-  ROTATION_HEARTRATE,
-  ROTATION_ALTITUDE,
-  ROTATION_MAX,
-};
-int rotation = ROTATION_DISABLED;
-static AppTimer *rotation_timer;
-#endif
 
 #ifdef PBL_ROUND
   #define PAGE_DATA_TOP_H SCREEN_H / 2 - TOPBAR_HEIGHT + 10
@@ -36,6 +24,13 @@ static AppTimer *rotation_timer;
 #define PAGE_DATA_TOP_DATA_H PAGE_DATA_MIDDLE_DATA_H - PAGE_DATA_MAIN_H / 2
 #define PAGE_DATA_BOTTOM_DATA_H PAGE_DATA_MIDDLE_DATA_H + PAGE_DATA_MAIN_H / 2
 
+#define NAVIGATION_COMPASS_RADIUS (SCREEN_W/2-5)
+#define NAVIGATION_COMPASS_PADDING 3
+#define NAVIGATION_COMPASS_CENTER_X SCREEN_W/2
+#define NAVIGATION_COMPASS_CENTER_Y (PBL_IF_ROUND_ELSE(PAGE_SCREEN_CENTER_H, (SCREEN_H-TOPBAR_HEIGHT)/2-6))
+#define NAVIGATION_COMPASS_CENTER GPoint(NAVIGATION_COMPASS_CENTER_X, NAVIGATION_COMPASS_CENTER_Y)
+#define NAVIGATION_COMPASS_RECT GRect(NAVIGATION_COMPASS_CENTER_X-NAVIGATION_COMPASS_RADIUS, NAVIGATION_COMPASS_CENTER_Y-NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS, 2 * NAVIGATION_COMPASS_RADIUS)
+
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
   graphics_context_set_stroke_color(ctx, COLOR_LINES);
@@ -48,6 +43,10 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_fill_color(ctx, COLOR_LINES_DATA_MAIN);
   graphics_fill_rect(ctx, GRect(0, PAGE_DATA_TOP_DATA_H, SCREEN_W, 2), 0, GCornerNone);
   graphics_fill_rect(ctx, GRect(0, PAGE_DATA_BOTTOM_DATA_H, SCREEN_W, 2), 0, GCornerNone);
+#endif
+
+#ifdef ENABLE_NAVIGATION
+  nav_draw_compass(ctx, NAVIGATION_COMPASS_CENTER, NAVIGATION_COMPASS_RECT, false);
 #endif
   if (s_data.data_subpage == SUBPAGE_UNDEF) {
     return;
@@ -194,38 +193,4 @@ void screen_data_deinit() {
   layer_destroy(line_layer);
   layer_destroy(s_data.page_data);
 }
-
-#if ROTATION
-static void rotation_timer_callback(void *data) {
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "rotation_timer");
-  rotation_timer = app_timer_register(2000, rotation_timer_callback, NULL);
-  rotation++;
-  if (rotation == ROTATION_HEARTRATE && s_gpsdata.heartrate == 255) {
-    rotation++;
-  }
-  if (rotation == ROTATION_MAX) {
-    rotation = ROTATION_MIN;
-  }
-   if (rotation == ROTATION_MIN) {
-     s_data.screen_config[SUBPAGE_A].field_top.type = FIELD_SPEED;
-     s_data.screen_config[SUBPAGE_A].field_bottom_left.type = FIELD_DISTANCE;
-     s_data.screen_config[SUBPAGE_A].field_bottom_right.type = FIELD_AVGSPEED;
-  } else {
-    s_data.screen_config[SUBPAGE_A].field_top.type = FIELD_ALTITUDE;
-    s_data.screen_config[SUBPAGE_A].field_bottom_left.type = FIELD_ASCENT;
-    s_data.screen_config[SUBPAGE_A].field_bottom_right.type = FIELD_DISTANCE;
-  }
-  screen_data_update_config(true);
-  update_screens();
-}
-void screen_data_start_rotation() {
-  if (rotation_timer == NULL) {
-    rotation_timer = app_timer_register(500, rotation_timer_callback, NULL);
-  } else {
-    app_timer_cancel(rotation_timer);
-    rotation_timer = NULL;
-    rotation = ROTATION_DISABLED;
-  }
-}
-#endif
 
