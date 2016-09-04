@@ -189,9 +189,9 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
 #ifdef ENABLE_NAVIGATION
   if (s_gpsdata.nav_nb_pages > 0) {
-
+    #ifndef PBL_SDK_2
     graphics_context_set_stroke_width(ctx, 2);
-
+    #endif
     for (uint16_t i = 1; i < NAV_NB_POINTS_STORAGE - 1; i++) {
       if (s_gpsdata.nav_xpos[i] == INT16_MAX) {
         //LOG_DEBUG("%d: skip point", i);
@@ -228,7 +228,9 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
     }
   }
 #endif
+    #ifndef PBL_SDK_2
     graphics_context_set_stroke_width(ctx, 1);
+    #endif
     graphics_context_set_stroke_color(ctx, COLOR_MAP);
 
     if (nb_points >= 2) {
@@ -273,7 +275,9 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
 
 #ifdef ENABLE_NAVIGATION
   if (s_gpsdata.nav_nb_pages > 0) {
+    #ifndef PBL_SDK_2
     graphics_context_set_stroke_width(ctx, 1);
+    #endif
     graphics_context_set_stroke_color(ctx, GColorBlack);
 
 #ifdef ENABLE_NAVIGATION_FULL

@@ -28,6 +28,18 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
     graphics_context_set_stroke_width(ctx, small ? 5 : 7);
     graphics_draw_line(ctx, center, gpoint_from_polar(box, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(direction)));
 #else
+  #ifdef PBL_SDK_2
+    // no support for graphics_fill_radial and GColorLightGray with sdk_2
+    GPoint gpoint_from_polar;
+    gpoint_from_polar.x = center.x + (sin_lookup(DEG_TO_TRIGANGLE(direction)) * box.size.w / 2 / TRIG_MAX_RATIO);
+    gpoint_from_polar.y = center.y - (cos_lookup(DEG_TO_TRIGANGLE(direction)) * box.size.w / 2 / TRIG_MAX_RATIO);
+    //graphics_context_set_stroke_width(ctx, small ? 5 : 7);
+    #define DIRECTION_PADDING 60
+    if (!small && ((direction > 90 - DIRECTION_PADDING && direction < 90 + DIRECTION_PADDING) || (direction > 270 - DIRECTION_PADDING && direction < 270 + DIRECTION_PADDING))) {
+      graphics_context_set_stroke_color(ctx, GColorWhite);
+    }
+    graphics_draw_line(ctx, center, gpoint_from_polar);
+  #else
     if (small) {
       graphics_draw_line(ctx, center, gpoint_from_polar(box, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(direction)));
     } else {
@@ -35,6 +47,7 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
       graphics_context_set_fill_color(ctx, GColorLightGray);
       graphics_fill_radial(ctx, box, GOvalScaleModeFitCircle, box.size.w, DEG_TO_TRIGANGLE(direction-5), DEG_TO_TRIGANGLE(direction+5));
     }
+  #endif
 #endif
   }
 }
