@@ -1,7 +1,7 @@
 {
   "uuid": "5DD35873-3BB6-44D6-8255-0E61BC3B97F5",
   "shortName": "Ventoo",
-  "longName": "Ventoo 2.8.0",
+  "longName": "Ventoo 2.8.0 NL",
   "companyName": "N Jackson & JayPS",
   "versionCode": 321,
   "versionLabel": "2.81",
@@ -74,15 +74,15 @@
         "file": "images/bluetooth.png"
       },
        {
-        "type": "png",
-        "name": "MASK",
+        "type": "png", 
+        "name": "MASK", 
         "file": "images/mask_2x2blue.png"
       },
       {
         "type": "raw",
         "name": "LOCALE_ENGLISH",
         "file": "locale_english.bin"
-      },
+      }, 
       {
         "type": "raw",
         "name": "LOCALE_FRENCH",
@@ -102,6 +102,11 @@
         "type": "raw",
         "name": "LOCALE_ITALIAN",
         "file": "locale_italian.bin"
+      },
+      {
+        "type": "raw",
+        "name": "LOCALE_DUTCH",
+        "file": "locale_dutch.bin"
       },
       {
         "type": "raw",

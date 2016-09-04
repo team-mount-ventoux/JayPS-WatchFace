@@ -5,7 +5,7 @@
 
 #define PRODUCTION
 #define VERSION_PEBBLE 320
-#define VERSION_TEXT "Version 2.8.0"
+#define VERSION_TEXT "Version 2.8.0 NL"
 #define APP_COMPANY "N Jackson & JayPS"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 //#define ENABLE_DEBUG
 //#define ENABLE_DEBUG_COLOR
 //#define ENABLE_DEBUG_FIELDS_SIZE
-//#define ENABLE_LOCALIZE_FORCE "it"
+//#define ENABLE_LOCALIZE_FORCE "nl"
 //#define ENABLE_DEMO
 //#define ENABLE_SCREENB_NAVIGATION
 
@@ -31,6 +31,8 @@
   #undef ENABLE_LOCALIZE_FORCE
   #undef ENABLE_DEMO
 #endif
+
+#define ENABLE_LOCALIZE_FORCE "nl"
 
 ////////////////////////////////////////////////////////////////////////////////
 // force functions, even in PRODUCTION
