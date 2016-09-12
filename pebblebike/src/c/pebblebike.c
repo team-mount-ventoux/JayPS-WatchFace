@@ -12,7 +12,7 @@
 #endif
 #include "heartrate.h"
 #include "buttons.h"
-#include "menu.h"
+//#include "menu.h"
 #include "screens.h"
 #include "screen_data.h"
 #ifdef ENABLE_FUNCTION_LIVE
@@ -254,7 +254,7 @@ static void init(void) {
   #endif
 
   action_bar_init(s_data.window);
-  menu_init();
+  //menu_init();
 
   // Reduce the sniff interval for more responsive messaging at the expense of
   // increased energy consumption by the Bluetooth module
@@ -323,7 +323,7 @@ static void deinit(void) {
   screen_map_layer_deinit();
 
   action_bar_deinit();
-  menu_deinit();
+  //menu_deinit();
 
   buttons_deinit();
 

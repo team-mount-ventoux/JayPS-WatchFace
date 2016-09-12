@@ -1,12 +1,12 @@
 #include "pebble.h"
-#include "config.h"
+#include "../config.h"
 #include "menu.h"
-#include "pebblebike.h"
-#include "communication.h"
-#include "screen_config.h"
-#include "heartrate.h"
+#include "../pebblebike.h"
+#include "../communication.h"
+#include "../screen_config.h"
+#include "../heartrate.h"
 #ifdef ENABLE_LOCALIZE
-  #include "localize.h"
+  #include "../localize.h"
 #endif
 
 #ifdef PBL_PLATFORM_APLITE
@@ -86,7 +86,6 @@ void init_settings_window()
 {
   window_set_background_color(window, GColorWhite);
   int i = 0, s = 0;
-
   // Section "Actions"
   i = 0;
   menu_section0_items[i++] = (SimpleMenuItem) {
@@ -111,7 +110,6 @@ void init_settings_window()
     .items = menu_section0_items,
     .num_items = i
   };
-
 #ifdef ENABLE_ORUXMAPS
     // Section "Orux"
     i = 0;
@@ -189,7 +187,6 @@ void init_settings_window()
     };
 #endif
 
-
   // Section "About"
   i = 0;
   menu_section2_items[i++] = (SimpleMenuItem) {
@@ -204,7 +201,6 @@ void init_settings_window()
     .title = _("More info"),
     .subtitle = "http://pebblebike.com",
   };
-
   BatteryChargeState charge_state = battery_state_service_peek();
   snprintf(pebble_battery_level, sizeof(pebble_battery_level), "%d %%", charge_state.charge_percent);
   menu_section2_items[i++] = (SimpleMenuItem) {
@@ -227,13 +223,10 @@ void init_settings_window()
     .items = menu_section2_items,
     .num_items = ARRAY_LENGTH(menu_section2_items)
   };
-
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
-
   // Initialize the simple menu layer
   menu_layer = simple_menu_layer_create(bounds, window, menu_sections, ARRAY_LENGTH(menu_sections), NULL);
-
   // Add it to the window for display
   layer_add_child(window_layer, simple_menu_layer_get_layer(menu_layer));  
 }
@@ -246,12 +239,12 @@ void init_settings_window()
 void menu_show()
 {
   init_settings_window();
-
   window_stack_push(window, true);
 }
 
 void window_disappear(Window *window) {
   simple_menu_layer_destroy(menu_layer);
+  menu_deinit();
 }
 
 void menu_init() {

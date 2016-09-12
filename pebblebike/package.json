@@ -117,14 +117,16 @@
           "type": "raw",
           "name": "LOCALE_JAPANESE",
           "file": "locale_japanese.bin"
-        }
+        },
+        { "name": "OVL_FULL", "file": "data/OVL_aplite.bin", "type": "raw", "targetPlatforms": "aplite"},
+        { "name": "OVL_FULL", "file": "data/OVL_basalt.bin", "type": "raw", "targetPlatforms": "basalt"},
+        { "name": "OVL_FULL", "file": "data/OVL_chalk.bin", "type": "raw", "targetPlatforms": "chalk"},
+        { "name": "OVL_FULL", "file": "data/OVL_diorite.bin", "type": "raw", "targetPlatforms": "diorite"}
       ]
     },
     "targetPlatforms": [
       "aplite",
-      "basalt",
-      "chalk",
-      "diorite"
+      "basalt"
     ],
     "capabilities": [
       "health"

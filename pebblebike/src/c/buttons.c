@@ -9,8 +9,12 @@
   #include "screen_live.h"
 #endif
 #include "screen_data.h"
-#include "menu.h"
 #include "screen_config.h"
+
+#include "overlord.h"
+#include "overlays.h"
+#include "ovl/menu.h"
+
 
 GBitmap *start_button;
 GBitmap *stop_button;
@@ -159,6 +163,8 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_type(CONFIG_CHANGE_TYPE_NEXT);
   } else {
+    overlay_load(OVL_MENU_OVL);
+    menu_init();
     menu_show();
   }
 #ifdef ENABLE_DEMO
