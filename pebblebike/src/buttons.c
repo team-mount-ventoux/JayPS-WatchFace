@@ -24,6 +24,13 @@ static AppTimer *button_timer;
 #ifdef ENABLE_ROTATION
   static AppTimer *rotation_timer;
 #endif
+
+#ifndef ENABLE_DEMO
+  #define TIMER_BUTTON_MS 2000
+#else
+  #define TIMER_BUTTON_MS 200
+#endif
+
 static void button_timer_callback(void *data) {
   button_timer = NULL;
   layer_set_hidden(action_bar_layer_get_layer(action_bar), true);
@@ -38,7 +45,7 @@ void button_click() {
     app_timer_cancel(button_timer);
   }
   // schedule a timer to hide action bar in X milliseconds
-  button_timer = app_timer_register(2000, button_timer_callback, NULL);
+  button_timer = app_timer_register(TIMER_BUTTON_MS, button_timer_callback, NULL);
 }
 
 void action_bar_set_menu_up_down_buttons() {

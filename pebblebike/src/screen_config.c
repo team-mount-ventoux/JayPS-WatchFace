@@ -516,10 +516,11 @@ void config_load() {
     config.screenB_bottom_left_type   = FIELD_ASCENTRATE;
     config.screenB_bottom_right_type  = FIELD_SLOPE;
 #endif
-#ifdef PRODUCTION
     config.screenB_topbar_center_type = FIELD_TIME;
-#else
+#ifndef PRODUCTION
+  #ifndef ENABLE_DEMO
     config.screenB_topbar_center_type = FIELD_NAV_NEXT_INDEX;
+  #endif
 #endif
   }
 #ifdef PBL_HEALTH

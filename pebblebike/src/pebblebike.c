@@ -126,7 +126,7 @@ void change_state(uint8_t state) {
 }
 
 static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
-
+#ifndef ENABLE_DEMO
   char *time_format;
   if (clock_is_24h_style()) {
     time_format = "%R";
@@ -143,6 +143,9 @@ static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
   }
   //layer_mark_dirty(s_data.topbar_layer.layer);
   update_screens();
+#else
+  strcpy(s_data.time, "14:38");
+#endif
 }
 
 void bt_callback(bool connected) {
@@ -197,8 +200,13 @@ static void init(void) {
   s_gpsdata.nav_nb_pages = 20;
   s_gpsdata.nav_distance_to_destination100 = 12100;
   s_gpsdata.nav_next_distance1000 = 234;
-  s_gpsdata.nav_error1000 = 12;
-  snprintf(s_data.nav_next_distance,   sizeof(s_data.nav_next_distance),   "%d",   s_gpsdata.nav_next_distance1000);
+  s_gpsdata.nav_error1000 = 60;
+  s_gpsdata.nav_bearing = 20;
+  strcpy(s_data.nav_next_distance, "234");
+  strcpy(s_data.nav_distance_to_destination, "12.1");
+  strcpy(s_data.nav_ttd, "0:34");
+  strcpy(s_data.nav_eta, "15:12");
+
 #else
   strcpy(s_data.speed, "0.0");
   strcpy(s_data.distance, "-");
