@@ -1,0 +1,133 @@
+{
+  "name": "Ventoo",
+  "version": "2.81.0",
+  "author": "N Jackson & JayPS",
+  "private": true,
+  "dependencies": {},
+  "keywords": [
+    "pebble-app"
+  ],
+  "pebble": {
+    "projectType": "native",
+    "uuid": "5dd35873-3bb6-44d6-8255-0e61bc3b97f5",
+    "messageKeys": {},
+    "enableMultiJS": false,
+    "displayName": "Ventoo 2.8.0",
+    "watchapp": {
+      "onlyShownOnCommunication": false,
+      "hiddenApp": false,
+      "watchface": false
+    },    
+    "sdkVersion": "3",
+    "resources": {
+      "media": [
+        {
+          "type": "font",
+          "name": "FONT_ROBOTO_BOLD_16",
+          "file": "fonts/Roboto-Bold.ttf"
+        },
+        {
+          "characterRegex": "[0-9.:-]",
+          "type": "font",
+          "name": "FONT_ROBOTO_BOLD_62",
+          "file": "fonts/Roboto-Bold.ttf"
+        },
+        {
+          "menuIcon": true,
+          "type": "png",
+          "name": "IMAGE_MENU_ICON",
+          "file": "images/menu_icon_pebble_cycling.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_START_BUTTON",
+          "file": "images/start_button.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_STOP_BUTTON",
+          "file": "images/stop_button.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_RESET_BUTTON",
+          "file": "images/reset_button.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_MENU_BUTTON",
+          "file": "images/menu_button.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_ZOOM_BUTTON",
+          "file": "images/zoom_button.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_NEXT_BUTTON",
+          "file": "images/next_button.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_MENU_UP_BUTTON",
+          "file": "images/menu_up_button.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_MENU_DOWN_BUTTON",
+          "file": "images/menu_down_button.png"
+        },
+        {
+          "type": "png",
+          "name": "IMAGE_BLUETOOTH",
+          "file": "images/bluetooth.png"
+        },
+        {
+          "type": "png",
+          "name": "MASK",
+          "file": "images/mask_2x2blue.png"
+        },
+        {
+          "type": "raw",
+          "name": "LOCALE_ENGLISH",
+          "file": "locale_english.bin"
+        },
+        {
+          "type": "raw",
+          "name": "LOCALE_FRENCH",
+          "file": "locale_french.bin"
+        },
+        {
+          "type": "raw",
+          "name": "LOCALE_SPANISH",
+          "file": "locale_spanish.bin"
+        },
+        {
+          "type": "raw",
+          "name": "LOCALE_GERMAN",
+          "file": "locale_german.bin"
+        },
+        {
+          "type": "raw",
+          "name": "LOCALE_ITALIAN",
+          "file": "locale_italian.bin"
+        },
+        {
+          "type": "raw",
+          "name": "LOCALE_JAPANESE",
+          "file": "locale_japanese.bin"
+        }
+      ]
+    },
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "capabilities": [
+      "health"
+    ]
+  }
+}
