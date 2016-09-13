@@ -3,7 +3,7 @@
 #include "pebblebike.h"
 #include "communication.h"
 #include "screens.h"
-#include "screen_map.h"
+#include "ovl/screen_map.h"
 #include "screen_live.h"
 #include "screen_config.h"
 #include "graph.h"

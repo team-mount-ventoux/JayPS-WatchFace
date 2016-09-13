@@ -4,7 +4,7 @@
 #include "buttons.h"
 #include "communication.h"
 #include "screens.h"
-#include "screen_map.h"
+#include "ovl/screen_map.h"
 #ifdef ENABLE_FUNCTION_LIVE
   #include "screen_live.h"
 #endif
@@ -112,7 +112,10 @@ void next_page(bool rotation) {
 #endif
   if (prev_page_number == PAGE_MAP) {
     action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, menu_button);
+    screen_map_layer_deinit();
   } else if (s_data.page_number == PAGE_MAP) {
+    overlay_load(OVL_MAP_OVL);
+    screen_map_layer_init(s_data.window);
     action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, zoom_button);
   }
 

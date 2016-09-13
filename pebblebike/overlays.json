@@ -4,6 +4,10 @@
         {
             "name"  : "ovl_menu",
             "files" : ["ovl/menu.c"]
+        },
+        {
+            "name"  : "ovl_map",
+            "files" : ["ovl/screen_map.c"]
         }
     ]
 }

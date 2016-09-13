@@ -14,5 +14,6 @@ void action_bar_deinit();
 void set_layer_attr_full(TextLayer *textlayer, const char *text, GFont font, GTextAlignment text_alignment, GColor color, GColor bg_color, Layer *ParentLayer);
 void screen_reset_instant_data();
 void copy_speed(char *speed, int8_t size, int32_t speed100);
+void screen_map_update_location();
 
 #endif // SCREENS_H

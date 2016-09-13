@@ -1,43 +1,17 @@
 #include "pebble.h"
-#include "config.h"
-#include "pebblebike.h"
-#include "navigation.h"
 #include "screen_map.h"
-#include "screens.h"
+#include "../screen_map_gpath.h"
+#include "../config.h"
+#include "../pebblebike.h"
+#include "../navigation.h"
+#include "../screens.h"
 
 // map layer
 Layer *path_layer;
 Layer *bearing_layer;
 
-// 4 Bytes/point
-// to compute correct values, use DEMO mode, cycle through all screens including menu
-#if PBL_PLATFORM_APLITE
-  #define NUM_POINTS 100
-#else
-  #define NUM_POINTS 1500
-#endif
-
-GPoint pts[NUM_POINTS];
-int cur_point = 0;
-int map_scale = MAP_SCALE_INI;
-int nb_points = 0;
-
-int32_t xposprev = 0, yposprev = 0;
-
 GRect pathFrame;
 
-
-const GPathInfo BEARING_PATH_POINTS = {
-    4,
-    (GPoint []) {
-        {0, 3},
-        {-4, 6},
-        {0, -6},
-        {4, 6},
-    }
-};
-
-GPath *bearing_gpath;
 
 #define NAVIGATION_COMPASS_RADIUS 15
 #define NAVIGATION_COMPASS_PADDING_X PBL_IF_ROUND_ELSE(23,3)
@@ -89,37 +63,6 @@ void screen_map_zoom_in(int factor) {
         map_scale = MAP_SCALE_MAX;
     }
     screen_map_update_map(true);
-}
-
-
-// in 10m
-#define SCREEN_MAP_MIN_DIST 5
-void screen_map_update_location() {
-
-    if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < SCREEN_MAP_MIN_DIST*SCREEN_MAP_MIN_DIST) {
-        // distance with previous position < SCREEN_MAP_MIN_DIST*10 (m)
-        /*snprintf(s_data.debug2, sizeof(s_data.debug2),
-          "#11 nbpoints:%u\npos : %ld|%ld\nposprev : %ld|%ld\n",
-          nb_points,
-          s_gpsdata.xpos, s_gpsdata.ypos,
-          xposprev, yposprev
-        );*/
-    } else {
-      // add new point
-      xposprev = s_gpsdata.xpos;
-      yposprev = s_gpsdata.ypos;
-
-      cur_point = nb_points % NUM_POINTS;
-      nb_points++;
-    }
-
-    // update cur point or add new one
-    pts[cur_point] = GPoint(s_gpsdata.xpos, s_gpsdata.ypos);
-
-    if (s_data.page_number == PAGE_MAP) {
-        // refresh displayed map only if current page is PAGE_MAP
-      screen_map_update_map(false);
-    }
 }
 
 void screen_map_update_map(bool force_recenter) {
@@ -312,7 +255,6 @@ void bearing_layer_update_callback(Layer *me, GContext *ctx) {
     gpath_draw_outline(ctx, bearing_gpath);
 }
 void screen_map_layer_init(Window* window) {
-
     for (int i = 0; i < NUM_POINTS; i++) {
         pts[i] = GPoint(0, 0);
     }
@@ -338,7 +280,7 @@ void screen_map_layer_init(Window* window) {
     layer_set_update_proc(bearing_layer, bearing_layer_update_callback);
     layer_add_child(s_data.page_map, bearing_layer);
 
-    bearing_gpath = gpath_create(&BEARING_PATH_POINTS);
+    screen_map_init_gpath();
     gpath_move_to(bearing_gpath, GPoint(SCREEN_W/2, SCREEN_H/2));
 
     layer_set_hidden(s_data.page_map, true);

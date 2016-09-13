@@ -5,6 +5,7 @@
 #include "config.h"
 #include "colors.h"
 #include "sizes.h"
+#include "ovl/screen_map.h"
 
 #ifndef PBL_IF_ROUND_ELSE
 #define PBL_IF_ROUND_ELSE(if_true, if_false) (if_false)
@@ -277,6 +278,24 @@ typedef struct GPSData {
   int16_t nav_xpos[NAV_NB_POINTS_STORAGE];
   int16_t nav_ypos[NAV_NB_POINTS_STORAGE];
 } GPSData;
+
+
+//////////////
+// Map
+//////////////
+
+#define MAP_VSIZE_X 4000
+#define MAP_VSIZE_Y 4000
+
+#define XINI MAP_VSIZE_X/2
+#define YINI MAP_VSIZE_Y/2
+
+extern GPoint pts[NUM_POINTS];
+extern int cur_point;
+extern int map_scale;
+extern int nb_points;
+extern int32_t xposprev, yposprev;
+
 
 //////////////
 // Live Data

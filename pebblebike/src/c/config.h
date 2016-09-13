@@ -3,9 +3,9 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//#define PRODUCTION
+#define PRODUCTION
 #define VERSION_PEBBLE 320
-#define VERSION_TEXT "Version 2.8.0"
+#define VERSION_TEXT "Version 2.8.0-overlay"
 #define APP_COMPANY "N Jackson & JayPS"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // force functions, even in PRODUCTION
 #define ENABLE_ORUXMAPS
-//#define ENABLE_LOCALIZE
+#define ENABLE_LOCALIZE
 #define ENABLE_NAVIGATION
 #define ENABLE_MAP_SKIP_POINT_OUTSIDE
 

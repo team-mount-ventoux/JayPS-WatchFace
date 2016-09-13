@@ -2,7 +2,7 @@
 #include "config.h"
 #include "pebblebike.h"
 #include "screens.h"
-#include "screen_map.h"
+#include "ovl/screen_map.h"
 #include "buttons.h"
 
 ActionBarLayer *action_bar;
@@ -14,7 +14,7 @@ void update_screens() {
 #ifdef ENABLE_FUNCTION_LIVE
   layer_set_hidden(menu_layer_get_layer(s_data.page_live_tracking), true);
 #endif
-  layer_set_hidden(s_data.page_map, true);
+  //todo ovl layer_set_hidden(s_data.page_map, true);
   window_set_background_color(s_data.window, BG_COLOR_WINDOW);
   if (s_data.data_subpage != SUBPAGE_UNDEF) {
     layer_set_hidden(s_data.page_data, false);
@@ -184,4 +184,32 @@ void copy_speed(char *speed, int8_t size, int32_t speed100) {
     snprintf(speed, size, "%ld.%ld", (speed100 + 5) / 100, ((speed100 + 5) % 100) / 10);
   }
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "cs:%ld => %s", speed100, speed);
+}
+
+void screen_map_update_location() {
+
+    if ((xposprev - s_gpsdata.xpos)*(xposprev - s_gpsdata.xpos) + (yposprev - s_gpsdata.ypos)*(yposprev - s_gpsdata.ypos) < SCREEN_MAP_MIN_DIST*SCREEN_MAP_MIN_DIST) {
+        // distance with previous position < SCREEN_MAP_MIN_DIST*10 (m)
+        /*snprintf(s_data.debug2, sizeof(s_data.debug2),
+          "#11 nbpoints:%u\npos : %ld|%ld\nposprev : %ld|%ld\n",
+          nb_points,
+          s_gpsdata.xpos, s_gpsdata.ypos,
+          xposprev, yposprev
+        );*/
+    } else {
+      // add new point
+      xposprev = s_gpsdata.xpos;
+      yposprev = s_gpsdata.ypos;
+
+      cur_point = nb_points % NUM_POINTS;
+      nb_points++;
+    }
+
+    // update cur point or add new one
+    pts[cur_point] = GPoint(s_gpsdata.xpos, s_gpsdata.ypos);
+
+    if (s_data.page_number == PAGE_MAP) {
+        // refresh displayed map only if current page is PAGE_MAP
+      screen_map_update_map(false);
+    }
 }

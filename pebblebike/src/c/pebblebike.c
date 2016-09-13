@@ -12,13 +12,12 @@
 #endif
 #include "heartrate.h"
 #include "buttons.h"
-//#include "menu.h"
 #include "screens.h"
 #include "screen_data.h"
 #ifdef ENABLE_FUNCTION_LIVE
   #include "screen_live.h"
 #endif
-#include "screen_map.h"
+#include "ovl/screen_map.h"
 #include "screen_config.h"
 #include "graph.h"
 
@@ -29,6 +28,15 @@ GFont font_roboto_bold_62;
 
 AppData s_data;
 GPSData s_gpsdata;
+
+//map
+GPoint pts[NUM_POINTS];
+int cur_point = 0;
+int map_scale = MAP_SCALE_INI;
+int nb_points = 0;
+int32_t xposprev = 0, yposprev = 0;
+
+
 #ifdef ENABLE_FUNCTION_LIVE
 LiveData s_live;
 #endif
@@ -245,7 +253,7 @@ static void init(void) {
 #ifdef ENABLE_FUNCTION_LIVE
   screen_live_layer_init(s_data.window);
 #endif
-  screen_map_layer_init(s_data.window);
+  //screen_map_layer_init(s_data.window);
 
   #ifdef PRODUCTION
     #ifndef ENABLE_DEMO
@@ -320,7 +328,7 @@ static void deinit(void) {
 #ifdef ENABLE_FUNCTION_LIVE
   screen_live_layer_deinit();
 #endif
-  screen_map_layer_deinit();
+  //screen_map_layer_deinit();
 
   action_bar_deinit();
   //menu_deinit();
