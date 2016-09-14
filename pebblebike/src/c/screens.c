@@ -201,7 +201,7 @@ void screen_map_update_location() {
       xposprev = s_gpsdata.xpos;
       yposprev = s_gpsdata.ypos;
 
-      cur_point = nb_points % NUM_POINTS;
+      cur_point = nb_points % MAP_NUM_POINTS;
       nb_points++;
     }
 

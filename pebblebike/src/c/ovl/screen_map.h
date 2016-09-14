@@ -1,14 +1,6 @@
 #ifndef SCREEN_MAP_H
 #define SCREEN_MAP_H
 
-// 4 Bytes/point
-// to compute correct values, use DEMO mode, cycle through all screens including menu
-#if PBL_PLATFORM_APLITE
-  #define NUM_POINTS 100
-#else
-  #define NUM_POINTS 1500
-#endif
-
 // in 10m
 #define SCREEN_MAP_MIN_DIST 5
 

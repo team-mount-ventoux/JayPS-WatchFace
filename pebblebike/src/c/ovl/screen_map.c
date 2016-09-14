@@ -177,9 +177,9 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
     graphics_context_set_stroke_color(ctx, COLOR_MAP);
 
     if (nb_points >= 2) {
-      for (int i = 0; i < ((nb_points > NUM_POINTS ? NUM_POINTS : nb_points) - 1); i++) {
-          p0 = pts[(NUM_POINTS+cur_point-i) % NUM_POINTS];
-          p1 = pts[(NUM_POINTS+cur_point-i-1) % NUM_POINTS];
+      for (int i = 0; i < ((nb_points > MAP_NUM_POINTS ? MAP_NUM_POINTS : nb_points) - 1); i++) {
+          p0 = pts[(MAP_NUM_POINTS+cur_point-i) % MAP_NUM_POINTS];
+          p1 = pts[(MAP_NUM_POINTS+cur_point-i-1) % MAP_NUM_POINTS];
 
           p0.x = (XINI + (p0.x * SCREEN_W / (map_scale/10))) % MAP_VSIZE_X;
           p0.y = (YINI - (p0.y * SCREEN_W / (map_scale/10))) % MAP_VSIZE_Y;
@@ -255,7 +255,7 @@ void bearing_layer_update_callback(Layer *me, GContext *ctx) {
     gpath_draw_outline(ctx, bearing_gpath);
 }
 void screen_map_layer_init(Window* window) {
-    for (int i = 0; i < NUM_POINTS; i++) {
+    for (int i = 0; i < MAP_NUM_POINTS; i++) {
         pts[i] = GPoint(0, 0);
     }
 
@@ -293,8 +293,8 @@ void screen_map_layer_init(Window* window) {
 #ifdef ENABLE_DEMO
     srand(0);
     #define MIN(a, b) (a < b ? a : b)
-    for(int j = NUM_POINTS; j>0; j--) {
-      pts[NUM_POINTS-j] = GPoint(2*j, j*j/50 + 5 + rand()%2);
+    for(int j = MAP_NUM_POINTS; j>0; j--) {
+      pts[MAP_NUM_POINTS-j] = GPoint(2*j, j*j/50 + 5 + rand()%2);
       cur_point++;
     }
     nb_points = cur_point;

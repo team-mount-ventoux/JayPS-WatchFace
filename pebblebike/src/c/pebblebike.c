@@ -30,7 +30,7 @@ AppData s_data;
 GPSData s_gpsdata;
 
 //map
-GPoint pts[NUM_POINTS];
+GPoint pts[MAP_NUM_POINTS];
 int cur_point = 0;
 int map_scale = MAP_SCALE_INI;
 int nb_points = 0;

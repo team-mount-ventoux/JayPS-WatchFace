@@ -83,14 +83,7 @@ enum {
   #define NUMBER_OF_PAGES 4
 #endif
 
-#define NAV_NB_POINTS 20
 #define NB_POINTS_PER_PAGE 5
-#ifdef ENABLE_NAVIGATION_FULL
-  // 5 * 256
-  #define NAV_NB_POINTS_STORAGE 1280
-#else
-  #define NAV_NB_POINTS_STORAGE NAV_NB_POINTS
-#endif
 
 #define SPEED_UNIT_IMPERIAL "mph"
 #define SPEED_UNIT_METRIC "km/h"
@@ -290,7 +283,7 @@ typedef struct GPSData {
 #define XINI MAP_VSIZE_X/2
 #define YINI MAP_VSIZE_Y/2
 
-extern GPoint pts[NUM_POINTS];
+extern GPoint pts[MAP_NUM_POINTS];
 extern int cur_point;
 extern int map_scale;
 extern int nb_points;
