@@ -10,6 +10,7 @@
 #endif
 #include "screen_data.h"
 #include "screen_config.h"
+#include "ovl/screen_config.h"
 
 #include "overlord.h"
 #include "overlays.h"
@@ -166,6 +167,7 @@ void handle_bottombutton_click(ClickRecognizerRef recognizer, void *context) {
   if (config_screen != CONFIG_SCREEN_DISABLED) {
     config_change_type(CONFIG_CHANGE_TYPE_NEXT);
   } else {
+    need_launch_config = false;
     overlay_load(OVL_MENU_OVL);
     menu_init();
     menu_show();
@@ -182,6 +184,7 @@ void handle_bottombutton_longclick(ClickRecognizerRef recognizer, void *context)
     screen_map_zoom_in(2);
   } else if (s_data.page_number == PAGE_DATA || s_data.page_number == PAGE_ALTITUDE) {
     if (config_screen == CONFIG_SCREEN_DISABLED) {
+      overlay_load(OVL_CONFIG_OVL);
       config_start();
     } else {
       config_stop();

@@ -5,6 +5,7 @@
 #include "../communication.h"
 #include "../screen_config.h"
 #include "../heartrate.h"
+#include "screen_config.h"
 #ifdef ENABLE_LOCALIZE
   #include "../localize.h"
 #endif
@@ -79,7 +80,8 @@ void menu_reset_data_callback(int index, void *context)
 }
 void menu_configure_screen(int index, void *context)
 {
-  config_start();
+  ///@todo(overlay) HACK (cannot call an overlay inside another one) improve me!
+  need_launch_config = true;
   window_stack_pop(true);
 }
 void init_settings_window()

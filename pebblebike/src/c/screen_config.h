@@ -3,6 +3,8 @@
 
 #define MIN_VERSION_PEBBLE_SCREEN_A_TOP2 267
 #define MIN_VERSION_PEBBLE_SCREEN_A_TOP_BAR 287
+#define CONFIG_NB_FIELD_ORDER 30
+
 enum {
   CONFIG_FIELD_SCREEN__MIN,
   CONFIG_FIELD_SCREEN_TOP = CONFIG_FIELD_SCREEN__MIN,
@@ -22,6 +24,7 @@ enum {
   CONFIG_SCREEN_B,
 };
 extern uint8_t config_screen;
+extern uint8_t config_order[CONFIG_NB_FIELD_ORDER];
 
 typedef struct ConfigData {
     /// ! DO NOT CHANGE ORDER
@@ -40,16 +43,12 @@ typedef struct ConfigData {
 extern ConfigData config;
 
 void config_init();
-void config_start();
-void config_stop();
-void config_change_field();
-void config_change_type(uint8_t direction);
 void config_load();
 void config_save();
 void config_affect_type(FieldConfig *field, uint8_t type);
+const char *field_get_title(uint8_t field);
 void config_field_set_text(FieldLayer field_layer, uint8_t type, GTextAlignment force_alignement);
 void screen_data_update_config(bool change_page);
-void screen_altitude_update_config();
 
 
 #endif // SCREEN_CONFIG_H

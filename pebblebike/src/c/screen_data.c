@@ -7,6 +7,9 @@
 #include "heartrate.h"
 #include "navigation.h"
 #include "screen_data.h"
+#include "overlord.h"
+#include "overlays.h"
+#include "ovl/screen_config.h"
 
 Layer *line_layer;
 
@@ -33,6 +36,12 @@ Layer *line_layer;
 
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
+  if (need_launch_config) {
+    ///@todo(overlay) HACK (cannot call an overlay inside another one) improve me!
+    need_launch_config = false;
+    overlay_load(OVL_CONFIG_OVL);
+    config_start();
+  }
   graphics_context_set_stroke_color(ctx, COLOR_LINES);
   graphics_draw_line(ctx, GPoint(PAGE_OFFSET_X + PAGE_W / 2, PAGE_DATA_TOP_H + 2), GPoint(PAGE_OFFSET_X + PAGE_W / 2, PAGE_H - 2));
 

@@ -28,9 +28,9 @@ uint16_t overlay_load(uint16_t overlay_id)
 		  LOG_INFO("OK, size:%d", size);
 		  memory_cache_flush((uint8_t *)(&__pbl_app_info) + _ovly_table[overlay_id][0], _ovly_table[overlay_id][1]);
 			s_current_ovl = overlay_id;
+    } else {
+      LOG_INFO("error overlay_id:%d", overlay_id);
 		}
-	} else {
-	  LOG_INFO("error");
 	}
 	return s_current_ovl;
 }

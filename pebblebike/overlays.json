@@ -8,6 +8,10 @@
         {
             "name"  : "ovl_map",
             "files" : ["ovl/screen_map.c"]
+        },
+        {
+            "name"  : "ovl_config",
+            "files" : ["ovl/screen_config.c"]
         }
     ]
 }

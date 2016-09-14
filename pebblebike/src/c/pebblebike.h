@@ -326,6 +326,7 @@ extern GPSData s_gpsdata;
 extern LiveData s_live;
 extern bool title_instead_of_units;
 extern GColor bg_color_data_main;
+extern bool need_launch_config;
 
 void change_units(uint8_t units, bool first_time);
 void change_state(uint8_t state);
