@@ -17,7 +17,7 @@
 #ifdef ENABLE_FUNCTION_LIVE
   #include "screen_live.h"
 #endif
-#include "ovl/screen_map.h"
+#include "screen_map.h"
 #include "screen_config.h"
 #include "graph.h"
 
@@ -254,7 +254,7 @@ static void init(void) {
 #ifdef ENABLE_FUNCTION_LIVE
   screen_live_layer_init(s_data.window);
 #endif
-  //screen_map_layer_init(s_data.window);
+  screen_map_init();
 
   #ifdef PRODUCTION
     #ifndef ENABLE_DEMO

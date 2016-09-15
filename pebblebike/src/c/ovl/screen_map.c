@@ -1,6 +1,7 @@
+#include "../screen_map.h"
+
 #include "pebble.h"
 #include "screen_map.h"
-#include "../screen_map_gpath.h"
 #include "../config.h"
 #include "../pebblebike.h"
 #include "../navigation.h"
@@ -255,10 +256,6 @@ void bearing_layer_update_callback(Layer *me, GContext *ctx) {
     gpath_draw_outline(ctx, bearing_gpath);
 }
 void screen_map_layer_init(Window* window) {
-    for (int i = 0; i < MAP_NUM_POINTS; i++) {
-        pts[i] = GPoint(0, 0);
-    }
-
     s_data.page_map = layer_create(GRect(0,TOPBAR_HEIGHT,SCREEN_W,SCREEN_H-TOPBAR_HEIGHT));
     layer_add_child(window_get_root_layer(window), s_data.page_map);
 #ifdef ENABLE_FUNCTION_LIVE
@@ -284,21 +281,6 @@ void screen_map_layer_init(Window* window) {
     gpath_move_to(bearing_gpath, GPoint(SCREEN_W/2, SCREEN_H/2));
 
     layer_set_hidden(s_data.page_map, true);
-
-
-    s_gpsdata.xpos=0;
-    s_gpsdata.ypos=0;
-    s_gpsdata.nb_received=0;
-
-#ifdef ENABLE_DEMO
-    srand(0);
-    #define MIN(a, b) (a < b ? a : b)
-    for(int j = MAP_NUM_POINTS; j>0; j--) {
-      pts[MAP_NUM_POINTS-j] = GPoint(2*j, j*j/50 + 5 + rand()%2);
-      cur_point++;
-    }
-    nb_points = cur_point;
-#endif
 }
 void screen_map_layer_deinit() {
 #ifdef ENABLE_FUNCTION_LIVE
