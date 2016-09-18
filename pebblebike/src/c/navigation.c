@@ -8,7 +8,9 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
 #ifdef ENABLE_NAVIGATION_FULL
     if (!nav_is_error_ok()) {
       graphics_context_set_stroke_width(ctx, small ? 2 : 3);
-      graphics_context_set_stroke_color(ctx, GColorOrange);
+      #ifdef PBL_COLOR
+        graphics_context_set_stroke_color(ctx, GColorOrange);
+      #endif
     }
 #endif
 //  s_gpsdata.bearing = 320;
@@ -19,7 +21,9 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
     // compass
     graphics_context_set_stroke_width(ctx, 1);
     graphics_draw_line(ctx, center, gpoint_from_polar(box, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(360 - s_gpsdata.bearing)));
+#endif
 
+#if defined(ENABLE_NAVIGATION_FULL) && defined(PBL_COLOR)
     if (nav_is_bearing_ok()) {
       graphics_context_set_stroke_color(ctx, GColorGreen);
     } else {
