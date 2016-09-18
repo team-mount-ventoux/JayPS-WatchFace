@@ -2,15 +2,11 @@
 #include <stdint.h>
 #include <string.h>
 #include "config.h"
-#ifdef ENABLE_LOCALIZE
-  #include "localize.h"
-#endif
 #include "pebblebike.h"
 #include "communication.h"
 #ifdef PBL_HEALTH
   #include "health.h"
 #endif
-#include "heartrate.h"
 #include "buttons.h"
 #include "screens.h"
 #include "screen_data.h"
@@ -20,6 +16,11 @@
 #include "screen_map.h"
 #include "screen_config.h"
 #include "graph.h"
+
+#include "overlord.h"
+#include "overlays.h"
+#include "ovl/init.h"
+
 
 #ifdef PBL_PLATFORM_CHALK
 GFont font_roboto_bold_16;
@@ -159,130 +160,12 @@ void bt_callback(bool connected) {
 }
 
 static void init(void) {
-  config_load();
+  overlay_load(OVL_INIT_OVL);
+  _ovl_init();
 
-#ifdef ENABLE_LOCALIZE
-  locale_init();
-#endif
-  heartrate_init();
-  s_gpsdata.heartrate = 255; // no data at startup
-  bg_color_data_main = BG_COLOR_DATA_MAIN;
-
-#ifdef ENABLE_NAVIGATION_FULL
-  for (uint16_t i = 0; i < NAV_NB_POINTS_STORAGE - 1; i++) {
-    s_gpsdata.nav_xpos[i] = s_gpsdata.nav_ypos[i] = INT16_MAX;
-  }
-#endif
-
-#ifdef ENABLE_DEBUG_FIELDS_SIZE
-  strcpy(s_data.speed, "188.8");
-  strcpy(s_data.distance, "88.8");
-  strcpy(s_data.avgspeed, "888.8");
-  strcpy(s_data.altitude, "888.8");
-  strcpy(s_data.ascent, "1342");
-  strcpy(s_data.ascentrate, "548");
-  strcpy(s_data.slope, "5");
-  strcpy(s_data.accuracy, "9");
-  strcpy(s_data.bearing, "270");
-  strcpy(s_data.elapsedtime, "1:05:28");
-  strcpy(s_data.maxspeed, "25.3");
-  strcpy(s_data.heartrate, "128");
-  strcpy(s_data.cadence, "90");
-#endif
-#ifdef ENABLE_DEMO
-  strcpy(s_data.maxspeed, "26.1");
-  strcpy(s_data.distance, "2.0");
-  strcpy(s_data.avgspeed, "14.0");
-  strcpy(s_data.altitude, "1139");
-  strcpy(s_data.accuracy, "4");
-  strcpy(s_data.steps, "7548");
-  strcpy(s_data.elapsedtime, "1:15:28");
-  strcpy(s_data.heartrate, "154");
-  s_gpsdata.heartrate = 154;
-  heartrate_new_data(s_gpsdata.heartrate);
-  s_data.live = 1;
-  s_data.state = STATE_START;
-
-  s_gpsdata.nav_distance_to_destination100 = 12100;
-  s_gpsdata.nav_next_distance1000 = 1345;
-  s_gpsdata.nav_error1000 = 55;
-  snprintf(s_data.nav_next_distance,   sizeof(s_data.nav_next_distance),   "%d",   s_gpsdata.nav_next_distance1000);
-#else
-  strcpy(s_data.speed, "0.0");
-  strcpy(s_data.distance, "-");
-  strcpy(s_data.avgspeed, "-");
-  strcpy(s_data.altitude, "-");
-  strcpy(s_data.ascent, "-");
-  strcpy(s_data.ascentrate, "-");
-  strcpy(s_data.slope, "-");
-  strcpy(s_data.accuracy, "-");
-  strcpy(s_data.bearing, "-");
-  strcpy(s_data.elapsedtime, "00:00:00");
-  strcpy(s_data.maxspeed, "-");
-  strcpy(s_data.heartrate, "-");
-  strcpy(s_data.cadence, "-");
-  strcpy(s_data.nav_next_distance, "-");
-  strcpy(s_data.nav_distance_to_destination, "-");
-  strcpy(s_data.nav_ttd, "-");
-  strcpy(s_data.nav_eta, "-");
-#endif
-  //strcpy(s_data.lat, "-");
-  //strcpy(s_data.lon, "-");
-  //strcpy(s_data.nbascent, "-");
-
-  s_data.phone_battery_level = -1;
-
-#ifdef PBL_PLATFORM_CHALK
-  font_roboto_bold_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16));
-#endif
-  font_roboto_bold_62 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_62));
-
-  // set default unit of measure
-  change_units(UNITS_IMPERIAL, true);
-
-  buttons_init();
-
-  s_data.window = window_create();
-  window_set_background_color(s_data.window, BG_COLOR_WINDOW);
-#ifdef PBL_SDK_2
-  window_set_fullscreen(s_data.window, true);
-#endif
-  topbar_layer_init(s_data.window);
-
-  screen_data_layer_init(s_data.window);
-  //screen_altitude_layer_init(s_data.window);
-#ifdef ENABLE_FUNCTION_LIVE
-  screen_live_layer_init(s_data.window);
-#endif
-  screen_map_init();
-
-  #ifdef PRODUCTION
-    #ifndef ENABLE_DEMO
-      screen_reset_instant_data();
-    #endif
-  #endif
-
-  action_bar_init(s_data.window);
-  //menu_init();
-
-  // Reduce the sniff interval for more responsive messaging at the expense of
-  // increased energy consumption by the Bluetooth module
-  // The sniff interval will be restored by the system after the app has been
-  // unloaded
-  //app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
-  
-  communication_init();
-
-  screen_data_update_config(true);
-  //screen_altitude_update_config();
-  graph_init();
-  
-  window_stack_push(s_data.window, true /* Animated */);
-  
+  // callbacks cannot be in the overlay, register them here
   tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
   bluetooth_connection_service_subscribe(bt_callback);
-  
-  send_version(true);
 }
 
 #ifdef ENABLE_GLANCE

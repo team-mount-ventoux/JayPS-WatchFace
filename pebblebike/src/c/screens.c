@@ -77,35 +77,6 @@ void topbar_layer_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_stroke_color(ctx, BG_COLOR_TOP_BAR);
   graphics_fill_rect(ctx, GRect(0, 0, SCREEN_W, TOPBAR_HEIGHT), 0, GCornerNone);
 }
-void topbar_layer_init(Window* window) {
-//  int16_t w = SCREEN_W - MENU_WIDTH;
-
-  s_data.topbar_layer.layer = layer_create(GRect(0, 0, SCREEN_W, TOPBAR_HEIGHT));
-  layer_set_update_proc(s_data.topbar_layer.layer , topbar_layer_update_callback);
-  layer_add_child(window_get_root_layer(window), s_data.topbar_layer.layer);
-
-  // time (centered in top bar)
-  s_data.topbar_layer.field_center_layer.data_layer = text_layer_create(GRect(PAGE_OFFSET_X, PBL_IF_ROUND_ELSE(6,-8), PAGE_W, PBL_IF_ROUND_ELSE(19,25)));
-  text_layer_set_background_color(s_data.topbar_layer.field_center_layer.data_layer, COLOR_TOP_BAR);
-  set_layer_attr_full(s_data.topbar_layer.field_center_layer.data_layer, s_data.time, PBL_IF_ROUND_ELSE(font_roboto_bold_16, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD)), GTextAlignmentCenter, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
-
-  // bluetooth icon
-  s_data.topbar_layer.bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
-  GRect frame = gbitmap_get_bounds(s_data.topbar_layer.bluetooth_image);
-#ifdef PBL_ROUND
-  frame.origin.x += 52;
-  frame.origin.y += 8;
-#endif
-  s_data.topbar_layer.bluetooth_layer = bitmap_layer_create(frame);
-  bitmap_layer_set_bitmap(s_data.topbar_layer.bluetooth_layer, s_data.topbar_layer.bluetooth_image);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer));
-  layer_set_hidden(bitmap_layer_get_layer(s_data.topbar_layer.bluetooth_layer), !bluetooth_connection_service_peek());
-
-  // accuracy (1/3, right)
-  s_data.topbar_layer.accuracy_layer = text_layer_create(GRect(PAGE_W - PBL_IF_ROUND_ELSE(18, 20) - PBL_IF_ROUND_ELSE(15, 0), PBL_IF_ROUND_ELSE(6,-8), PBL_IF_ROUND_ELSE(18, 20), PBL_IF_ROUND_ELSE(19,25)));
-  set_layer_attr_full(s_data.topbar_layer.accuracy_layer, s_data.accuracy, PBL_IF_ROUND_ELSE(font_roboto_bold_16, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD)), GTextAlignmentRight, COLOR_TOP_BAR, BG_COLOR_TOP_BAR, window_get_root_layer(window));
-  layer_set_hidden(text_layer_get_layer(s_data.topbar_layer.accuracy_layer), s_data.state == STATE_STOP);
-}
 
 static void disconnect_timer_callback(void *data) {
   disconnect_timer = NULL;

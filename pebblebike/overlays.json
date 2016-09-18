@@ -2,6 +2,10 @@
     "overlays" : 
     [
         {
+            "name"  : "ovl_init",
+            "files" : ["ovl/init.c"]
+        },
+        {
             "name"  : "ovl_menu",
             "files" : ["ovl/menu.c"]
         },
