@@ -7,7 +7,7 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
 //  s_gpsdata.nav_bearing = 270;
 #ifdef ENABLE_NAVIGATION_FULL
     if (!nav_is_error_ok()) {
-      graphics_context_set_stroke_width(ctx, small ? 2 : 3);
+      graphics_context_set_stroke_width(ctx, COLOR_FALLBACK(small ? 2 : 3, small ? 1 : 2));
       #ifdef PBL_COLOR
         graphics_context_set_stroke_color(ctx, GColorOrange);
       #endif

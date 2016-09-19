@@ -146,7 +146,7 @@ void path_layer_update_callback(Layer *me, GContext *ctx) {
         continue;
       }
       //LOG_DEBUG("%d: xpos:%d ypos:%d %s", i, s_gpsdata.nav_xpos[i], s_gpsdata.nav_ypos[i], s_gpsdata.nav_first_index_in_storage + i == s_gpsdata.nav_next_index ? "NEXT" : "");
-#ifdef ENABLE_NAVIGATION_FULL
+#if defined(ENABLE_NAVIGATION_FULL) && defined(PBL_COLOR)
       if (s_gpsdata.nav_first_index_in_storage + i < s_gpsdata.nav_next_index) {
         // previous points
         graphics_context_set_stroke_color(ctx, GColorLightGray);
