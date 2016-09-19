@@ -209,7 +209,7 @@ const char *field_get_units(uint8_t field) {
         return HEART_RATE_UNIT;
       }
       break;
-    case FIELD_CADENCE: return "rpm"; break;
+    case FIELD_CADENCE: return "Hrm 2"; break;///@todo(hrm)
     case FIELD_TEMPERATURE: return s_data.unitsTemperature; break;
     case FIELD_TIME: return ""; break;
 #ifdef PBL_HEALTH
@@ -335,15 +335,17 @@ void config_load() {
     config.screenA_top_type           = FIELD_HEARTRATE;
     config.screenA_top2_type          = FIELD_HEARTRATE_GRAPH_ONLY;
 #else
-    config.screenA_top_type           = FIELD_SPEED;
+    config.screenA_top_type           = FIELD_HEARTRATE;
   #ifdef PBL_COLOR
       config.screenA_top2_type          = FIELD_ALTITUDE_DATA_AND_GRAPH;
   #else
-      config.screenA_top2_type          = FIELD_ALTITUDE;
+      config.screenA_top2_type          = FIELD_HEARTRATE_GRAPH_ONLY;
   #endif
 #endif
-    config.screenA_bottom_left_type   = FIELD_DISTANCE;
-    config.screenA_bottom_right_type  = FIELD_AVGSPEED;
+    config.screenA_bottom_left_type   = FIELD_CADENCE;
+#ifdef PBL_HEALTH
+    config.screenA_bottom_right_type  = FIELD_STEPS;
+#endif
     config.screenA_topbar_center_type = FIELD_TIME;
 #ifdef ENABLE_SCREENB_NAVIGATION
     config.screenB_top_type           = FIELD_NAV_DISTANCE_NEXT;
