@@ -397,13 +397,27 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             if (tuple->value->data[BYTE_BEARING] != 0) {
               GET_DATA(s_gpsdata.bearing, BYTE_BEARING) * 360 / 256;
             }
-            GET_DATA(s_gpsdata.heartrate, BYTE_HEARTRATE);
-            if (tuple->key >= MSG_LOCATION_DATA_V3) {
-              GET_DATA(s_gpsdata.cadence, BYTE_CADENCE);
-            } else {
-              GET_DATA(s_gpsdata.cadence, BYTE_HEARTRATE); // no specific field until MSG_LOCATION_DATA_V3
-            }
 
+            #ifdef DEBUG_REPLACE_CADENCE_BY_HEARTRATE
+              GET_DATA(s_gpsdata.cadence, BYTE_HEARTRATE);
+            #else
+              #ifdef PBL_HEALTH
+                uint8_t tmp_heartrate = 255;
+                GET_DATA(tmp_heartrate, BYTE_HEARTRATE);
+                if (tmp_heartrate != 255) {
+                  s_gpsdata.received_external_hr = true;
+                  s_gpsdata.heartrate = tmp_heartrate;
+                }
+                LOG_INFO("received_internal_hr:%d received_external_hr:%d", s_gpsdata.received_internal_hr, s_gpsdata.received_external_hr);
+              #else
+                GET_DATA(s_gpsdata.heartrate, BYTE_HEARTRATE);
+              #endif
+              if (tuple->key >= MSG_LOCATION_DATA_V3) {
+                GET_DATA(s_gpsdata.cadence, BYTE_CADENCE);
+              } else {
+                GET_DATA(s_gpsdata.cadence, BYTE_HEARTRATE); // no specific field until MSG_LOCATION_DATA_V3
+              }
+            #endif
 
             snprintf(s_data.accuracy,   sizeof(s_data.accuracy),   "%d",   s_gpsdata.accuracy);
             snprintf(s_data.distance,   sizeof(s_data.distance),   "%ld.%ld", s_gpsdata.distance100 / 100, s_gpsdata.distance100 % 100 / 10);
@@ -415,21 +429,29 @@ void communication_in_received_callback(DictionaryIterator *iter, void *context)
             snprintf(s_data.ascentrate, sizeof(s_data.ascentrate), "%d",   s_gpsdata.ascentrate);
             snprintf(s_data.slope,      sizeof(s_data.slope),      "%d",   s_gpsdata.slope);
             snprintf(s_data.bearing,    sizeof(s_data.bearing),    "%d",   s_gpsdata.bearing);
-            if (s_gpsdata.heartrate != 255) {
-              snprintf(s_data.heartrate,  sizeof(s_data.heartrate),  "%d",   s_gpsdata.heartrate);
-              if (s_gpsdata.heartrate > 0) {
-                graph_add_data(&graph_heartrates, s_gpsdata.heartrate);
-                heartrate_new_data(s_gpsdata.heartrate);
+            #ifdef DEBUG_REPLACE_CADENCE_BY_HEARTRATE
+              if (s_gpsdata.cadence != 255) {
+                snprintf(s_data.cadence,  sizeof(s_data.cadence),  "%d",   s_gpsdata.cadence);
+              } else {
+                strcpy(s_data.cadence, "-");
               }
-            } else {
-              strcpy(s_data.heartrate, "-");
-            }
+            #else
+              if (s_gpsdata.heartrate != 255) {
+                snprintf(s_data.heartrate,  sizeof(s_data.heartrate),  "%d",   s_gpsdata.heartrate);
+                if (s_gpsdata.heartrate > 0) {
+                  graph_add_data(&graph_heartrates, s_gpsdata.heartrate);
+                  heartrate_new_data(s_gpsdata.heartrate);
+                }
+              } else {
+                strcpy(s_data.heartrate, "-");
+              }
 
-            if (s_gpsdata.cadence != 255) {
-              snprintf(s_data.cadence,  sizeof(s_data.cadence),  "%d",   s_gpsdata.cadence);
-            } else {
-              strcpy(s_data.cadence, "-");
-           }
+              if (s_gpsdata.cadence != 255) {
+                snprintf(s_data.cadence,  sizeof(s_data.cadence),  "%d",   s_gpsdata.cadence);
+              } else {
+                strcpy(s_data.cadence, "-");
+              }
+            #endif
             if (s_gpsdata.time / 3600 > 0) {
               snprintf(s_data.elapsedtime,sizeof(s_data.elapsedtime),"%d:%.2d:%.2d", s_gpsdata.time / 3600, (s_gpsdata.time / 60) % 60, s_gpsdata.time % 60);
             } else {

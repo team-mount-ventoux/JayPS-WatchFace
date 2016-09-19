@@ -95,6 +95,11 @@ void _ovl_init() {
 
   s_data.phone_battery_level = -1;
 
+#ifdef PBL_HEALTH
+  s_gpsdata.received_external_hr = false;
+  s_gpsdata.received_internal_hr = false;
+#endif
+
 #ifdef PBL_PLATFORM_CHALK
   font_roboto_bold_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_16));
 #endif

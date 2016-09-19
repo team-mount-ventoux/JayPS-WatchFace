@@ -66,6 +66,13 @@
   //#define ENABLE_MAP_SKIP_POINT_OUTSIDE
 #endif
 
+
+#ifdef PBL_PLATFORM_DIORITE
+  #define HAS_TWO_HRM
+  #define ENABLE_INTERNAL_HRM
+  //#define DEBUG_REPLACE_CADENCE_BY_HEARTRATE
+#endif
+
 #ifdef ENABLE_OVERLAYS
   //#define ENABLE_FUNCTION_LIVE
  // Heart zones in menu > 740 bytes

@@ -270,6 +270,11 @@ typedef struct GPSData {
 
   int16_t nav_xpos[NAV_NB_POINTS_STORAGE];
   int16_t nav_ypos[NAV_NB_POINTS_STORAGE];
+
+#ifdef PBL_HEALTH
+  bool received_external_hr;
+  bool received_internal_hr;
+#endif
 } GPSData;
 
 

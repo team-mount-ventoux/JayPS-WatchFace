@@ -23,7 +23,7 @@ void graph_init_data(GraphData* graph, uint8_t point_duration) {
 void graph_init() {
   graph_init_data(&graph_altitudes, 120);
   graph_init_data(&graph_ascentrates, 120);
-  graph_init_data(&graph_heartrates, 30);
+  graph_init_data(&graph_heartrates, 60); ///@todo(hrm)
   graph_init_data(&graph_speeds, 30);
 
 #ifdef PBL_COLOR

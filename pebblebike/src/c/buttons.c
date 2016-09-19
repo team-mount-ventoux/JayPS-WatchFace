@@ -77,7 +77,7 @@ void next_page(bool rotation) {
   uint8_t prev_page_number = s_data.page_number;
   s_data.page_number++;
 
-  if (s_data.page_number == PAGE_HEARTRATE && s_gpsdata.heartrate == 255) {
+  if (s_data.page_number == PAGE_HEARTRATE && (s_gpsdata.heartrate == 255 || config.screenA_top_type == FIELD_HEARTRATE)) {
     s_data.page_number++;
   }
 #ifdef ENABLE_FUNCTION_LIVE
