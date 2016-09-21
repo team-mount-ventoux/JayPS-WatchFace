@@ -12,7 +12,7 @@
     "uuid": "5dd35873-3bb6-44d6-8255-0e61bc3b97f5",
     "messageKeys": {},
     "enableMultiJS": false,
-    "displayName": "Ventoo 2.9.0-alpha1",
+    "displayName": "Ventoo 2.9.0-beta1",
     "watchapp": {
       "onlyShownOnCommunication": false,
       "hiddenApp": false,
