@@ -45,6 +45,9 @@ void nav_draw_compass(GContext* ctx, GPoint center, GRect box, bool small) {
     graphics_draw_line(ctx, center, gpoint_from_polar);
   #else
     if (small) {
+      #ifdef ENABLE_NAVIGATION_FULL
+        graphics_context_set_stroke_width(ctx, 3);
+      #endif
       graphics_draw_line(ctx, center, gpoint_from_polar(box, GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(direction)));
     } else {
       // GColorLightGray only works for _fill_ functions, cannot use line...
