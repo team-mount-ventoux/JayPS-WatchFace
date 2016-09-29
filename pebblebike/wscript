@@ -114,6 +114,7 @@ def get_overlay_length(elf_file):
         line=line[6:]
         columns=line.split()
         if columns[0].endswith("_ovl") and not columns[0].startswith(".") :
+            print columns[0], int(columns[4],16)
             length = max(length, int(columns[4],16))
     # length += 0x100 - (length % 0x100)
     return length
@@ -136,7 +137,7 @@ def get_app_length(elf_file):
             app_length = max(app_length, int(columns[2],16) + int(columns[4],16))
     app_length -= app_start
     app_length += 0x100 - (app_length % 0x100)
-    return app_length
+    return app_length + 0x100
 
 def get_overlay_load_address(elf_file):
     strt_length = get_strt_length(elf_file)
