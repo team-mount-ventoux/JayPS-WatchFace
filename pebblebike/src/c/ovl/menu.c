@@ -192,7 +192,7 @@ void init_settings_window()
   // Section "About"
   i = 0;
   menu_section2_items[i++] = (SimpleMenuItem) {
-    .title = "Ventoo",
+    .title = "JayPS",
     .subtitle = VERSION_TEXT,
   };
   menu_section2_items[i++] = (SimpleMenuItem) {
@@ -230,7 +230,7 @@ void init_settings_window()
   // Initialize the simple menu layer
   menu_layer = simple_menu_layer_create(bounds, window, menu_sections, ARRAY_LENGTH(menu_sections), NULL);
   // Add it to the window for display
-  layer_add_child(window_layer, simple_menu_layer_get_layer(menu_layer));  
+  layer_add_child(window_layer, simple_menu_layer_get_layer(menu_layer));
 }
 
 
@@ -259,7 +259,7 @@ void menu_init() {
     .appear = (WindowHandler)handle_appear,
     .disappear = window_disappear,
   });
-  
+
 }
 void menu_deinit() {
   window_destroy(window);

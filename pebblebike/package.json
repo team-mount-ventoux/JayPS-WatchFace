@@ -1,7 +1,7 @@
 {
-  "name": "Ventoo",
-  "version": "2.91.0",
-  "author": "N Jackson & JayPS",
+  "name": "JayPS",
+  "version": "3.00.0",
+  "author": "Nic & Jay",
   "private": true,
   "dependencies": {},
   "keywords": [
@@ -12,12 +12,12 @@
     "uuid": "5dd35873-3bb6-44d6-8255-0e61bc3b97f5",
     "messageKeys": {},
     "enableMultiJS": false,
-    "displayName": "Ventoo 2.9.1",
+    "displayName": "JayPS 3.0.0",
     "watchapp": {
       "onlyShownOnCommunication": false,
       "hiddenApp": false,
       "watchface": false
-    },    
+    },
     "sdkVersion": "3",
     "resources": {
       "media": [

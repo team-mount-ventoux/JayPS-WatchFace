@@ -4,9 +4,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define PRODUCTION
-#define VERSION_PEBBLE 332
-#define VERSION_TEXT "Version 2.9.1"
-#define APP_COMPANY "N Jackson & JayPS"
+#define VERSION_PEBBLE 400
+#define VERSION_TEXT "Version 3.0.0"
+#define APP_COMPANY "Nic & Jay"
 
 ////////////////////////////////////////////////////////////////////////////////
 // uncomment to enable specific functions (note: will be disable for PRODUCTION)
