@@ -17,10 +17,7 @@ log:
 	pebble logs --emulator $(PEBBLE_EMULATOR)
 
 travis_build:
-	yes | ~/pebble-dev/${PEBBLE_SDK}/bin/pebble build || true
-	yes | ~/pebble-dev/${PEBBLE_SDK}/bin/pebble build || true
-	yes | ~/pebble-dev/${PEBBLE_SDK}/bin/pebble build || true
-	yes | ~/pebble-dev/${PEBBLE_SDK}/bin/pebble build || true
+	for n in `seq 1 79`; do yes | ~/pebble-dev/${PEBBLE_SDK}/bin/pebble build || true ; done
 	yes | ~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
 
 install:
