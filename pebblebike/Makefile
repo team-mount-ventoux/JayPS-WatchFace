@@ -7,7 +7,14 @@ NAME=$(shell cat package.json | grep '"name":' | head -1 | sed 's/,//g' |sed 's/
 
 all: build install
 
-build:
+init_overlays:
+	mkdir -p resources/data
+	touch resources/data/OVL_aplite.bin
+	touch resources/data/OVL_basalt.bin
+	touch resources/data/OVL_chalk.bin
+	touch resources/data/OVL_diorite.bin
+
+build: init_overlays
 	pebble build
 
 config:
@@ -16,7 +23,7 @@ config:
 log:
 	pebble logs --emulator $(PEBBLE_EMULATOR)
 
-travis_build:
+travis_build: init_overlays
 	yes | ~/pebble-dev/${PEBBLE_SDK}/bin/pebble build
 
 install:
