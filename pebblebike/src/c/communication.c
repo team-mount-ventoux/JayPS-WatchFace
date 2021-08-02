@@ -130,6 +130,19 @@ void send_version(bool first_time) {
       version_data_timer = app_timer_register(5000, version_data_timer_callback, NULL);
     }
 }
+void send_p2hr(uint8_t hr) {
+    Tuplet value = TupletInteger(MSG_P2HR, (int)hr);
+    DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+
+    if (iter == NULL)
+        return;
+
+    dict_write_tuplet(iter, &value);
+    dict_write_end(iter);
+
+    app_message_outbox_send();
+}
 
 #ifdef ENABLE_DEBUG
 void communication_in_dropped_callback(AppMessageResult reason, void *context) {
