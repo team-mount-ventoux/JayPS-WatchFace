@@ -4,6 +4,7 @@
 #include "health.h"
 #include "graph.h"
 #include "heartrate.h"
+#include "communication.h"
 #ifdef PBL_HEALTH
 bool s_health_available = false;
 time_t prev_time = 0;
@@ -34,6 +35,9 @@ static void health_handler(HealthEventType type, void *context) {
             if (type == HealthEventHeartRateUpdate) {
               s_gpsdata.received_internal_hr = true;
               LOG_INFO("received_internal_hr:%d received_external_hr:%d", s_gpsdata.received_internal_hr, s_gpsdata.received_external_hr);
+	      if (!s_gpsdata.received_external_hr) {
+                  send_p2hr(s_gpsdata.heartrate);
+	      }
             }
           #endif
         }

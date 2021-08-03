@@ -30,6 +30,7 @@ enum {
   MSG_CONFIG = 0x28,
   MSG_HR_MAX = 0x29,
   MSG_NAVIGATION = 0x31,
+  MSG_P2HR = 0x32,
 };
 
 enum {
